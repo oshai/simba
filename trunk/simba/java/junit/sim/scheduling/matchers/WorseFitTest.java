@@ -1,7 +1,8 @@
-package sim.scheduling.mix_fit;
+package sim.scheduling.matchers;
 
-import static com.google.common.collect.Lists.*;
-import static org.junit.Assert.*;
+import static com.google.common.collect.Lists.newArrayList;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import java.util.List;
 
@@ -10,32 +11,31 @@ import org.junit.Test;
 import sim.model.Host;
 import sim.model.Job;
 
-public class HostPickerTest
+public class WorseFitTest
 {
-	
 	@Test
 	public void testNoAccpetingHostNotFit()
 	{
 		List<Host> hosts = newArrayList(Host.Builder.create().build());
-		assertNull(new HostPicker(hosts).getBestHost(Job.Builder.create(1).cores(1).build()));
+		assertNull(new WorseFit().match(Job.Builder.create(1).cores(1).build(), hosts));
 	}
-	
+
 	@Test
 	public void testAccpetingHostFit()
 	{
 		Host host = Host.Builder.create().cores(1).build();
 		List<Host> hosts = newArrayList(host);
-		assertEquals(host, new HostPicker(hosts).getBestHost(Job.Builder.create(1).cores(1).build()));
+		assertEquals(host, new WorseFit().match(Job.Builder.create(1).cores(1).build(), hosts));
 	}
-	
+
 	@Test
 	public void testAccpetingBestHost()
 	{
 		Host host1 = Host.Builder.create().cores(2).memory(16).build();
 		Host host2 = Host.Builder.create().cores(2).memory(15).build();
 		Host host3 = Host.Builder.create().cores(2).memory(8).build();
-		List<Host> hosts = newArrayList(host1, host2, host3);
-		assertEquals(host3, new HostPicker(hosts).getBestHost(Job.Builder.create(1).cores(1).memory(4).build()));
+		List<Host> hosts = newArrayList(host3, host2, host1);
+		assertEquals(host1, new WorseFit().match(Job.Builder.create(1).cores(1).memory(4).build(), hosts));
 	}
-	
+
 }

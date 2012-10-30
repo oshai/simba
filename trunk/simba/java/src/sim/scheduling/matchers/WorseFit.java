@@ -1,21 +1,13 @@
-package sim.scheduling.worse_fit;
-
-import java.util.List;
+package sim.scheduling.matchers;
 
 import sim.model.Host;
 import sim.model.Job;
 
-public class WFHostPicker
+public class WorseFit implements Matcher
 {
-	
-	private final List<Host> hosts;
-	
-	public WFHostPicker(List<Host> hosts)
-	{
-		this.hosts = hosts;
-	}
-	
-	public Host getBestHost(Job job)
+
+	@Override
+	public Host match(Job job, Iterable<Host> hosts)
 	{
 		Host $ = null;
 		for (Host host : hosts)
@@ -34,5 +26,5 @@ public class WFHostPicker
 		}
 		return $;
 	}
-	
+
 }
