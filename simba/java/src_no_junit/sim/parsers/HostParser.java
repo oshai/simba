@@ -23,7 +23,7 @@ public class HostParser
 			try
 			{
 				String[] cols = line.split(",");
-				cluster.add(Host.Builder.create().id(cols[0]).cores(Double.valueOf(cols[1])).memory(Double.valueOf(cols[2])).build());
+				cluster.add(Host.create().id(cols[0]).cores(Double.valueOf(cols[1])).memory(Double.valueOf(cols[2])).build());
 			}
 			catch (Exception ex)
 			{

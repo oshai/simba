@@ -38,8 +38,8 @@ public class SystemTest
 	@Test
 	public void testOneJobOneHost()
 	{
-		Host host = Host.Builder.create().cores(1).memory(8).build();
-		Job job = Job.Builder.create(3).priority(0).submitTime(2).cores(1).memory(4).build();
+		Host host = Host.create().cores(1).memory(8).build();
+		Job job = Job.create((long) 3).priority(0).submitTime(2).cores(1).memory(4).build();
 		ArrayList<Job> jobs = newArrayList(job);
 		Looper looper = init(host, jobs);
 		looper.tick();
@@ -58,9 +58,9 @@ public class SystemTest
 	@Test
 	public void test2Jobs1Host()
 	{
-		Host host = Host.Builder.create().cores(2).memory(8).build();
-		Job job1 = Job.Builder.create(3).priority(0).submitTime(2).cores(1).memory(4).build();
-		Job job2 = Job.Builder.create(4).priority(0).submitTime(2).cores(1).memory(4).build();
+		Host host = Host.create().cores(2).memory(8).build();
+		Job job1 = Job.create((long) 3).priority(0).submitTime(2).cores(1).memory(4).build();
+		Job job2 = Job.create((long) 4).priority(0).submitTime(2).cores(1).memory(4).build();
 		ArrayList<Job> jobs = newArrayList(job1, job2);
 		Looper looper = init(host, jobs);
 		looper.tick();
@@ -81,9 +81,9 @@ public class SystemTest
 	@Test
 	public void test2Jobs1HostWithWaiting()
 	{
-		Host host = Host.Builder.create().cores(1).memory(8).build();
-		Job job1 = Job.Builder.create(3).priority(0).submitTime(2).cores(1).memory(4).build();
-		Job job2 = Job.Builder.create(4).priority(0).submitTime(3).cores(1).memory(4).build();
+		Host host = Host.create().cores(1).memory(8).build();
+		Job job1 = Job.create((long) 3).priority(0).submitTime(2).cores(1).memory(4).build();
+		Job job2 = Job.create((long) 4).priority(0).submitTime(3).cores(1).memory(4).build();
 		ArrayList<Job> jobs = newArrayList(job1, job2);
 		Looper looper = init(host, jobs);
 		looper.execute();

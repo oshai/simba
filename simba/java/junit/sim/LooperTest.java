@@ -53,7 +53,7 @@ public class LooperTest
 	{
 		Clock clock = new Clock();
 		EventQueue eventQueue = new EventQueue(clock);
-		Job job = Job.Builder.create(1).priority(0).submitTime(1).cores(0).memory(0).build();
+		Job job = Job.create((long) 1).priority(0).submitTime(1).cores(0).memory(0).build();
 		eventQueue.add(new Submit(job));
 		WaitingQueue waitingQueue = new WaitingQueue();
 		Looper looper = new Looper(clock, eventQueue, waitingQueue, mock(SimpleScheduler.class), mock(HostCollector.class), mock(JobFinisher.class));
@@ -69,8 +69,8 @@ public class LooperTest
 	{
 		Clock clock = new Clock();
 		EventQueue eventQueue = new EventQueue(clock);
-		Job job = Job.Builder.create(1).priority(0).submitTime(1).cores(0).memory(0).build();
-		Host host = Host.Builder.create().cores(0).memory(0).build();
+		Job job = Job.create((long) 1).priority(0).submitTime(1).cores(0).memory(0).build();
+		Host host = Host.create().cores(0).memory(0).build();
 		host.dispatchJob(job);
 		eventQueue.add(new Finish(1, job, host));
 		WaitingQueue waitingQueue = new WaitingQueue();
@@ -87,7 +87,7 @@ public class LooperTest
 	{
 		Clock clock = new Clock();
 		EventQueue eventQueue = new EventQueue(clock);
-		Job job = Job.Builder.create(1).priority(0).submitTime(2).cores(0).memory(0).build();
+		Job job = Job.create((long) 1).priority(0).submitTime(2).cores(0).memory(0).build();
 		eventQueue.add(new Submit(job));
 		WaitingQueue waitingQueue = new WaitingQueue();
 		Scheduler scheduler = mock(SimpleScheduler.class);
@@ -101,7 +101,7 @@ public class LooperTest
 	{
 		Clock clock = new Clock();
 		EventQueue eventQueue = new EventQueue(clock);
-		Job job = Job.Builder.create(1).priority(0).submitTime(1).cores(0).memory(0).build();
+		Job job = Job.create((long) 1).priority(0).submitTime(1).cores(0).memory(0).build();
 		eventQueue.add(new Submit(job));
 		WaitingQueue waitingQueue = new WaitingQueue();
 		SimpleScheduler scheduler = mock(SimpleScheduler.class);

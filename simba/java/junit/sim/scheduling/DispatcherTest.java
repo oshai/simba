@@ -19,7 +19,7 @@ public class DispatcherTest
 	{
 		int currentTime = 1;
 		int jobLength = 1;
-		Job job = Job.Builder.create(jobLength).priority(0).submitTime(0).cores(0).memory(0).build();
+		Job job = Job.create((long) jobLength).priority(0).submitTime(0).cores(0).memory(0).build();
 		Host host = mock(Host.class);
 		EventQueue eventQueue = new EventQueue(new Clock());
 		new Dispatcher(eventQueue).dipatch(job, host, currentTime);

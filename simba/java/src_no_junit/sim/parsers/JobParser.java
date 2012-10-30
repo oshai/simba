@@ -37,7 +37,7 @@ public class JobParser
 					{
 						length = 10;
 					}
-					Job job = Job.Builder.create(length).id(cols[0]).priority(l(cols[5])).submitTime(l(cols[4])).cores(cores).memory(memory).build();
+					Job job = Job.create(length).id(cols[0]).priority(l(cols[5])).submitTime(l(cols[4])).cores(cores).memory(memory).build();
 					if (canRun(job, cluster))
 					{
 						$.add(new Submit(job));

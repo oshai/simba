@@ -17,57 +17,57 @@ public class RandomFitTest
 	@Test
 	public void testNoAccpetingHostNotFit()
 	{
-		Host host = Host.Builder.create().cores(1).build();
-		Host host2 = Host.Builder.create().cores(1).build();
-		Host host3 = Host.Builder.create().cores(1).build();
+		Host host = Host.create().cores(1).build();
+		Host host2 = Host.create().cores(1).build();
+		Host host3 = Host.create().cores(1).build();
 		List<Host> hosts = newArrayList(host, host2, host3);
 		Random random = mock(Random.class);
 		when(random.nextInt(3)).thenReturn(1);
-		assertEquals(null, new RandomFit(random).match(Job.Builder.create(1).cores(2).build(), hosts));
+		assertEquals(null, new RandomFit(random).match(Job.create((long) 1).cores(2).build(), hosts));
 	}
 
 	@Test
 	public void testAccpetingHostFit()
 	{
-		Host host = Host.Builder.create().cores(1).build();
+		Host host = Host.create().cores(1).build();
 		List<Host> hosts = newArrayList(host);
-		assertEquals(host, new RandomFit().match(Job.Builder.create(1).cores(1).build(), hosts));
+		assertEquals(host, new RandomFit().match(Job.create((long) 1).cores(1).build(), hosts));
 	}
 
 	@Test
 	public void testAccpetingRandomHost()
 	{
-		Host host1 = Host.Builder.create().cores(2).memory(16).build();
-		Host host2 = Host.Builder.create().cores(2).memory(15).build();
-		Host host3 = Host.Builder.create().cores(2).memory(8).build();
+		Host host1 = Host.create().cores(2).memory(16).build();
+		Host host2 = Host.create().cores(2).memory(15).build();
+		Host host3 = Host.create().cores(2).memory(8).build();
 		List<Host> hosts = newArrayList(host1, host2, host3);
 		Random random = mock(Random.class);
 		when(random.nextInt(3)).thenReturn(1);
-		assertEquals(host2, new RandomFit(random).match(Job.Builder.create(1).cores(1).memory(4).build(), hosts));
+		assertEquals(host2, new RandomFit(random).match(Job.create((long) 1).cores(1).memory(4).build(), hosts));
 	}
 
 	@Test
 	public void testAccpetingNextHostIfNotAvailable()
 	{
-		Host host1 = Host.Builder.create().cores(2).memory(16).build();
-		Host host2 = Host.Builder.create().cores(2).memory(3).build();
-		Host host3 = Host.Builder.create().cores(2).memory(8).build();
+		Host host1 = Host.create().cores(2).memory(16).build();
+		Host host2 = Host.create().cores(2).memory(3).build();
+		Host host3 = Host.create().cores(2).memory(8).build();
 		List<Host> hosts = newArrayList(host1, host2, host3);
 		Random random = mock(Random.class);
 		when(random.nextInt(3)).thenReturn(1);
-		assertEquals(host3, new RandomFit(random).match(Job.Builder.create(1).cores(1).memory(4).build(), hosts));
+		assertEquals(host3, new RandomFit(random).match(Job.create((long) 1).cores(1).memory(4).build(), hosts));
 	}
 
 	@Test
 	public void testAccpetingNextHostIfNotAvailableTheReturnToListStart()
 	{
-		Host host1 = Host.Builder.create().cores(2).memory(16).build();
-		Host host2 = Host.Builder.create().cores(2).memory(3).build();
-		Host host3 = Host.Builder.create().cores(2).memory(3).build();
+		Host host1 = Host.create().cores(2).memory(16).build();
+		Host host2 = Host.create().cores(2).memory(3).build();
+		Host host3 = Host.create().cores(2).memory(3).build();
 		List<Host> hosts = newArrayList(host1, host2, host3);
 		Random random = mock(Random.class);
 		when(random.nextInt(3)).thenReturn(1);
-		assertEquals(host1, new RandomFit(random).match(Job.Builder.create(1).cores(1).memory(4).build(), hosts));
+		assertEquals(host1, new RandomFit(random).match(Job.create((long) 1).cores(1).memory(4).build(), hosts));
 	}
 
 }
