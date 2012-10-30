@@ -100,7 +100,7 @@ public class Simulator
 		{
 			return new RandomFit();
 		}
-		throw new RuntimeException("no scheduler choosen: WF, MF, BF, FF, RF");
+		throw new RuntimeException("no scheduler chosen: WF, MF, BF, FF, RF");
 	}
 
 	protected Looper createLooper(Cluster cluster, EventQueue eventQueue, Clock clock, Matcher matcher)
