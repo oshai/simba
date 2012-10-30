@@ -18,9 +18,10 @@ public class JobParser
 {
 	private static final Logger log = Logger.getLogger(JobParser.class);
 	private static final String JOBS_FILE = "/nfs/iil/iec/sws/work/oshai/public/workload/traces2/iil1_trace_14-10-28-10-2012.csv";
-	
+
 	public EventQueue parse(Provider<Clock> clockProvider, final Cluster cluster)
 	{
+		log.info("parse() - starting");
 		final EventQueue $ = new EventQueue(clockProvider);
 		Predicate<String> predicate = new Predicate<String>()
 		{
@@ -44,21 +45,21 @@ public class JobParser
 					}
 					else
 					{
-						log.warn("apply() - job cannot run " + job.cores() + " " + job.memory());
+						log.debug("apply() - job cannot run " + job.cores() + " " + job.memory());
 					}
 				}
 				catch (Exception ex)
 				{
-					log.warn("apply() - error: " + ex.getMessage() + "; on line " + line);
+					log.debug("apply() - error: " + ex.getMessage() + "; on line " + line);
 				}
 				return true;
 			}
-			
+
 		};
 		TextFileUtils.getContentByLines(JOBS_FILE, predicate);
 		return $;
 	}
-	
+
 	private boolean canRun(Job job, Cluster cluster)
 	{
 		for (Host host : cluster.hosts())
@@ -70,7 +71,7 @@ public class JobParser
 		}
 		return false;
 	}
-	
+
 	private double getMapValue(String key, String map)
 	{
 		String[] keyValues = map.trim().split(";");
@@ -84,7 +85,7 @@ public class JobParser
 		}
 		throw new RuntimeException("not found in map");
 	}
-	
+
 	private long l(String value)
 	{
 		return Long.valueOf(value);

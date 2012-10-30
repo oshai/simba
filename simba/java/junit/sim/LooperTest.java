@@ -1,12 +1,8 @@
 package sim;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.junit.Assert.*;
+import static org.mockito.Matchers.*;
+import static org.mockito.Mockito.*;
 
 import org.junit.Test;
 
@@ -53,7 +49,7 @@ public class LooperTest
 	{
 		Clock clock = new Clock();
 		EventQueue eventQueue = new EventQueue(clock);
-		Job job = Job.create((long) 1).priority(0).submitTime(1).cores(0).memory(0).build();
+		Job job = Job.create(1).priority(0).submitTime(1).cores(0).memory(0).build();
 		eventQueue.add(new Submit(job));
 		WaitingQueue waitingQueue = new WaitingQueue();
 		Looper looper = new Looper(clock, eventQueue, waitingQueue, mock(SimpleScheduler.class), mock(HostCollector.class), mock(JobFinisher.class));
@@ -69,7 +65,7 @@ public class LooperTest
 	{
 		Clock clock = new Clock();
 		EventQueue eventQueue = new EventQueue(clock);
-		Job job = Job.create((long) 1).priority(0).submitTime(1).cores(0).memory(0).build();
+		Job job = Job.create(1).priority(0).submitTime(1).cores(0).memory(0).build();
 		Host host = Host.create().cores(0).memory(0).build();
 		host.dispatchJob(job);
 		eventQueue.add(new Finish(1, job, host));
@@ -87,13 +83,29 @@ public class LooperTest
 	{
 		Clock clock = new Clock();
 		EventQueue eventQueue = new EventQueue(clock);
-		Job job = Job.create((long) 1).priority(0).submitTime(2).cores(0).memory(0).build();
+		Job job = Job.create(1).priority(0).submitTime(12).cores(0).memory(0).build();
 		eventQueue.add(new Submit(job));
 		WaitingQueue waitingQueue = new WaitingQueue();
 		Scheduler scheduler = mock(SimpleScheduler.class);
 		Looper looper = new Looper(clock, eventQueue, waitingQueue, scheduler, mock(HostCollector.class), mock(JobFinisher.class));
 		assertFalse(looper.tick());
-		verifyZeroInteractions(scheduler);
+		verify(scheduler).schedule(1);
+		assertFalse(looper.tick());
+		verifyNoMoreInteractions(scheduler);
+	}
+
+	@Test
+	public void testNoEventsFirstCycle()
+	{
+		Clock clock = new Clock();
+		EventQueue eventQueue = new EventQueue(clock);
+		Job job = Job.create(1).priority(0).submitTime(2).cores(0).memory(0).build();
+		WaitingQueue waitingQueue = new WaitingQueue();
+		waitingQueue.add(job);
+		Scheduler scheduler = mock(SimpleScheduler.class);
+		Looper looper = new Looper(clock, eventQueue, waitingQueue, scheduler, mock(HostCollector.class), mock(JobFinisher.class));
+		assertFalse(looper.tick());
+		verify(scheduler).schedule(1);
 	}
 
 	@Test
@@ -101,7 +113,7 @@ public class LooperTest
 	{
 		Clock clock = new Clock();
 		EventQueue eventQueue = new EventQueue(clock);
-		Job job = Job.create((long) 1).priority(0).submitTime(1).cores(0).memory(0).build();
+		Job job = Job.create(1).priority(0).submitTime(1).cores(0).memory(0).build();
 		eventQueue.add(new Submit(job));
 		WaitingQueue waitingQueue = new WaitingQueue();
 		SimpleScheduler scheduler = mock(SimpleScheduler.class);
