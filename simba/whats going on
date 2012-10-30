@@ -1,0 +1,24 @@
+job priority is by start time (from traces)
+on submit time jobs move to wait queue
+when there is a match jobs move to host and finish time is entered to event queue
+when job is finished it is removed from host
+collectors - 
+	for each job:
+		wait time
+		run time
+we can report it when job finish
+	for each host:
+		core used
+		memory used
+we will have an event (say each 5 minutes) that will check those		
+
+TODO:
+add random scheduler
+make scheduling more simple
+pay in performance
+
+		
+more comments (old bugs)		
+handle test finish time on last submit/schedule - when no events in queue...
+verify jobs can run on pool - throw them from simulation - ask zamir about parallel
+negative job length		 - must be greater than 0. problem with iil_1 traces rounding
