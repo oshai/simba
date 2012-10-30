@@ -19,7 +19,7 @@ public class JobPriorityComparatorTest
 	
 	private Job createJob(long priority)
 	{
-		return Job.Builder.create(1).priority(priority).submitTime(0).cores(0).memory(0).build();
+		return Job.create((long) 1).priority(priority).submitTime(0).cores(0).memory(0).build();
 	}
 	
 	@Test
