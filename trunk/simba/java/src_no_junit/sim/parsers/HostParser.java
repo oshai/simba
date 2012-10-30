@@ -12,9 +12,10 @@ public class HostParser
 {
 	private static final Logger log = Logger.getLogger(HostParser.class);
 	private static final String HOST_FILE = "/tmp/iil1_workstations";
-	
+
 	public Cluster parse()
 	{
+		log.info("parse() - starting");
 		Cluster cluster = new Cluster();
 		String contents = TextFileUtils.getContents(new File(HOST_FILE));
 		String[] lines = contents.split("\n");
@@ -27,7 +28,7 @@ public class HostParser
 			}
 			catch (Exception ex)
 			{
-				log.warn("parse() - fail on line " + line);
+				log.debug("parse() - fail on line " + line);
 			}
 		}
 		return cluster;

@@ -3,6 +3,7 @@ package sim;
 import javax.inject.Provider;
 
 import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 import sim.collectors.HostCollector;
@@ -38,6 +39,7 @@ public class Simulator
 	public static void main(String[] args)
 	{
 		BasicConfigurator.configure();
+		Logger.getRootLogger().setLevel(Level.INFO);
 		try
 		{
 			new Simulator(args).execute();
@@ -72,56 +74,38 @@ public class Simulator
 
 	private Looper createLooper(Cluster cluster, EventQueue eventQueue, Clock clock)
 	{
+		Matcher $ = createMatcher();
+		return createLooper(cluster, eventQueue, clock, $);
+	}
+
+	private Matcher createMatcher()
+	{
 		if (args[0].equalsIgnoreCase("WF"))
 		{
-			return createLooperWF(cluster, eventQueue, clock);
+			return new WorseFit();
 		}
 		if (args[0].equalsIgnoreCase("MF"))
 		{
-			return createLooperMF(cluster, eventQueue, clock);
+			return new MixFit();
 		}
 		if (args[0].equalsIgnoreCase("BF"))
 		{
-			return createLooperBF(cluster, eventQueue, clock);
+			return new BestFit();
 		}
 		if (args[0].equalsIgnoreCase("FF"))
 		{
-			return createLooperFF(cluster, eventQueue, clock);
+			return new FirstFit();
 		}
 		if (args[0].equalsIgnoreCase("RF"))
 		{
-			return createLooperRF(cluster, eventQueue, clock);
+			return new RandomFit();
 		}
 		throw new RuntimeException("no scheduler choosen: WF, MF, BF, FF, RF");
 	}
 
-	private Looper createLooperWF(Cluster cluster, EventQueue eventQueue, Clock clock)
-	{
-		return createLooper(cluster, eventQueue, clock, new WorseFit());
-	}
-
-	private Looper createLooperRF(Cluster cluster, EventQueue eventQueue, Clock clock)
-	{
-		return createLooper(cluster, eventQueue, clock, new RandomFit());
-	}
-
-	private Looper createLooperMF(Cluster cluster, EventQueue eventQueue, Clock clock)
-	{
-		return createLooper(cluster, eventQueue, clock, new MixFit());
-	}
-
-	private Looper createLooperBF(Cluster cluster, EventQueue eventQueue, Clock clock)
-	{
-		return createLooper(cluster, eventQueue, clock, new BestFit());
-	}
-
-	private Looper createLooperFF(Cluster cluster, EventQueue eventQueue, Clock clock)
-	{
-		return createLooper(cluster, eventQueue, clock, new FirstFit());
-	}
-
 	protected Looper createLooper(Cluster cluster, EventQueue eventQueue, Clock clock, Matcher matcher)
 	{
+		log.info("createLooper() - matcher is " + matcher.getClass().getSimpleName());
 		WaitingQueue waitingQueue = new WaitingQueue();
 		Dispatcher dispatcher = new Dispatcher(eventQueue);
 		if (args[1].equalsIgnoreCase("submit=immediately"))
@@ -142,10 +126,10 @@ public class Simulator
 
 	private void moveEventToWaitQueue(EventQueue eventQueue, WaitingQueue waitingQueue)
 	{
-		Submit e = null;
-		while (null != (e = (Submit) eventQueue.removeFirst()))
+		log.info("moveEventToWaitQueue() - moving jobs to wait queue");
+		while (eventQueue.size() > 0)
 		{
-			waitingQueue.add(e.job());
+			waitingQueue.add(((Submit) eventQueue.removeFirst()).job());
 		}
 	}
 
