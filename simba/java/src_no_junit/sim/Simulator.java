@@ -12,6 +12,7 @@ import sim.event_handling.EventQueue;
 import sim.events.Event;
 import sim.events.Submit;
 import sim.model.Cluster;
+import sim.model.Job;
 import sim.parsers.HostParser;
 import sim.parsers.JobParser;
 import sim.scheduling.Dispatcher;
@@ -129,7 +130,9 @@ public class Simulator
 		log.info("moveEventToWaitQueue() - moving jobs to wait queue");
 		while (eventQueue.size() > 0)
 		{
-			waitingQueue.add(((Submit) eventQueue.removeFirst()).job());
+			Job job = ((Submit) eventQueue.removeFirst()).job();
+			Job jobUpdated = Job.create(job.length()).cores(job.cores()).submitTime(0L).memory(job.memory()).id(job.id()).priority(job.priority()).build();
+			waitingQueue.add(jobUpdated);
 		}
 	}
 
