@@ -9,6 +9,7 @@ import sim.collectors.HostCollector;
 import sim.collectors.JobCollector;
 import sim.event_handling.EventQueue;
 import sim.events.Event;
+import sim.events.Submit;
 import sim.model.Cluster;
 import sim.parsers.HostParser;
 import sim.parsers.JobParser;
@@ -123,12 +124,29 @@ public class Simulator
 	{
 		WaitingQueue waitingQueue = new WaitingQueue();
 		Dispatcher dispatcher = new Dispatcher(eventQueue);
+		if (args[1].equalsIgnoreCase("submit=immediately"))
+		{
+			moveEventToWaitQueue(eventQueue, waitingQueue);
+		}
+		else if (!args[1].equalsIgnoreCase("submit=real"))
+		{
+			throw new RuntimeException("arg1 should be submit=immediately or submit=real");
+		}
 		Scheduler scheduler = new SimpleScheduler(waitingQueue, cluster, matcher, dispatcher);
 		JobCollector jobCollector = new JobCollector();
 		JobFinisher jobFinisher = new JobFinisher(jobCollector);
 		HostCollector hostCollector = new HostCollector(cluster, 300);
 		Looper looper = new Looper(clock, eventQueue, waitingQueue, scheduler, hostCollector, jobFinisher);
 		return looper;
+	}
+
+	private void moveEventToWaitQueue(EventQueue eventQueue, WaitingQueue waitingQueue)
+	{
+		Submit e = null;
+		while (null != (e = (Submit) eventQueue.removeFirst()))
+		{
+			waitingQueue.add(e.job());
+		}
 	}
 
 	private final class ClockProvider implements Provider<Clock>
