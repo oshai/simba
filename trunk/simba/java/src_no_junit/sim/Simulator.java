@@ -23,8 +23,6 @@ import sim.scheduling.matchers.Matcher;
 import sim.scheduling.mix_fit.MixFitScheduler;
 import sim.scheduling.worse_fit.WorseFitScheduler;
 
-import com.intel.swiss.sws.netstar.framework.service.controller.topology.JUnitUtils;
-
 public class Simulator
 {
 	
@@ -32,7 +30,6 @@ public class Simulator
 	
 	public static void main(String[] args)
 	{
-		JUnitUtils.disableNativeLibs();
 		BasicConfigurator.configure();
 		try
 		{

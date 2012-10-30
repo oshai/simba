@@ -10,9 +10,9 @@ import sim.events.Submit;
 import sim.model.Cluster;
 import sim.model.Host;
 import sim.model.Job;
+import utils.TextFileUtils;
 
 import com.google.common.base.Predicate;
-import com.intel.swiss.sws.mechanism.file.TextFileUtil;
 
 public class JobParser
 {
@@ -55,7 +55,7 @@ public class JobParser
 			}
 			
 		};
-		TextFileUtil.getContentByLines(JOBS_FILE, predicate);
+		TextFileUtils.getContentByLines(JOBS_FILE, predicate);
 		return $;
 	}
 	

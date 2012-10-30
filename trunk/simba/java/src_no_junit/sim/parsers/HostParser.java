@@ -6,8 +6,7 @@ import org.apache.log4j.Logger;
 
 import sim.model.Cluster;
 import sim.model.Host;
-
-import com.intel.swiss.sws.mechanism.file.TextFileUtil;
+import utils.TextFileUtils;
 
 public class HostParser
 {
@@ -17,7 +16,7 @@ public class HostParser
 	public Cluster parse()
 	{
 		Cluster cluster = new Cluster();
-		String contents = TextFileUtil.getContents(new File(HOST_FILE));
+		String contents = TextFileUtils.getContents(new File(HOST_FILE));
 		String[] lines = contents.split("\n");
 		for (String line : lines)
 		{

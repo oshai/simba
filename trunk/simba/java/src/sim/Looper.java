@@ -1,6 +1,6 @@
 package sim;
 
-import static com.intel.swiss.sws.mechanism.assertions.Asserter.*;
+import static utils.assertions.Asserter.*;
 
 import org.apache.log4j.Logger;
 

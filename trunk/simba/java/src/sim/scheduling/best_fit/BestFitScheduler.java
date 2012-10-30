@@ -1,6 +1,6 @@
 package sim.scheduling.best_fit;
 
-import static com.intel.swiss.sws.mechanism.assertions.Asserter.*;
+import static utils.assertions.Asserter.*;
 import sim.model.Host;
 import sim.model.Job;
 import sim.scheduling.Dispatcher;

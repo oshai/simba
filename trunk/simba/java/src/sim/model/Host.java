@@ -1,7 +1,7 @@
 package sim.model;
 
 import static com.google.common.collect.Lists.*;
-import static com.intel.swiss.sws.mechanism.assertions.Asserter.*;
+import static utils.assertions.Asserter.*;
 
 import java.util.List;
 
