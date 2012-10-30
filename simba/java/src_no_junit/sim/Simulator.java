@@ -20,19 +20,26 @@ import sim.scheduling.matchers.BestFit;
 import sim.scheduling.matchers.FirstFit;
 import sim.scheduling.matchers.Matcher;
 import sim.scheduling.matchers.MixFit;
+import sim.scheduling.matchers.RandomFit;
 import sim.scheduling.matchers.WorseFit;
 
 public class Simulator
 {
 
 	private final Logger log = Logger.getLogger(Simulator.class);
+	private final String[] args;
+
+	public Simulator(String[] args)
+	{
+		this.args = args;
+	}
 
 	public static void main(String[] args)
 	{
 		BasicConfigurator.configure();
 		try
 		{
-			new Simulator().execute();
+			new Simulator(args).execute();
 		}
 		catch (Exception ex)
 		{
@@ -58,13 +65,43 @@ public class Simulator
 		clockProvider.setClock(clock);
 		log.info("execute() - cluster size is " + cluster.hosts().size());
 		log.info("execute() - # of jobs " + eventQueue.size());
-		Looper looper = createLooperWF(cluster, eventQueue, clock);
+		Looper looper = createLooper(cluster, eventQueue, clock);
 		looper.execute();
+	}
+
+	private Looper createLooper(Cluster cluster, EventQueue eventQueue, Clock clock)
+	{
+		if (args[0].equalsIgnoreCase("WF"))
+		{
+			return createLooperWF(cluster, eventQueue, clock);
+		}
+		if (args[0].equalsIgnoreCase("MF"))
+		{
+			return createLooperMF(cluster, eventQueue, clock);
+		}
+		if (args[0].equalsIgnoreCase("BF"))
+		{
+			return createLooperBF(cluster, eventQueue, clock);
+		}
+		if (args[0].equalsIgnoreCase("FF"))
+		{
+			return createLooperFF(cluster, eventQueue, clock);
+		}
+		if (args[0].equalsIgnoreCase("RF"))
+		{
+			return createLooperRF(cluster, eventQueue, clock);
+		}
+		throw new RuntimeException("no scheduler choosen: WF, MF, BF, FF, RF");
 	}
 
 	private Looper createLooperWF(Cluster cluster, EventQueue eventQueue, Clock clock)
 	{
 		return createLooper(cluster, eventQueue, clock, new WorseFit());
+	}
+
+	private Looper createLooperRF(Cluster cluster, EventQueue eventQueue, Clock clock)
+	{
+		return createLooper(cluster, eventQueue, clock, new RandomFit());
 	}
 
 	private Looper createLooperMF(Cluster cluster, EventQueue eventQueue, Clock clock)

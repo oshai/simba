@@ -13,7 +13,7 @@ we can report it when job finish
 we will have an event (say each 5 minutes) that will check those		
 
 TODO:
-add random scheduler
+schedule all jobs immidiatly
 		
 more comments (old bugs)		
 handle test finish time on last submit/schedule - when no events in queue...
