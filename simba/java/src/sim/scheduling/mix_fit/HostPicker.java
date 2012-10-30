@@ -4,8 +4,7 @@ import java.util.List;
 
 import sim.model.Host;
 import sim.model.Job;
-
-import com.intel.swiss.sws.mechanism.utils.GlobalUtils;
+import utils.GlobalUtils;
 
 public class HostPicker
 {

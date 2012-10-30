@@ -1,6 +1,6 @@
 package sim.scheduling.first_fit;
 
-import static com.intel.swiss.sws.mechanism.assertions.Asserter.*;
+import static utils.assertions.Asserter.*;
 import sim.model.Cluster;
 import sim.model.Host;
 import sim.model.Job;
