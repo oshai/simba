@@ -1,22 +1,12 @@
-package sim.scheduling.mix_fit;
-
-import java.util.List;
+package sim.scheduling.matchers;
 
 import sim.model.Host;
 import sim.model.Job;
 import utils.GlobalUtils;
 
-public class HostPicker
+public class MixFit implements Matcher
 {
-	
-	private final List<Host> hosts;
-	
-	public HostPicker(List<Host> hosts)
-	{
-		this.hosts = hosts;
-	}
-	
-	public Host getBestHost(Job job)
+	public Host match(Job job, Iterable<Host> hosts)
 	{
 		Host $ = null;
 		for (Host host : hosts)
@@ -42,12 +32,12 @@ public class HostPicker
 		}
 		return $;
 	}
-	
+
 	private double getRating(Host host, Job job)
 	{
 		double hostRatio = host.memory() / host.cores();
 		double usageRatio = (host.usedMemory() + job.memory()) / (host.usedCores() + job.cores());
 		return Math.abs(Math.atan(hostRatio) - Math.atan(usageRatio));
 	}
-	
+
 }

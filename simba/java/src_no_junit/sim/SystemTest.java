@@ -1,7 +1,8 @@
 package sim;
 
-import static com.google.common.collect.Lists.*;
-import static org.junit.Assert.*;
+import static com.google.common.collect.Lists.newArrayList;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 
@@ -17,8 +18,8 @@ import sim.model.Host;
 import sim.model.Job;
 import sim.scheduling.Dispatcher;
 import sim.scheduling.Scheduler;
+import sim.scheduling.SimpleScheduler;
 import sim.scheduling.WaitingQueue;
-import sim.scheduling.first_fit.FirstFitScheduler;
 import sim.scheduling.matchers.FirstFit;
 import sim.scheduling.matchers.Matcher;
 
@@ -26,14 +27,14 @@ public class SystemTest
 {
 	private EventQueue eventQueue;
 	private Clock clock;
-	
+
 	@Before
 	public void beforeTest()
 	{
 		clock = new Clock();
 		eventQueue = new EventQueue(clock);
 	}
-	
+
 	@Test
 	public void testOneJobOneHost()
 	{
@@ -53,7 +54,7 @@ public class SystemTest
 		assertEquals(newArrayList(), host.jobs());
 		assertTrue(eventQueue.isEmpty());
 	}
-	
+
 	@Test
 	public void test2Jobs1Host()
 	{
@@ -76,7 +77,7 @@ public class SystemTest
 		assertEquals(newArrayList(), host.jobs());
 		assertTrue(eventQueue.isEmpty());
 	}
-	
+
 	@Test
 	public void test2Jobs1HostWithWaiting()
 	{
@@ -88,7 +89,7 @@ public class SystemTest
 		looper.execute();
 		assertTrue(eventQueue.isEmpty());
 	}
-	
+
 	private Looper init(Host host, ArrayList<Job> arrayList)
 	{
 		Cluster cluster = new Cluster();
@@ -100,10 +101,10 @@ public class SystemTest
 		WaitingQueue waitingQueue = new WaitingQueue();
 		Dispatcher dispatcher = new Dispatcher(eventQueue);
 		Matcher matcher = new FirstFit();
-		Scheduler scheduler = new FirstFitScheduler(waitingQueue, cluster, matcher, dispatcher);
+		Scheduler scheduler = new SimpleScheduler(waitingQueue, cluster, matcher, dispatcher);
 		JobCollector jobCollector = new JobCollector();
 		HostCollector statistics = new HostCollector(cluster, 1);
-		JobFinisher jobFinisher = new JobFinisher(jobCollector, cluster);
+		JobFinisher jobFinisher = new JobFinisher(jobCollector);
 		Looper looper = new Looper(clock, eventQueue, waitingQueue, scheduler, statistics, jobFinisher);
 		return looper;
 	}

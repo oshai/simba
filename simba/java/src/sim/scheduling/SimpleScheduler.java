@@ -1,33 +1,33 @@
-package sim.scheduling.mix_fit;
+package sim.scheduling;
 
-import static utils.assertions.Asserter.*;
+import static utils.assertions.Asserter.asserter;
 import sim.model.Cluster;
 import sim.model.Host;
 import sim.model.Job;
-import sim.scheduling.Dispatcher;
-import sim.scheduling.Scheduler;
-import sim.scheduling.WaitingQueue;
+import sim.scheduling.matchers.Matcher;
 
-public class MixFitScheduler implements Scheduler
+public class SimpleScheduler implements Scheduler
 {
 	private final WaitingQueue waitingQueue;
+	private final Cluster cluster;
+	private final Matcher matcher;
 	private final Dispatcher dispatcher;
-	private final HostPicker hostPicker;
-	
-	public MixFitScheduler(WaitingQueue waitingQueue, Cluster hosts, Dispatcher dispatcher)
+
+	public SimpleScheduler(WaitingQueue waitingQueue, Cluster cluster, Matcher matcher, Dispatcher dispatcher)
 	{
+		this.cluster = cluster;
 		this.waitingQueue = waitingQueue;
+		this.matcher = matcher;
 		this.dispatcher = dispatcher;
-		this.hostPicker = new HostPicker(hosts.hosts());
 	}
-	
+
 	@Override
 	public void schedule(long time)
 	{
 		while (!waitingQueue.isEmpty())
 		{
 			Job job = waitingQueue.peek();
-			Host host = hostPicker.getBestHost(job);
+			Host host = matcher.match(job, cluster.hosts());
 			if (null == host)
 			{
 				return;
@@ -37,5 +37,4 @@ public class MixFitScheduler implements Scheduler
 			dispatcher.dipatch(job, host, time);
 		}
 	}
-	
 }
