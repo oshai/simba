@@ -13,8 +13,6 @@ public class Job
 	// runtime
 	private long startTime;
 
-	// private long finishTime;
-
 	private Job(String id, long priority, long submitTime, long length, double cores, double memory)
 	{
 		super();
