@@ -1,8 +1,7 @@
 package sim;
 
-import static com.google.common.collect.Lists.newArrayList;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static com.google.common.collect.Lists.*;
+import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 
@@ -39,7 +38,7 @@ public class SystemTest
 	public void testOneJobOneHost()
 	{
 		Host host = Host.create().cores(1).memory(8).build();
-		Job job = Job.create((long) 3).priority(0).submitTime(2).cores(1).memory(4).build();
+		Job job = Job.create(3).priority(0).submitTime(2).cores(1).memory(4).build();
 		ArrayList<Job> jobs = newArrayList(job);
 		Looper looper = init(host, jobs);
 		looper.tick();
@@ -59,8 +58,8 @@ public class SystemTest
 	public void test2Jobs1Host()
 	{
 		Host host = Host.create().cores(2).memory(8).build();
-		Job job1 = Job.create((long) 3).priority(0).submitTime(2).cores(1).memory(4).build();
-		Job job2 = Job.create((long) 4).priority(0).submitTime(2).cores(1).memory(4).build();
+		Job job1 = Job.create(3).priority(0).submitTime(2).cores(1).memory(4).build();
+		Job job2 = Job.create(4).priority(0).submitTime(2).cores(1).memory(4).build();
 		ArrayList<Job> jobs = newArrayList(job1, job2);
 		Looper looper = init(host, jobs);
 		looper.tick();
@@ -82,8 +81,8 @@ public class SystemTest
 	public void test2Jobs1HostWithWaiting()
 	{
 		Host host = Host.create().cores(1).memory(8).build();
-		Job job1 = Job.create((long) 3).priority(0).submitTime(2).cores(1).memory(4).build();
-		Job job2 = Job.create((long) 4).priority(0).submitTime(3).cores(1).memory(4).build();
+		Job job1 = Job.create(3).priority(0).submitTime(2).cores(1).memory(4).build();
+		Job job2 = Job.create(4).priority(0).submitTime(3).cores(1).memory(4).build();
 		ArrayList<Job> jobs = newArrayList(job1, job2);
 		Looper looper = init(host, jobs);
 		looper.execute();

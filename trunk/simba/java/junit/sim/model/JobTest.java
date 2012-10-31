@@ -1,6 +1,6 @@
 package sim.model;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import org.junit.Test;
 
@@ -10,7 +10,7 @@ public class JobTest
 	@Test
 	public void testWaitTime()
 	{
-		Job job = Job.create((long) 1).submitTime(1).build();
+		Job job = Job.create(1).submitTime(1).build();
 		job.started(5);
 		assertEquals(4, job.waitTime());
 	}
@@ -18,7 +18,7 @@ public class JobTest
 	@Test(expected = IllegalArgumentException.class)
 	public void testNegativeLength()
 	{
-		Job.create((long) 0).build();
+		Job.create(0).build();
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -30,7 +30,7 @@ public class JobTest
 	@Test
 	public void testMembers()
 	{
-		Job job = Job.create((long) 2).priority(7).submitTime(1).cores(3.1).memory(4.2).id("id").build();
+		Job job = Job.create(2).priority(7).submitTime(1).cores(3.1).memory(4.2).id("id").build();
 		assertEquals(1, job.submitTime());
 		assertEquals(2, job.length());
 		assertEquals(3.1, job.cores(), 0.01);
@@ -44,7 +44,7 @@ public class JobTest
 	@Test
 	public void testToString()
 	{
-		Job job = Job.create((long) 2).submitTime(1).cores(3.1).memory(4.2).id("id").build();
+		Job job = Job.create(2).submitTime(1).cores(3.1).memory(4.2).id("id").build();
 		assertEquals("Job [id=id, priority=0, submitTime=1, length=2, cores=3.1, memory=4.2, startTime=0]", job.toString());
 	}
 }

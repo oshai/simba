@@ -23,7 +23,7 @@ public class RandomFitTest
 		List<Host> hosts = newArrayList(host, host2, host3);
 		Random random = mock(Random.class);
 		when(random.nextInt(3)).thenReturn(1);
-		assertEquals(null, new RandomFit(random).match(Job.create((long) 1).cores(2).build(), hosts));
+		assertEquals(null, new RandomFit(random).match(Job.create(1).cores(2).build(), hosts));
 	}
 
 	@Test
@@ -31,7 +31,7 @@ public class RandomFitTest
 	{
 		Host host = Host.create().cores(1).build();
 		List<Host> hosts = newArrayList(host);
-		assertEquals(host, new RandomFit().match(Job.create((long) 1).cores(1).build(), hosts));
+		assertEquals(host, new RandomFit().match(Job.create(1).cores(1).build(), hosts));
 	}
 
 	@Test
@@ -43,7 +43,7 @@ public class RandomFitTest
 		List<Host> hosts = newArrayList(host1, host2, host3);
 		Random random = mock(Random.class);
 		when(random.nextInt(3)).thenReturn(1);
-		assertEquals(host2, new RandomFit(random).match(Job.create((long) 1).cores(1).memory(4).build(), hosts));
+		assertEquals(host2, new RandomFit(random).match(Job.create(1).cores(1).memory(4).build(), hosts));
 	}
 
 	@Test
@@ -55,7 +55,7 @@ public class RandomFitTest
 		List<Host> hosts = newArrayList(host1, host2, host3);
 		Random random = mock(Random.class);
 		when(random.nextInt(3)).thenReturn(1);
-		assertEquals(host3, new RandomFit(random).match(Job.create((long) 1).cores(1).memory(4).build(), hosts));
+		assertEquals(host3, new RandomFit(random).match(Job.create(1).cores(1).memory(4).build(), hosts));
 	}
 
 	@Test
@@ -67,7 +67,7 @@ public class RandomFitTest
 		List<Host> hosts = newArrayList(host1, host2, host3);
 		Random random = mock(Random.class);
 		when(random.nextInt(3)).thenReturn(1);
-		assertEquals(host1, new RandomFit(random).match(Job.create((long) 1).cores(1).memory(4).build(), hosts));
+		assertEquals(host1, new RandomFit(random).match(Job.create(1).cores(1).memory(4).build(), hosts));
 	}
 
 }

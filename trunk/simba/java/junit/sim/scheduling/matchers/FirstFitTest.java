@@ -13,20 +13,20 @@ import sim.model.Job;
 
 public class FirstFitTest
 {
-	
+
 	@Test
 	public void testNoMatch()
 	{
-		Job job = Job.create((long) 1).priority(0).submitTime(0).cores(0).memory(0).build();
+		Job job = Job.create(1).priority(0).submitTime(0).cores(0).memory(0).build();
 		List<Host> hosts = newArrayList();
 		Host $ = new FirstFit().match(job, hosts);
 		assertNull($);
 	}
-	
+
 	@Test
 	public void testMatch()
 	{
-		Job job = Job.create((long) 1).priority(0).submitTime(0).cores(0).memory(0).build();
+		Job job = Job.create(1).priority(0).submitTime(0).cores(0).memory(0).build();
 		List<Host> hosts = newArrayList();
 		hosts.add(mock(Host.class));
 		Host host2 = mock(Host.class);
@@ -35,5 +35,5 @@ public class FirstFitTest
 		Host $ = new FirstFit().match(job, hosts);
 		assertEquals(host2, $);
 	}
-	
+
 }
