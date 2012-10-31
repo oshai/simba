@@ -22,7 +22,7 @@ import sim.scheduling.WaitingQueue;
 import sim.scheduling.matchers.BestFit;
 import sim.scheduling.matchers.FirstFit;
 import sim.scheduling.matchers.Matcher;
-import sim.scheduling.matchers.MixFit;
+import sim.scheduling.matchers.GradeMatcherProvider;
 import sim.scheduling.matchers.RandomFit;
 import sim.scheduling.matchers.WorseFit;
 
@@ -60,23 +60,19 @@ public class Simulator
 		EventQueue eventQueue = new JobParser().parse(clockProvider, cluster);
 		Event event = eventQueue.peek();
 		long time = 0;
-		if (null != event)
+		if (null != event && !submitImmediately())
 		{
 			time = event.time() - 1;
 		}
 		log.info("execute() - starting at " + time);
 		Clock clock = new Clock(time);
 		clockProvider.setClock(clock);
+		Matcher matcher = createMatcher();
 		log.info("execute() - cluster size is " + cluster.hosts().size());
 		log.info("execute() - # of jobs " + eventQueue.size());
-		Looper looper = createLooper(cluster, eventQueue, clock);
+		log.info("execute() - matcher is " + matcher.getClass().getSimpleName());
+		Looper looper = createLooper(cluster, eventQueue, clock, matcher);
 		looper.execute();
-	}
-
-	private Looper createLooper(Cluster cluster, EventQueue eventQueue, Clock clock)
-	{
-		Matcher $ = createMatcher();
-		return createLooper(cluster, eventQueue, clock, $);
 	}
 
 	private Matcher createMatcher()
@@ -87,7 +83,7 @@ public class Simulator
 		}
 		if (args[0].equalsIgnoreCase("MF"))
 		{
-			return new MixFit();
+			return GradeMatcherProvider.createGraderMf1();
 		}
 		if (args[0].equalsIgnoreCase("BF"))
 		{
@@ -106,12 +102,11 @@ public class Simulator
 
 	protected Looper createLooper(Cluster cluster, EventQueue eventQueue, Clock clock, Matcher matcher)
 	{
-		log.info("createLooper() - matcher is " + matcher.getClass().getSimpleName());
-		WaitingQueue waitingQueue = new WaitingQueue();
 		Dispatcher dispatcher = new Dispatcher(eventQueue);
-		if (args[1].equalsIgnoreCase("submit=immediately"))
+		WaitingQueue waitingQueue = new WaitingQueue();
+		if (submitImmediately())
 		{
-			moveEventToWaitQueue(eventQueue, waitingQueue);
+			moveJobsToWaitQueue(eventQueue, waitingQueue);
 		}
 		else if (!args[1].equalsIgnoreCase("submit=real"))
 		{
@@ -125,9 +120,14 @@ public class Simulator
 		return looper;
 	}
 
-	private void moveEventToWaitQueue(EventQueue eventQueue, WaitingQueue waitingQueue)
+	private boolean submitImmediately()
 	{
-		log.info("moveEventToWaitQueue() - moving jobs to wait queue");
+		return args[1].equalsIgnoreCase("submit=immediately");
+	}
+
+	private void moveJobsToWaitQueue(EventQueue eventQueue, WaitingQueue waitingQueue)
+	{
+		log.info("moveJobsToWaitQueue() - start");
 		while (eventQueue.size() > 0)
 		{
 			Job job = ((Submit) eventQueue.removeFirst()).job();

@@ -1,9 +1,7 @@
 package sim.model;
 
-import static com.google.common.collect.Lists.newArrayList;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static com.google.common.collect.Lists.*;
+import static org.junit.Assert.*;
 
 import org.junit.Test;
 
@@ -14,7 +12,7 @@ public class HostTest
 	public void testDispatchAndFinish()
 	{
 		Host host = Host.create().cores(0).memory(0).build();
-		Job job = Job.create((long) 1).build();
+		Job job = Job.create(1).build();
 		host.dispatchJob(job);
 		assertEquals(newArrayList(job), host.jobs());
 		host.finishJob(job);
@@ -25,7 +23,7 @@ public class HostTest
 	public void test_hasAvailableResourcesFor_false()
 	{
 		Host host = Host.create().cores(0).memory(0).build();
-		Job job = Job.create((long) 1).cores(1).build();
+		Job job = Job.create(1).cores(1).build();
 		assertFalse(host.hasAvailableResourcesFor(job));
 	}
 
@@ -33,7 +31,7 @@ public class HostTest
 	public void test_hasAvailableResourcesFor_core_true()
 	{
 		Host host = Host.create().cores(1).memory(0).build();
-		Job job = Job.create((long) 1).cores(1).build();
+		Job job = Job.create(1).cores(1).build();
 		assertTrue(host.hasAvailableResourcesFor(job));
 	}
 
@@ -41,7 +39,7 @@ public class HostTest
 	public void test_hasAvailableResourcesFor_memory_false()
 	{
 		Host host = Host.create().cores(0).memory(0).build();
-		Job job = Job.create((long) 1).memory(1).build();
+		Job job = Job.create(1).memory(1).build();
 		assertFalse(host.hasAvailableResourcesFor(job));
 	}
 
@@ -49,7 +47,7 @@ public class HostTest
 	public void test_hasAvailableResourcesFor_core_with_jobs()
 	{
 		Host host = Host.create().cores(1).memory(0).build();
-		Job job = Job.create((long) 1).cores(1).build();
+		Job job = Job.create(1).cores(1).build();
 		assertTrue(host.hasAvailableResourcesFor(job));
 		host.dispatchJob(job);
 		assertFalse(host.hasAvailableResourcesFor(job));
@@ -59,7 +57,7 @@ public class HostTest
 	public void test_hasAvailableResourcesFor_memory_with_jobs()
 	{
 		Host host = Host.create().cores(0).memory(1).build();
-		Job job = Job.create((long) 1).memory(1).build();
+		Job job = Job.create(1).memory(1).build();
 		assertTrue(host.hasAvailableResourcesFor(job));
 		host.dispatchJob(job);
 		assertFalse(host.hasAvailableResourcesFor(job));
