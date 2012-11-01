@@ -19,4 +19,10 @@ public class Invert implements Grader
 		return -grader.getGrade(host, job);
 	}
 
+	@Override
+	public String toString()
+	{
+		return "Invert [grader=" + grader.getClass().getSimpleName() + "]";
+	}
+
 }

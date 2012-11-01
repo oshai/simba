@@ -1,6 +1,6 @@
 package utils.assertions;
 
-import utils.GlobalUtils;
+import utils.to;
 
 public abstract class AbstractAsserterStrategy implements IAsserterStrategy
 {
@@ -12,7 +12,7 @@ public abstract class AbstractAsserterStrategy implements IAsserterStrategy
 	
 	protected final String formatMessage(Object... message)
 	{
-		return GlobalUtils.arrayToString(message, " ");
+		return to.string(message, " ");
 	}
 	
 	protected final String formatMessageBoolean(boolean actual, Object... message)

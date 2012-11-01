@@ -1,5 +1,9 @@
 package sim;
 
+import java.util.Date;
+import java.util.HashMap;
+import java.util.concurrent.TimeUnit;
+
 import javax.inject.Provider;
 
 import org.apache.log4j.BasicConfigurator;
@@ -21,10 +25,13 @@ import sim.scheduling.SimpleScheduler;
 import sim.scheduling.WaitingQueue;
 import sim.scheduling.matchers.BestFit;
 import sim.scheduling.matchers.FirstFit;
-import sim.scheduling.matchers.Matcher;
 import sim.scheduling.matchers.GradeMatcherProvider;
+import sim.scheduling.matchers.Matcher;
 import sim.scheduling.matchers.RandomFit;
 import sim.scheduling.matchers.WorseFit;
+
+import com.google.common.base.Stopwatch;
+import com.google.common.collect.Maps;
 
 public class Simulator
 {
@@ -54,7 +61,8 @@ public class Simulator
 
 	private void execute()
 	{
-		log.info("execute() - starting...");
+		log.info("execute() - starting at " + new Date());
+		Stopwatch stopwatch = new Stopwatch().start();
 		Cluster cluster = new HostParser().parse();
 		ClockProvider clockProvider = new ClockProvider();
 		EventQueue eventQueue = new JobParser().parse(clockProvider, cluster);
@@ -70,34 +78,33 @@ public class Simulator
 		Matcher matcher = createMatcher();
 		log.info("execute() - cluster size is " + cluster.hosts().size());
 		log.info("execute() - # of jobs " + eventQueue.size());
-		log.info("execute() - matcher is " + matcher.getClass().getSimpleName());
+		log.info("execute() - matcher is " + matcher.toString());
 		Looper looper = createLooper(cluster, eventQueue, clock, matcher);
 		looper.execute();
+		log.info("execute() - finished at " + new Date());
+		log.info("execute() - took " + stopwatch.elapsedTime(TimeUnit.SECONDS));
 	}
 
 	private Matcher createMatcher()
 	{
-		if (args[0].equalsIgnoreCase("WF"))
+		HashMap<String, Matcher> matchers = Maps.newHashMap();
+		matchers.put("WF", new WorseFit());
+		matchers.put("MF1", GradeMatcherProvider.createGraderMf1());
+		matchers.put("MF2", GradeMatcherProvider.createGraderMf2());
+		matchers.put("MF3", GradeMatcherProvider.createGraderMf3());
+		matchers.put("MF4", GradeMatcherProvider.createGraderMf4());
+		matchers.put("MF5", GradeMatcherProvider.createGraderMf5());
+		matchers.put("NF", GradeMatcherProvider.createProductionGrader());
+		matchers.put("BF", new BestFit());
+		matchers.put("FF", new FirstFit());
+		matchers.put("RF", new RandomFit());
+
+		Matcher $ = matchers.get(args[0].toUpperCase());
+		if (null == $)
 		{
-			return new WorseFit();
+			throw new RuntimeException("no scheduler chosen from: " + matchers.keySet());
 		}
-		if (args[0].equalsIgnoreCase("MF"))
-		{
-			return GradeMatcherProvider.createGraderMf1();
-		}
-		if (args[0].equalsIgnoreCase("BF"))
-		{
-			return new BestFit();
-		}
-		if (args[0].equalsIgnoreCase("FF"))
-		{
-			return new FirstFit();
-		}
-		if (args[0].equalsIgnoreCase("RF"))
-		{
-			return new RandomFit();
-		}
-		throw new RuntimeException("no scheduler chosen: WF, MF, BF, FF, RF");
+		return $;
 	}
 
 	protected Looper createLooper(Cluster cluster, EventQueue eventQueue, Clock clock, Matcher matcher)
