@@ -50,4 +50,10 @@ public class GradeMatcher implements Matcher
 		return host1;
 	}
 
+	@Override
+	public String toString()
+	{
+		return "GradeMatcher [graders=" + graders + "]";
+	}
+
 }

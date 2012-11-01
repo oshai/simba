@@ -15,7 +15,8 @@ public class HostParser
 
 	public Cluster parse()
 	{
-		log.info("parse() - starting");
+		log.info("parse() - starting with file " + HOST_FILE);
+		int dropped = 0;
 		Cluster cluster = new Cluster();
 		String contents = TextFileUtils.getContents(new File(HOST_FILE));
 		String[] lines = contents.split("\n");
@@ -29,8 +30,10 @@ public class HostParser
 			catch (Exception ex)
 			{
 				log.debug("parse() - fail on line " + line);
+				dropped++;
 			}
 		}
+		log.info("parse() - dropped " + dropped + " which is: " + (int) ((double) dropped * 100 / (cluster.hosts().size() + dropped)) + "%");
 		return cluster;
 	}
 }
