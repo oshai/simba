@@ -41,7 +41,7 @@ public class JobParser
 					double cores = getMapValue("cores", cols[20]);
 					double memory = getMapValue("memory", cols[20]);
 					long length = l(cols[6]) - l(cols[5]);
-					if (length < 10)
+					if (length < 10)// when this is 10 it gives bad results, check why!
 					{
 						length = 10;
 						veryShortJobs++;
