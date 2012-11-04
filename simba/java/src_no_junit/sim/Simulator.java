@@ -72,7 +72,7 @@ public class Simulator
 		{
 			time = event.time() - 1;
 		}
-		log.info("execute() - starting at " + time);
+		log.info("execute() - simulation starting clock (epoc): " + time);
 		Clock clock = new Clock(time);
 		clockProvider.setClock(clock);
 		Matcher matcher = createMatcher();
