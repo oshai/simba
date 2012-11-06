@@ -88,8 +88,7 @@ public class Simulator
 	private Matcher createMatcher()
 	{
 		HashMap<String, Matcher> matchers = Maps.newHashMap();
-		matchers.put("WF", new WorseFit());
-		matchers.put("MF1", GradeMatcherProvider.createGraderMf1());
+		matchers.put("MF", GradeMatcherProvider.createGraderMf1());
 		matchers.put("MF2", GradeMatcherProvider.createGraderMf2());
 		matchers.put("MF3", GradeMatcherProvider.createGraderMf3());
 		matchers.put("MF4", GradeMatcherProvider.createGraderMf4());
@@ -98,6 +97,7 @@ public class Simulator
 		matchers.put("BF", new BestFit());
 		matchers.put("FF", new FirstFit());
 		matchers.put("RF", new RandomFit());
+		matchers.put("WF", new WorseFit());
 
 		Matcher $ = matchers.get(args[0].toUpperCase());
 		if (null == $)
