@@ -37,11 +37,9 @@ public class Simulator
 {
 
 	private final Logger log = Logger.getLogger(Simulator.class);
-	private final String[] args;
 
-	public Simulator(String[] args)
+	public Simulator()
 	{
-		this.args = args;
 	}
 
 	public static void main(String[] args)
@@ -50,7 +48,7 @@ public class Simulator
 		Logger.getRootLogger().setLevel(Level.INFO);
 		try
 		{
-			new Simulator(args).execute();
+			new Simulator().execute();
 		}
 		catch (Exception ex)
 		{
@@ -101,12 +99,17 @@ public class Simulator
 		matchers.put("RF", new RandomFit());
 		matchers.put("WF", new WorseFit());
 
-		Matcher $ = matchers.get(args[0].toUpperCase());
+		Matcher $ = matchers.get(getMatcherProperty().toUpperCase());
 		if (null == $)
 		{
-			throw new RuntimeException("no scheduler chosen from: " + matchers.keySet());
+			throw new RuntimeException("no matcher for " + getMatcherProperty() + " from: " + matchers.keySet());
 		}
 		return $;
+	}
+
+	private String getMatcherProperty()
+	{
+		return System.getProperty("matcher");
 	}
 
 	protected Looper createLooper(Cluster cluster, EventQueue eventQueue, Clock clock, Matcher matcher)
@@ -116,10 +119,6 @@ public class Simulator
 		if (submitImmediately())
 		{
 			moveJobsToWaitQueue(eventQueue, waitingQueue);
-		}
-		else if (!args[1].equalsIgnoreCase("submit=real"))
-		{
-			throw new RuntimeException("arg1 should be submit=immediately or submit=real");
 		}
 		Scheduler scheduler = new SimpleScheduler(waitingQueue, cluster, matcher, dispatcher);
 		JobCollector jobCollector = new JobCollector();
@@ -131,7 +130,12 @@ public class Simulator
 
 	private boolean submitImmediately()
 	{
-		return args[1].equalsIgnoreCase("submit=immediately");
+		return "immediately".equalsIgnoreCase(getSubmitProperty());
+	}
+
+	private String getSubmitProperty()
+	{
+		return System.getProperty("submit");
 	}
 
 	private void moveJobsToWaitQueue(EventQueue eventQueue, WaitingQueue waitingQueue)

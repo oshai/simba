@@ -12,7 +12,7 @@ public class HostParser
 {
 	private static final Logger log = Logger.getLogger(HostParser.class);
 	private static final String HOST_FILE = System.getProperty("hosts-file");
-	private static final double HOST_MEMORY_MULTIPLIER = Integer.getInteger("host-memory-multiplier", 1);
+	private static final double HOST_MEMORY_MULTIPLIER = getMultiplier();
 
 	private static final int index_hostid = 0;
 	private static final int index_cores = 1;
@@ -42,5 +42,10 @@ public class HostParser
 		}
 		log.info("parse() - dropped " + dropped + " which is: " + (int) ((double) dropped * 100 / (cluster.hosts().size() + dropped)) + "%");
 		return cluster;
+	}
+
+	private static double getMultiplier()
+	{
+		return Double.valueOf(System.getProperty("host-memory-multiplier", "1.0"));
 	}
 }

@@ -24,6 +24,11 @@ public class JobParser
 	private int shortJobs;// less than 10 minutes
 	private int mediumJobs;// more than 10 minutes, less than 1 hour
 	private int longJobs;// more than one hour
+	private int memNarrowJobs;// less than 4 GB
+	private int memMediumJobs;// less than 8 GB
+	private int memWideJobs;// more than 8 GB
+	private int errorLength;// more than 8 GB
+	private int errorMemory;// more than 8 GB
 	private static final int index_actualclassreservation = 22 - 1;
 	private static final int index_jobid = 1 - 1;
 	private static final int index_iterationsubmittime = 19 - 1;
@@ -46,24 +51,18 @@ public class JobParser
 					double cores = getMapValue("cores", cols[index_actualclassreservation]);
 					double memory = getMapValue("memory", cols[index_actualclassreservation]);
 					long length = l(cols[index_finishtime]) - l(cols[index_starttime]);
-					if (length < 10)// when this is 10 it gives bad results,
-									// check why!
+					if (length < 1)
 					{
-						length = 10;
-						veryShortJobs++;
+						length = 1;
+						errorLength++;
 					}
-					else if (length < 60 * 10)
+					if (memory < 1)
 					{
-						shortJobs++;
+						memory = 1;
+						errorMemory++;
 					}
-					else if (length < 60 * 60)
-					{
-						mediumJobs++;
-					}
-					else if (length > 60 * 60)
-					{
-						longJobs++;
-					}
+					updateRunTimeBuckets(length);
+					updateMemoryBuckets(memory);
 					Job job = Job.create(length).id(cols[index_jobid]).priority(l(cols[index_starttime])).submitTime(l(cols[index_iterationsubmittime]))
 							.cores(cores).memory(memory).build();
 					if (canRun(job, cluster))
@@ -86,17 +85,22 @@ public class JobParser
 		};
 		TextFileUtils.getContentByLines(JOBS_FILE, predicate);
 		int dropped = total - left;
-		log.info("parse() - dropped " + dropped + " which is: " + (int) ((double) dropped * 100 / total) + "%");
-		log.info("parse() - very short jobs " + getPrecentString(veryShortJobs));
-		log.info("parse() - short jobs " + getPrecentString(shortJobs));
-		log.info("parse() - medium jobs " + getPrecentString(mediumJobs));
-		log.info("parse() - long jobs " + getPrecentString(longJobs));
+		log.info("dropped " + getPrecentString(dropped));
+		log.info("very short jobs " + getPrecentString(veryShortJobs));
+		log.info("short jobs " + getPrecentString(shortJobs));
+		log.info("medium jobs " + getPrecentString(mediumJobs));
+		log.info("long jobs " + getPrecentString(longJobs));
+		log.info("narrow memory jobs " + getPrecentString(memNarrowJobs));
+		log.info("medium memory jobs " + getPrecentString(memMediumJobs));
+		log.info("wide memory jobs " + getPrecentString(memWideJobs));
+		log.info("length error " + getPrecentString(errorLength));
+		log.info("memory error " + getPrecentString(errorMemory));
 		return $;
 	}
 
 	private String getPrecentString(int jobs)
 	{
-		return jobs + " which is: " + (int) ((double) jobs * 100 / total) + "%";
+		return jobs + " jobs which is: " + (int) ((double) jobs * 100 / total) + "%";
 	}
 
 	private boolean canRun(Job job, Cluster cluster)
@@ -128,5 +132,42 @@ public class JobParser
 	private long l(String value)
 	{
 		return Long.valueOf(value);
+	}
+
+	private void updateRunTimeBuckets(long length)
+	{
+		if (length <= 10)
+		{
+			veryShortJobs++;
+		}
+		else if (length <= 60 * 10)
+		{
+			shortJobs++;
+		}
+		else if (length <= 60 * 60)
+		{
+			mediumJobs++;
+		}
+		else
+		// if (length > 60 * 60)
+		{
+			longJobs++;
+		}
+	}
+
+	private void updateMemoryBuckets(double memory)
+	{
+		if (memory <= 4)
+		{
+			memNarrowJobs++;
+		}
+		else if (memory <= 8)
+		{
+			memMediumJobs++;
+		}
+		else
+		{
+			memWideJobs++;
+		}
 	}
 }
