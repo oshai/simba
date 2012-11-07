@@ -8,6 +8,7 @@
 	<classpathentry kind="lib" path="libs/guava-13.0.1.jar"/>
 	<classpathentry kind="lib" path="libs/javax.inject.jar"/>
 	<classpathentry kind="lib" path="libs/mockito-all-1.9.5.jar"/>
+	<classpathentry kind="lib" path="libs/commons-math3-3.0.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="output" path="compiled_classes"/>
 </classpath>
