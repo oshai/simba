@@ -102,7 +102,7 @@ public class SystemTest
 		Matcher matcher = new FirstFit();
 		Scheduler scheduler = new SimpleScheduler(waitingQueue, cluster, matcher, dispatcher);
 		JobCollector jobCollector = new JobCollector();
-		HostCollector statistics = new HostCollector(cluster, 1);
+		HostCollector statistics = new HostCollector(cluster, 1, waitingQueue);
 		JobFinisher jobFinisher = new JobFinisher(jobCollector);
 		Looper looper = new Looper(clock, eventQueue, waitingQueue, scheduler, statistics, jobFinisher);
 		return looper;

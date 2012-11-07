@@ -8,20 +8,14 @@ import sim.model.Cluster;
 import sim.model.Host;
 import utils.TextFileUtils;
 
-public class HostParser
+public class CopyOfHostParser
 {
-	private static final Logger log = Logger.getLogger(HostParser.class);
-	private static final String HOST_FILE = System.getProperty("hosts-file");
-	private static final double HOST_MEMORY_MULTIPLIER = Integer.getInteger("host-memory-multiplier", 1);
-
-	private static final int index_hostid = 0;
-	private static final int index_cores = 1;
-	private static final int index_memory = 2;
+	private static final Logger log = Logger.getLogger(CopyOfHostParser.class);
+	private static final String HOST_FILE = "/tmp/iil1_workstations";
 
 	public Cluster parse()
 	{
 		log.info("parse() - starting with file " + HOST_FILE);
-		log.info("parse() - memory multiplier is " + HOST_MEMORY_MULTIPLIER);
 		int dropped = 0;
 		Cluster cluster = new Cluster();
 		String contents = TextFileUtils.getContents(new File(HOST_FILE));
@@ -31,8 +25,7 @@ public class HostParser
 			try
 			{
 				String[] cols = line.split(",");
-				cluster.add(Host.create().id(cols[index_hostid]).cores(Double.valueOf(cols[index_cores]))
-						.memory(HOST_MEMORY_MULTIPLIER * Double.valueOf(cols[index_memory]) / 1024).build());
+				cluster.add(Host.create().id(cols[0]).cores(Double.valueOf(cols[1])).memory(Double.valueOf(cols[2])).build());
 			}
 			catch (Exception ex)
 			{

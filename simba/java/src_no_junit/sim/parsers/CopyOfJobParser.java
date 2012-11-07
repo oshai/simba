@@ -14,21 +14,16 @@ import utils.TextFileUtils;
 
 import com.google.common.base.Predicate;
 
-public class JobParser
+public class CopyOfJobParser
 {
-	private static final Logger log = Logger.getLogger(JobParser.class);
-	private static final String JOBS_FILE = System.getProperty("jobs-file");
+	private static final Logger log = Logger.getLogger(CopyOfJobParser.class);
+	private static final String JOBS_FILE = "/nfs/iil/iec/sws/work/oshai/public/workload/traces2/iil1_trace_14-10-28-10-2012.csv";
 	private int left;
 	private int total;
 	private int veryShortJobs;// less than 10 seconds
 	private int shortJobs;// less than 10 minutes
 	private int mediumJobs;// more than 10 minutes, less than 1 hour
 	private int longJobs;// more than one hour
-	private static final int index_actualclassreservation = 22 - 1;
-	private static final int index_jobid = 1 - 1;
-	private static final int index_iterationsubmittime = 19 - 1;
-	private static final int index_starttime = 6 - 1;
-	private static final int index_finishtime = 7 - 1;
 
 	public EventQueue parse(Provider<Clock> clockProvider, final Cluster cluster)
 	{
@@ -43,11 +38,10 @@ public class JobParser
 				try
 				{
 					String[] cols = line.split(",");
-					double cores = getMapValue("cores", cols[index_actualclassreservation]);
-					double memory = getMapValue("memory", cols[index_actualclassreservation]);
-					long length = l(cols[index_finishtime]) - l(cols[index_starttime]);
-					if (length < 10)// when this is 10 it gives bad results,
-									// check why!
+					double cores = getMapValue("cores", cols[20]);
+					double memory = getMapValue("memory", cols[20]);
+					long length = l(cols[6]) - l(cols[5]);
+					if (length < 10)// when this is 10 it gives bad results, check why!
 					{
 						length = 10;
 						veryShortJobs++;
@@ -64,8 +58,7 @@ public class JobParser
 					{
 						longJobs++;
 					}
-					Job job = Job.create(length).id(cols[index_jobid]).priority(l(cols[index_starttime])).submitTime(l(cols[index_iterationsubmittime]))
-							.cores(cores).memory(memory).build();
+					Job job = Job.create(length).id(cols[0]).priority(l(cols[5])).submitTime(l(cols[4])).cores(cores).memory(memory).build();
 					if (canRun(job, cluster))
 					{
 						$.add(new Submit(job));
