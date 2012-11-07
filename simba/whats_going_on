@@ -1,6 +1,7 @@
+
 job priority is by start time (from traces)
 on submit time jobs move to wait queue
-when there is a match jobs move to host and finish time is entered to event queue
+
 when job is finished it is removed from host
 collectors - 
 	for each job:
@@ -11,6 +12,12 @@ we can report it when job finish
 		core used
 		memory used
 we will have an event (say each 5 minutes) that will check those		
+
+scheduler:
+look for host
+when there is a match jobs move to host and finish time is entered to event queue
+if not found - make reservation: take the best host (more resources) and put reservation on it (this might have performance problem)
+
 
 TODO:
 validate kelet (jobs hosts)
