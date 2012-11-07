@@ -1,6 +1,7 @@
 package sim.scheduling.matchers;
 
 import static com.google.common.collect.Lists.*;
+import sim.scheduling.graders.AvailableCoresGrader;
 import sim.scheduling.graders.AvailableMemoryGrader;
 import sim.scheduling.graders.ConfiguredMemoryGrader;
 import sim.scheduling.graders.Grader;
@@ -8,6 +9,7 @@ import sim.scheduling.graders.Invert;
 import sim.scheduling.graders.MixDegreeDeltaGrader;
 import sim.scheduling.graders.MixDistanceGrader;
 import sim.scheduling.graders.MixNormilizedDegreeDeltaGrader;
+import sim.scheduling.graders.MixNormilizedDegreeFromTopLeftViewDeltaGrader;
 import sim.scheduling.graders.MixNormilizedDegreeFromTopViewDeltaGrader;
 
 public class GradeMatcherProvider
@@ -40,6 +42,16 @@ public class GradeMatcherProvider
 	public static Matcher createGraderMf5()
 	{
 		return new GradeMatcher(newArrayList(invert(new ConfiguredMemoryGrader()), invert(new MixDegreeDeltaGrader()), invert(new AvailableMemoryGrader())));
+	}
+
+	public static Matcher createGraderMf6()
+	{
+		return new GradeMatcher(newArrayList(invert(new MixNormilizedDegreeFromTopLeftViewDeltaGrader()), invert(new AvailableCoresGrader())));
+	}
+
+	public static Matcher createGraderBfi()
+	{
+		return new GradeMatcher(newArrayList(invert(new AvailableMemoryGrader()), invert(new AvailableCoresGrader())));
 	}
 
 	public static GradeMatcher createProductionGrader()

@@ -93,6 +93,8 @@ public class Simulator
 		matchers.put("MF3", GradeMatcherProvider.createGraderMf3());
 		matchers.put("MF4", GradeMatcherProvider.createGraderMf4());
 		matchers.put("MF5", GradeMatcherProvider.createGraderMf5());
+		matchers.put("MF6", GradeMatcherProvider.createGraderMf6());
+		matchers.put("BFI", GradeMatcherProvider.createGraderBfi());
 		matchers.put("NF", GradeMatcherProvider.createProductionGrader());
 		matchers.put("BF", new BestFit());
 		matchers.put("FF", new FirstFit());
@@ -122,7 +124,7 @@ public class Simulator
 		Scheduler scheduler = new SimpleScheduler(waitingQueue, cluster, matcher, dispatcher);
 		JobCollector jobCollector = new JobCollector();
 		JobFinisher jobFinisher = new JobFinisher(jobCollector);
-		HostCollector hostCollector = new HostCollector(cluster, 300);
+		HostCollector hostCollector = new HostCollector(cluster, 300, waitingQueue);
 		Looper looper = new Looper(clock, eventQueue, waitingQueue, scheduler, hostCollector, jobFinisher);
 		return looper;
 	}

@@ -15,10 +15,13 @@ we will have an event (say each 5 minutes) that will check those
 TODO:
 validate kelet (jobs hosts)
 add to hosts collector: avg mem used (mean), stiyat teken (variance)
-add to hosts collector: jobs in queue. completed jobs?
-input files should not be hardcoded
-allow parsing of other files (other traces)
+
+
+
+maybe add statistics file to each run
 change job length field to runTime
+make running jobs a seperate queue?
+
  
 
 		
