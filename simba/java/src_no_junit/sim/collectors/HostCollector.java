@@ -1,5 +1,7 @@
 package sim.collectors;
 
+import org.apache.commons.math3.stat.descriptive.moment.StandardDeviation;
+
 import sim.model.Cluster;
 import sim.model.Host;
 import sim.scheduling.WaitingQueue;
@@ -27,7 +29,7 @@ public class HostCollector extends Collector<Long>
 		long usedMemory = 0;
 		long usedCores = 0;
 		long averageMemory = 0;
-
+		StandardDeviation standardDeviation = new StandardDeviation();
 		for (Host host : cluster.hosts())
 		{
 			cores += host.cores();
@@ -35,10 +37,11 @@ public class HostCollector extends Collector<Long>
 			memory += host.memory();
 			usedMemory += host.usedMemory();
 			averageMemory += host.usedMemory();
+			standardDeviation.increment(host.usedMemory());
 		}
 		averageMemory = averageMemory / cluster.hosts().size();
 		String line = time + SEPERATOR + cores + SEPERATOR + usedCores + SEPERATOR + memory + SEPERATOR + usedMemory + SEPERATOR + averageMemory + SEPERATOR
-				+ waitingQueue.size() + SEPERATOR;
+				+ standardDeviation.evaluate() + SEPERATOR + waitingQueue.size() + SEPERATOR;
 		return line;
 	}
 
@@ -46,7 +49,7 @@ public class HostCollector extends Collector<Long>
 	protected String collectHeader()
 	{
 		String line = "#time" + SEPERATOR + "cores" + SEPERATOR + "usedCores" + SEPERATOR + "memory" + SEPERATOR + "usedMemory" + SEPERATOR + "averageMemory"
-				+ SEPERATOR + "waitQueueSize" + SEPERATOR;
+				+ SEPERATOR + "standardDeviation" + SEPERATOR + "waitQueueSize" + SEPERATOR;
 		return line;
 	}
 
