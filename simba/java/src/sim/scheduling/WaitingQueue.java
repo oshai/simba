@@ -1,12 +1,14 @@
 package sim.scheduling;
 
-import sim.model.Job;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.Queue;
 
-import com.google.common.collect.MinMaxPriorityQueue;
+import sim.model.Job;
 
 public class WaitingQueue
 {
-	private MinMaxPriorityQueue<Job> queue = MinMaxPriorityQueue.orderedBy(new JobPriorityComparator()).create();
+	private Queue<Job> queue = new LinkedList<Job>();
 
 	public boolean isEmpty()
 	{
@@ -20,7 +22,7 @@ public class WaitingQueue
 
 	public Job peek()
 	{
-		return queue.peekFirst();
+		return queue.peek();
 	}
 
 	public void add(Job job)
@@ -30,6 +32,11 @@ public class WaitingQueue
 
 	public Job remove()
 	{
-		return queue.removeFirst();
+		return queue.remove();
+	}
+
+	public Iterator<Job> iterator()
+	{
+		return queue.iterator();
 	}
 }
