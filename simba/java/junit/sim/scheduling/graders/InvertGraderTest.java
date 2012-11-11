@@ -13,4 +13,10 @@ public class InvertGraderTest
 		assertEquals(-8.0, new Invert(new Constant(8.0)).getGrade(null, null), 0.1);
 	}
 
+	@Test
+	public void testToString()
+	{
+		new Invert(new Constant(8.0)).toString();
+	}
+
 }

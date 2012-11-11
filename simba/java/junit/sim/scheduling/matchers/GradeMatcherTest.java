@@ -11,6 +11,8 @@ import sim.model.Host;
 import sim.model.Job;
 import sim.scheduling.graders.Grader;
 
+import com.google.common.collect.Lists;
+
 public class GradeMatcherTest
 {
 
@@ -26,6 +28,12 @@ public class GradeMatcherTest
 		when(grader.getGrade(host1, job)).thenReturn(1.0);
 		when(grader.getGrade(host2, job)).thenReturn(1.0);
 		assertEquals(host1, new GradeMatcher(newArrayList(grader)).match(job, newArrayList(host1, host2)));
+	}
+
+	@Test
+	public void testToString()
+	{
+		new GradeMatcher(Lists.<Grader> newArrayList()).toString();
 	}
 
 	@Test
