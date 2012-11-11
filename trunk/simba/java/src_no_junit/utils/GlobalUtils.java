@@ -15,4 +15,22 @@ public class GlobalUtils
 		}
 		return obj1.equals(obj2);
 	}
+
+	public static boolean greater(double d1, double d2)
+	{
+		if (equals(d1, d2))
+		{
+			return false;
+		}
+		return d1 > d2;
+	}
+
+	public static boolean greaterOrEquals(double d1, double d2)
+	{
+		if (equals(d1, d2))
+		{
+			return true;
+		}
+		return d1 > d2;
+	}
 }
