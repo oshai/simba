@@ -11,6 +11,7 @@ import sim.scheduling.graders.MixDistanceGrader;
 import sim.scheduling.graders.MixNormilizedDegreeDeltaGrader;
 import sim.scheduling.graders.MixNormilizedDegreeFromTopLeftViewDeltaGrader;
 import sim.scheduling.graders.MixNormilizedDegreeFromTopViewDeltaGrader;
+import sim.scheduling.graders.SimpleMixGrader;
 
 public class GradeMatcherProvider
 {
@@ -54,6 +55,11 @@ public class GradeMatcherProvider
 		return new GradeMatcher(newArrayList(invert(new AvailableMemoryGrader()), invert(new AvailableCoresGrader())));
 	}
 
+	public static Matcher createGraderBf2()
+	{
+		return new GradeMatcher(newArrayList(invert(new AvailableMemoryGrader())));
+	}
+
 	public static GradeMatcher createProductionGrader()
 	{
 		return new GradeMatcher(newArrayList(invert(new ConfiguredMemoryGrader()), invert(new AvailableMemoryGrader())));
@@ -62,6 +68,11 @@ public class GradeMatcherProvider
 	private static Grader invert(Grader grader)
 	{
 		return new Invert(grader);
+	}
+
+	public static Matcher createGraderSmf()
+	{
+		return new GradeMatcher(newArrayList((Grader) new SimpleMixGrader()));
 	}
 
 }

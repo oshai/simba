@@ -13,6 +13,7 @@ public class HostParser
 	private static final Logger log = Logger.getLogger(HostParser.class);
 	private static final String HOST_FILE = System.getProperty("hosts-file");
 	private static final double HOST_MEMORY_MULTIPLIER = getMultiplier();
+	private static final int HOST_MEMORY_UNIT_NORMILIZER = 1;
 
 	private static final int index_hostid = 0;
 	private static final int index_cores = 1;
@@ -32,7 +33,7 @@ public class HostParser
 			{
 				String[] cols = line.split(",");
 				cluster.add(Host.create().id(cols[index_hostid]).cores(Double.valueOf(cols[index_cores]))
-						.memory(HOST_MEMORY_MULTIPLIER * Double.valueOf(cols[index_memory]) / 1024).build());
+						.memory(HOST_MEMORY_MULTIPLIER * Double.valueOf(cols[index_memory]) / HOST_MEMORY_UNIT_NORMILIZER).build());
 			}
 			catch (Exception ex)
 			{

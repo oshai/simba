@@ -1,8 +1,8 @@
 package sim;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
+import org.apache.commons.math3.util.Pair;
 import org.junit.Test;
 
 import sim.collectors.JobCollector;
@@ -21,7 +21,7 @@ public class JobFinisherTest
 		Job job = mock(Job.class);
 		Host host = mock(Host.class);
 		jobFinisher.finish(new Finish(5, job, host));
-		verify(c).collect(job);
+		verify(c).collect(new Pair<Job, Host>(job, host));
 		verify(host).finishJob(job);
 	}
 

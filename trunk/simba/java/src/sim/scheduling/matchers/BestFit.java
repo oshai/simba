@@ -4,6 +4,7 @@ import java.util.List;
 
 import sim.model.Host;
 import sim.model.Job;
+import utils.GlobalUtils;
 
 public class BestFit implements Matcher
 {
@@ -20,7 +21,7 @@ public class BestFit implements Matcher
 				{
 					$ = host;
 				}
-				else if (host.availableMemory() < $.availableMemory())
+				else if (!GlobalUtils.equals(host.availableMemory(), $.availableMemory()) && host.availableMemory() < $.availableMemory())
 				{
 					$ = host;
 				}

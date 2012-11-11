@@ -45,7 +45,8 @@ public class Simulator
 	public static void main(String[] args)
 	{
 		BasicConfigurator.configure();
-		Logger.getRootLogger().setLevel(Level.INFO);
+		Level level = Boolean.getBoolean("ebug") ? Level.DEBUG : Level.INFO;
+		Logger.getRootLogger().setLevel(level);
 		try
 		{
 			new Simulator().execute();
@@ -92,7 +93,9 @@ public class Simulator
 		matchers.put("MF4", GradeMatcherProvider.createGraderMf4());
 		matchers.put("MF5", GradeMatcherProvider.createGraderMf5());
 		matchers.put("MF6", GradeMatcherProvider.createGraderMf6());
+		matchers.put("SMF", GradeMatcherProvider.createGraderSmf());
 		matchers.put("BFI", GradeMatcherProvider.createGraderBfi());
+		matchers.put("BF2", GradeMatcherProvider.createGraderBf2());
 		matchers.put("NF", GradeMatcherProvider.createProductionGrader());
 		matchers.put("BF", new BestFit());
 		matchers.put("FF", new FirstFit());

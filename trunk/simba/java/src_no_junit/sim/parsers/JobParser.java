@@ -29,11 +29,12 @@ public class JobParser
 	private int memWideJobs;// more than 8 GB
 	private int errorLength;// more than 8 GB
 	private int errorMemory;// more than 8 GB
-	private static final int index_actualclassreservation = 22 - 1;
-	private static final int index_jobid = 1 - 1;
-	private static final int index_iterationsubmittime = 19 - 1;
-	private static final int index_starttime = 6 - 1;
-	private static final int index_finishtime = 7 - 1;
+	private static final int index_actualclassreservation = 20;// was 21
+	private static final int index_jobid = 0;
+	private static final int index_iterationsubmittime = 4;// was 18
+	private static final int index_starttime = 5;
+	private static final int index_finishtime = 6;
+	private static final int index_wtime = 9;
 
 	public EventQueue parse(Provider<Clock> clockProvider, final Cluster cluster)
 	{
@@ -50,7 +51,9 @@ public class JobParser
 					String[] cols = line.split(",");
 					double cores = getMapValue("cores", cols[index_actualclassreservation]);
 					double memory = getMapValue("memory", cols[index_actualclassreservation]);
-					long length = l(cols[index_finishtime]) - l(cols[index_starttime]);
+					// long length = l(cols[index_finishtime]) -
+					// l(cols[index_starttime]);
+					long length = d2l(cols[index_wtime]);
 					if (length < 1)
 					{
 						length = 1;
@@ -63,8 +66,8 @@ public class JobParser
 					}
 					updateRunTimeBuckets(length);
 					updateMemoryBuckets(memory);
-					Job job = Job.create(length).id(cols[index_jobid]).priority(l(cols[index_starttime])).submitTime(l(cols[index_iterationsubmittime]))
-							.cores(cores).memory(memory).build();
+					Job job = Job.create(length).id(cols[index_jobid]).priority(l(cols[index_iterationsubmittime]))
+							.submitTime(l(cols[index_iterationsubmittime])).cores(cores).memory(memory).build();
 					if (canRun(job, cluster))
 					{
 						$.add(new Submit(job));
@@ -72,7 +75,7 @@ public class JobParser
 					}
 					else
 					{
-						log.debug("apply() - job cannot run " + job.cores() + " " + job.memory());
+						log.info("apply() - job cannot run " + job.cores() + " " + job.memory());
 					}
 				}
 				catch (Exception ex)
@@ -96,6 +99,11 @@ public class JobParser
 		log.info("length error " + getPrecentString(errorLength));
 		log.info("memory error " + getPrecentString(errorMemory));
 		return $;
+	}
+
+	protected long d2l(String value)
+	{
+		return Math.round(Double.valueOf(value));
 	}
 
 	private String getPrecentString(int jobs)
