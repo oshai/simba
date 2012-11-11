@@ -28,28 +28,34 @@ public class HostCollector extends Collector<Long>
 		long cores = 0;
 		long usedMemory = 0;
 		long usedCores = 0;
-		long averageMemory = 0;
-		Variance variance = new Variance();
+		long memoryAverage = 0;
+		Variance memoryVariance = new Variance();
+		long mixAverage = 0;
+		Variance mixVariance = new Variance();
 		for (Host host : cluster.hosts())
 		{
 			cores += host.cores();
 			usedCores += host.usedCores();
 			memory += host.memory();
 			usedMemory += host.usedMemory();
-			averageMemory += host.usedMemory();
-			variance.increment(host.usedMemory());
+			memoryAverage += host.usedMemory();
+			memoryVariance.increment(host.usedMemory());
+			double usedRation = (host.usedMemory() + (host.memory() / 1000)) / (host.usedCores() + (host.cores() / 1000));
+			mixAverage += usedRation;
+			mixVariance.increment(usedRation);
 		}
-		averageMemory = averageMemory / cluster.hosts().size();
-		String line = time + SEPERATOR + cores + SEPERATOR + usedCores + SEPERATOR + memory + SEPERATOR + usedMemory + SEPERATOR + averageMemory + SEPERATOR
-				+ variance.getResult() + SEPERATOR + waitingQueue.size() + SEPERATOR;
+		mixAverage = mixAverage / cluster.hosts().size();
+		memoryAverage = memoryAverage / cluster.hosts().size();
+		String line = time + SEPERATOR + cores + SEPERATOR + usedCores + SEPERATOR + memory + SEPERATOR + usedMemory + SEPERATOR + memoryAverage + SEPERATOR
+				+ memoryVariance.getResult() + SEPERATOR + waitingQueue.size() + SEPERATOR + mixAverage + SEPERATOR + mixVariance.getResult();
 		return line;
 	}
 
 	@Override
 	protected String collectHeader()
 	{
-		String line = "#time" + SEPERATOR + "cores" + SEPERATOR + "usedCores" + SEPERATOR + "memory" + SEPERATOR + "usedMemory" + SEPERATOR + "averageMemory"
-				+ SEPERATOR + "variance" + SEPERATOR + "waitQueueSize" + SEPERATOR;
+		String line = "#time" + SEPERATOR + "cores" + SEPERATOR + "usedCores" + SEPERATOR + "memory" + SEPERATOR + "usedMemory" + SEPERATOR + "memoryAverage"
+				+ SEPERATOR + "memoryVariance" + SEPERATOR + "waitQueueSize" + SEPERATOR + "mixAverage" + SEPERATOR + "mixVariance";
 		return line;
 	}
 
