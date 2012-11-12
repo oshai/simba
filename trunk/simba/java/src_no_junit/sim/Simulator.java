@@ -20,15 +20,14 @@ import sim.model.Job;
 import sim.parsers.HostParser;
 import sim.parsers.JobParser;
 import sim.scheduling.Dispatcher;
+import sim.scheduling.ReservingScheduler;
 import sim.scheduling.Scheduler;
-import sim.scheduling.SimpleScheduler;
 import sim.scheduling.WaitingQueue;
-import sim.scheduling.matchers.BestFit;
-import sim.scheduling.matchers.FirstFit;
+import sim.scheduling.graders.AvailableMemoryGrader;
+import sim.scheduling.graders.Constant;
+import sim.scheduling.graders.Grader;
+import sim.scheduling.graders.RandomGrader;
 import sim.scheduling.matchers.GradeMatcherProvider;
-import sim.scheduling.matchers.Matcher;
-import sim.scheduling.matchers.RandomFit;
-import sim.scheduling.matchers.WorseFit;
 
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.Maps;
@@ -74,48 +73,48 @@ public class Simulator
 		log.info("execute() - simulation starting clock (epoc): " + time);
 		Clock clock = new Clock(time);
 		clockProvider.setClock(clock);
-		Matcher matcher = createMatcher();
+		Grader grader = createGrader();
 		log.info("execute() - cluster size is " + cluster.hosts().size());
 		log.info("execute() - # of jobs " + eventQueue.size());
-		log.info("execute() - matcher is " + matcher.toString());
-		Looper looper = createLooper(cluster, eventQueue, clock, matcher);
+		log.info("execute() - grader is " + grader.toString());
+		Looper looper = createLooper(cluster, eventQueue, clock, grader);
 		looper.execute();
 		log.info("execute() - finished at " + new Date());
 		log.info("execute() - took " + stopwatch.elapsedTime(TimeUnit.SECONDS));
 	}
 
-	private Matcher createMatcher()
+	private Grader createGrader()
 	{
-		HashMap<String, Matcher> matchers = Maps.newHashMap();
-		matchers.put("MF", GradeMatcherProvider.createGraderMf1());
-		matchers.put("MF2", GradeMatcherProvider.createGraderMf2());
-		matchers.put("MF3", GradeMatcherProvider.createGraderMf3());
-		matchers.put("MF4", GradeMatcherProvider.createGraderMf4());
-		matchers.put("MF5", GradeMatcherProvider.createGraderMf5());
-		matchers.put("MF6", GradeMatcherProvider.createGraderMf6());
-		matchers.put("SMF", GradeMatcherProvider.createGraderSmf());
-		matchers.put("BFI", GradeMatcherProvider.createGraderBfi());
-		matchers.put("BF2", GradeMatcherProvider.createGraderBf2());
-		matchers.put("NF", GradeMatcherProvider.createProductionGrader());
-		matchers.put("BF", new BestFit());
-		matchers.put("FF", new FirstFit());
-		matchers.put("RF", new RandomFit());
-		matchers.put("WF", new WorseFit());
+		HashMap<String, Grader> graders = Maps.newHashMap();
+		graders.put("MF", GradeMatcherProvider.createGraderMf1());
+		// graders.put("MF2", GradeMatcherProvider.createGraderMf2());
+		// graders.put("MF3", GradeMatcherProvider.createGraderMf3());
+		// graders.put("MF4", GradeMatcherProvider.createGraderMf4());
+		// graders.put("MF5", GradeMatcherProvider.createGraderMf5());
+		// graders.put("MF6", GradeMatcherProvider.createGraderMf6());
+		graders.put("SMF", GradeMatcherProvider.createGraderSmf());
+		// graders.put("BFI", GradeMatcherProvider.createGraderBfi());
+		graders.put("BF", GradeMatcherProvider.createGraderBf2());
+		// graders.put("NF", GradeMatcherProvider.createProductionGrader());
+		// graders.put("BF", new BestFit()); // specific grader
+		graders.put("FF", new Constant(0)); // constant grader
+		graders.put("RF", new RandomGrader(100000)); // random grader
+		graders.put("WF", new AvailableMemoryGrader()); // specific grader
 
-		Matcher $ = matchers.get(getMatcherProperty().toUpperCase());
+		Grader $ = graders.get(getMatcherProperty().toUpperCase());
 		if (null == $)
 		{
-			throw new RuntimeException("no matcher for " + getMatcherProperty() + " from: " + matchers.keySet());
+			throw new RuntimeException("no matcher for " + getMatcherProperty() + " from: " + graders.keySet());
 		}
 		return $;
 	}
 
 	private String getMatcherProperty()
 	{
-		return System.getProperty("matcher");
+		return System.getProperty("grader");
 	}
 
-	protected Looper createLooper(Cluster cluster, EventQueue eventQueue, Clock clock, Matcher matcher)
+	protected Looper createLooper(Cluster cluster, EventQueue eventQueue, Clock clock, Grader grader)
 	{
 		Dispatcher dispatcher = new Dispatcher(eventQueue);
 		WaitingQueue waitingQueue = new WaitingQueue();
@@ -123,7 +122,9 @@ public class Simulator
 		{
 			moveJobsToWaitQueue(eventQueue, waitingQueue);
 		}
-		Scheduler scheduler = new SimpleScheduler(waitingQueue, cluster, matcher, dispatcher);
+		// Scheduler scheduler = new SimpleScheduler(waitingQueue, cluster, new
+		// GradeMatcher(grader), dispatcher);
+		Scheduler scheduler = new ReservingScheduler(waitingQueue, cluster, grader, dispatcher);
 		JobCollector jobCollector = new JobCollector();
 		JobFinisher jobFinisher = new JobFinisher(jobCollector);
 		HostCollector hostCollector = new HostCollector(cluster, 300, waitingQueue);

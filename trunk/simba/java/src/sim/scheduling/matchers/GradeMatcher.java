@@ -1,5 +1,7 @@
 package sim.scheduling.matchers;
 
+import static com.google.common.collect.Lists.*;
+
 import java.util.List;
 
 import sim.model.Host;
@@ -15,6 +17,11 @@ public class GradeMatcher implements Matcher
 	{
 		super();
 		this.graders = graders;
+	}
+
+	public GradeMatcher(Grader grader)
+	{
+		this(newArrayList(grader));
 	}
 
 	public Host match(Job job, List<Host> hosts)
