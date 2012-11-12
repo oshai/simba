@@ -36,7 +36,7 @@ public class ReservingScheduler implements Scheduler
 		Iterator<Job> iterator = waitingQueue.iterator();
 		while (iterator.hasNext())
 		{
-			Job job = (Job) iterator.next();
+			Job job = iterator.next();
 			Host host = getBestHost(job);
 			if (isAvailable(host, job))
 			{
