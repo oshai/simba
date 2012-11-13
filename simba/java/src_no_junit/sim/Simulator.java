@@ -22,11 +22,13 @@ import sim.parsers.JobParser;
 import sim.scheduling.Dispatcher;
 import sim.scheduling.ReservingScheduler;
 import sim.scheduling.Scheduler;
+import sim.scheduling.SimpleScheduler;
 import sim.scheduling.WaitingQueue;
 import sim.scheduling.graders.AvailableMemoryGrader;
 import sim.scheduling.graders.Constant;
 import sim.scheduling.graders.Grader;
 import sim.scheduling.graders.RandomGrader;
+import sim.scheduling.matchers.GradeMatcher;
 import sim.scheduling.matchers.GradeMatcherProvider;
 
 import com.google.common.base.Stopwatch;
@@ -101,17 +103,22 @@ public class Simulator
 		graders.put("RF", new RandomGrader(100000)); // random grader
 		graders.put("WF", new AvailableMemoryGrader()); // specific grader
 
-		Grader $ = graders.get(getMatcherProperty().toUpperCase());
+		Grader $ = graders.get(getGraderProperty().toUpperCase());
 		if (null == $)
 		{
-			throw new RuntimeException("no matcher for " + getMatcherProperty() + " from: " + graders.keySet());
+			throw new RuntimeException("no matcher for " + getGraderProperty() + " from: " + graders.keySet());
 		}
 		return $;
 	}
 
-	private String getMatcherProperty()
+	private String getGraderProperty()
 	{
 		return System.getProperty("grader");
+	}
+
+	private String getSchedulerProperty()
+	{
+		return System.getProperty("scheduler");
 	}
 
 	protected Looper createLooper(Cluster cluster, EventQueue eventQueue, Clock clock, Grader grader)
@@ -122,14 +129,26 @@ public class Simulator
 		{
 			moveJobsToWaitQueue(eventQueue, waitingQueue);
 		}
-		// Scheduler scheduler = new SimpleScheduler(waitingQueue, cluster, new
-		// GradeMatcher(grader), dispatcher);
-		Scheduler scheduler = new ReservingScheduler(waitingQueue, cluster, grader, dispatcher);
+		Scheduler scheduler = createSchduler(cluster, grader, dispatcher, waitingQueue);
+		log.info("createLooper() - scheduler is " + scheduler.getClass().getSimpleName());
 		JobCollector jobCollector = new JobCollector();
 		JobFinisher jobFinisher = new JobFinisher(jobCollector);
 		HostCollector hostCollector = new HostCollector(cluster, 300, waitingQueue);
 		Looper looper = new Looper(clock, eventQueue, waitingQueue, scheduler, hostCollector, jobFinisher);
 		return looper;
+	}
+
+	private Scheduler createSchduler(Cluster cluster, Grader grader, Dispatcher dispatcher, WaitingQueue waitingQueue)
+	{
+		if ("fifo".equals(getSchedulerProperty()))
+		{
+			return new SimpleScheduler(waitingQueue, cluster, new GradeMatcher(grader), dispatcher);
+		}
+		if ("reservation".equals(getSchedulerProperty()))
+		{
+			return new ReservingScheduler(waitingQueue, cluster, grader, dispatcher);
+		}
+		throw new RuntimeException("no scheduler " + getSchedulerProperty());
 	}
 
 	private boolean submitImmediately()
