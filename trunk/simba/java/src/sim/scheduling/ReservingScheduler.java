@@ -33,9 +33,12 @@ public class ReservingScheduler implements Scheduler
 	public void schedule(long time)
 	{
 		init();
+		int reservingJobsCount = 0;
+		int processedJobsCount = 0;
 		Iterator<Job> iterator = waitingQueue.iterator();
-		while (iterator.hasNext())
+		while (iterator.hasNext() && processedJobsCount < 100)
 		{
+			processedJobsCount++;
 			Job job = iterator.next();
 			Host host = getBestHost(job);
 			if (isAvailable(host, job))
@@ -45,7 +48,11 @@ public class ReservingScheduler implements Scheduler
 			}
 			else
 			{
-				reserve(host, job);
+				if (reservingJobsCount < 1)
+				{
+					reserve(host, job);
+					reservingJobsCount++;
+				}
 			}
 		}
 	}

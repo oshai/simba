@@ -29,12 +29,10 @@ public class JobParser
 	private int memWideJobs;// more than 8 GB
 	private int errorLength;// more than 8 GB
 	private int errorMemory;// more than 8 GB
-	private static final int index_actualclassreservation = 20;// was 21
-	private static final int index_jobid = 0;
-	private static final int index_iterationsubmittime = 4;// was 18
-	private static final int index_starttime = 5;
-	private static final int index_finishtime = 6;
-	private static final int index_wtime = 9;
+	private static final int index_actualclassreservation = 21;// iil-new20
+	private static final int index_jobid = 0;// iil-new also
+	private static final int index_iterationsubmittime = 18;// iil-new4
+	private static final int index_wtime = 9;// iil-new also
 
 	public EventQueue parse(Provider<Clock> clockProvider, final Cluster cluster)
 	{
