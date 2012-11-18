@@ -9,6 +9,7 @@ import sim.scheduling.WaitingQueue;
 public class HostStatistics
 {
 
+	private static final double CONST = 0.01;
 	private final Cluster cluster;
 	private final WaitingQueue waitingQueue;
 	private long memory = 0;
@@ -17,8 +18,10 @@ public class HostStatistics
 	private long usedCores = 0;
 	private long usedMemoryAverage = 0;
 	private Variance usedMemoryVariance = new Variance();
-	private long mixAverage = 0;
+	private double mixSum = 0;
 	private Variance mixVariance = new Variance();
+	private double reverseMixSum;
+	private Variance reverseMixVariance = new Variance();
 
 	public HostStatistics(Cluster cluster, WaitingQueue waitingQueue)
 	{
@@ -36,9 +39,9 @@ public class HostStatistics
 		return mixVariance.getResult();
 	}
 
-	public long mixAverage()
+	public double mixAverage()
 	{
-		return mixAverage;
+		return mixSum / cluster.hosts().size();
 	}
 
 	public int waitingJobs()
@@ -86,11 +89,28 @@ public class HostStatistics
 			usedMemory += host.usedMemory();
 			usedMemoryAverage += host.usedMemory();
 			usedMemoryVariance.increment(host.usedMemory());
-			double usedRatio = (host.usedMemory() + (host.memory() / 1000)) / (host.usedCores() + (host.cores() / 1000));
-			mixAverage += usedRatio;
+			double usedMemoryNormalized = (host.usedMemory() / host.memory()) + CONST;
+			double usedCoresNormalized = (host.usedCores() / host.cores()) + CONST;
+			double usedRatio = usedMemoryNormalized / usedCoresNormalized;
+			mixSum += usedRatio;
 			mixVariance.increment(usedRatio);
+			double availableMemoryNormalized = (host.availableMemory() / host.memory()) + CONST;
+			double availableCoresNormalized = (host.availableCores() / host.cores()) + CONST;
+			double availableRatio = availableCoresNormalized / availableMemoryNormalized;
+			reverseMixSum += availableRatio;
+			reverseMixVariance.increment(availableRatio);
+
 		}
-		mixAverage = mixAverage() / cluster.hosts().size();
 		usedMemoryAverage = usedMemoryAverage() / cluster.hosts().size();
+	}
+
+	public double reverseMixAverage()
+	{
+		return reverseMixSum / cluster.hosts().size();
+	}
+
+	public double reverseMixVariance()
+	{
+		return reverseMixVariance.getResult();
 	}
 }

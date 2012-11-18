@@ -24,8 +24,9 @@ public class HostCollector extends Collector<Long>
 		HostStatistics statistics = new HostStatistics(cluster, waitingQueue);
 		String line = time
 				+ SEPERATOR
-				+ (statistics.cores() + SEPERATOR + statistics.usedCores() + SEPERATOR + statistics.memory() + SEPERATOR + statistics.usedMemory() + SEPERATOR + statistics.usedMemoryAverage() + SEPERATOR
-						+ statistics.usedMemoryVariance() + SEPERATOR + statistics.waitingJobs() + SEPERATOR + statistics.mixAverage() + SEPERATOR + statistics.mixVariance());
+				+ (statistics.cores() + SEPERATOR + statistics.usedCores() + SEPERATOR + statistics.memory() + SEPERATOR + statistics.usedMemory() + SEPERATOR
+						+ statistics.usedMemoryAverage() + SEPERATOR + statistics.usedMemoryVariance() + SEPERATOR + statistics.waitingJobs() + SEPERATOR
+						+ statistics.reverseMixAverage() + SEPERATOR + statistics.reverseMixVariance());
 		return line;
 	}
 
@@ -33,7 +34,8 @@ public class HostCollector extends Collector<Long>
 	protected String collectHeader()
 	{
 		String line = "#time" + SEPERATOR + "cores" + SEPERATOR + "usedCores" + SEPERATOR + "memory" + SEPERATOR + "usedMemory" + SEPERATOR + "memoryAverage"
-				+ SEPERATOR + "memoryVariance" + SEPERATOR + "waitQueueSize" + SEPERATOR + "mixAverage" + SEPERATOR + "mixVariance";
+				+ SEPERATOR + "memoryVariance" + SEPERATOR + "waitQueueSize" + SEPERATOR + "mixAverage" + SEPERATOR + "mixVariance" + "reverseMixAverage"
+				+ SEPERATOR + "reverseMixVariance";
 		return line;
 	}
 

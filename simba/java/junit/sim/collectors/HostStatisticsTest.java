@@ -28,8 +28,10 @@ public class HostStatisticsTest
 		assertEquals(0, tested.memory());
 		assertEquals(0, tested.usedMemoryAverage());
 		assertEquals(0, tested.usedMemoryVariance(), 0.1);
-		assertEquals(0, tested.mixAverage());
+		// assertEquals(0, tested.mixAverage(), 0.1);
 		assertEquals(0, tested.mixVariance(), 0.1);
+		// assertEquals(0, tested.reverseMixAverage(), 0.1);
+		assertEquals(0, tested.reverseMixVariance(), 0.1);
 		assertEquals(0, tested.usedCores());
 		assertEquals(0, tested.usedMemory());
 		assertEquals(0, tested.waitingJobs());
@@ -47,8 +49,10 @@ public class HostStatisticsTest
 		assertEquals(2, tested.memory());
 		assertEquals(1, tested.usedMemoryAverage());
 		assertEquals(0, tested.usedMemoryVariance(), 0.1);
-		assertEquals(1, tested.mixAverage());
+		assertEquals(1, tested.mixAverage(), 0.1);
 		assertEquals(0, tested.mixVariance(), 0.1);
+		assertEquals(1, tested.reverseMixAverage(), 0.1);
+		assertEquals(0, tested.reverseMixVariance(), 0.1);
 		assertEquals(1, tested.usedCores());
 		assertEquals(1, tested.usedMemory());
 	}
