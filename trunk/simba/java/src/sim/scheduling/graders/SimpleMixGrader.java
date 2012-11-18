@@ -8,7 +8,7 @@ public class SimpleMixGrader implements Grader
 {
 
 	private final Grader availableMemoryGrader = new AvailableMemoryGrader();
-	private final Invert invertAvailableMemoryGrader = new Invert(new AvailableMemoryGrader());
+	private final InvertGrader invertAvailableMemoryGrader = new InvertGrader(new AvailableMemoryGrader());
 
 	public SimpleMixGrader()
 	{

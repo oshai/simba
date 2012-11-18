@@ -17,10 +17,13 @@ my $jobsFile = "/nfs/iil/stod/stod048/w.nbdist.104/oshai/jobs.${testName}.csv";
 #my $jobsFile = "/nfs/iil/iec/sws/work/oshai/public/workload/traces2/iil1_trace_14-10-28-10-2012.csv";
 my @tests = ( 
 			'bf',
+			'bfi',
+			'nf',
 			'ff',
 			'wf',
 			'rf',
 			'mf',
+			'mf4',
 			'smf',
 			);
 my $simulatorJar = "/nfs/iil/iec/sws/work/oshai/simba.jar";

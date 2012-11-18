@@ -3,9 +3,10 @@ package sim.scheduling.matchers;
 import static com.google.common.collect.Lists.*;
 import sim.scheduling.graders.AvailableCoresGrader;
 import sim.scheduling.graders.AvailableMemoryGrader;
+import sim.scheduling.graders.CompositeGrader;
 import sim.scheduling.graders.ConfiguredMemoryGrader;
 import sim.scheduling.graders.Grader;
-import sim.scheduling.graders.Invert;
+import sim.scheduling.graders.InvertGrader;
 import sim.scheduling.graders.MixDegreeDeltaGrader;
 import sim.scheduling.graders.MixDistanceGrader;
 import sim.scheduling.graders.MixNormilizedDegreeDeltaGrader;
@@ -30,14 +31,14 @@ public class GradeMatcherProvider
 		return createMf(new MixNormilizedDegreeDeltaGrader());
 	}
 
-	public static Matcher createGraderMf3()
+	public static Grader createGraderMf3()
 	{
-		return createMf(new MixDistanceGrader());
+		return invert(new MixDistanceGrader());
 	}
 
-	public static Matcher createGraderMf4()
+	public static Grader createGraderMf4()
 	{
-		return createMf(new MixNormilizedDegreeFromTopViewDeltaGrader());
+		return invert(new MixNormilizedDegreeFromTopViewDeltaGrader());
 	}
 
 	public static Matcher createGraderMf5()
@@ -45,14 +46,14 @@ public class GradeMatcherProvider
 		return new GradeMatcher(newArrayList(invert(new ConfiguredMemoryGrader()), invert(new MixDegreeDeltaGrader()), invert(new AvailableMemoryGrader())));
 	}
 
-	public static Matcher createGraderMf6()
+	public static Grader createGraderMf6()
 	{
-		return new GradeMatcher(newArrayList(invert(new MixNormilizedDegreeFromTopLeftViewDeltaGrader()), invert(new AvailableCoresGrader())));
+		return new MixNormilizedDegreeFromTopLeftViewDeltaGrader();
 	}
 
-	public static Matcher createGraderBfi()
+	public static Grader createGraderBfi()
 	{
-		return new GradeMatcher(newArrayList(invert(new AvailableMemoryGrader()), invert(new AvailableCoresGrader())));
+		return new CompositeGrader(newArrayList(invert(new AvailableMemoryGrader()), invert(new AvailableCoresGrader())), 1000);
 	}
 
 	public static Grader createGraderBf2()
@@ -60,14 +61,14 @@ public class GradeMatcherProvider
 		return invert(new AvailableMemoryGrader());
 	}
 
-	public static GradeMatcher createProductionGrader()
+	public static Grader createProductionGrader()
 	{
-		return new GradeMatcher(newArrayList(invert(new ConfiguredMemoryGrader()), invert(new AvailableMemoryGrader())));
+		return new CompositeGrader(newArrayList(invert(new ConfiguredMemoryGrader()), invert(new AvailableMemoryGrader())), 1000);
 	}
 
 	private static Grader invert(Grader grader)
 	{
-		return new Invert(grader);
+		return new InvertGrader(grader);
 	}
 
 	public static Grader createGraderSmf()
