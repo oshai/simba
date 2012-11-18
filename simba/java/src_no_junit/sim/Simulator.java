@@ -90,14 +90,14 @@ public class Simulator
 		HashMap<String, Grader> graders = Maps.newHashMap();
 		graders.put("MF", GradeMatcherProvider.createGraderMf1());
 		// graders.put("MF2", GradeMatcherProvider.createGraderMf2());
-		// graders.put("MF3", GradeMatcherProvider.createGraderMf3());
-		// graders.put("MF4", GradeMatcherProvider.createGraderMf4());
+		graders.put("MF3", GradeMatcherProvider.createGraderMf3());
+		graders.put("MF4", GradeMatcherProvider.createGraderMf4());
 		// graders.put("MF5", GradeMatcherProvider.createGraderMf5());
-		// graders.put("MF6", GradeMatcherProvider.createGraderMf6());
+		graders.put("MF6", GradeMatcherProvider.createGraderMf6());
 		graders.put("SMF", GradeMatcherProvider.createGraderSmf());
-		// graders.put("BFI", GradeMatcherProvider.createGraderBfi());
+		graders.put("BFI", GradeMatcherProvider.createGraderBfi());
 		graders.put("BF", GradeMatcherProvider.createGraderBf2());
-		// graders.put("NF", GradeMatcherProvider.createProductionGrader());
+		graders.put("NF", GradeMatcherProvider.createProductionGrader());
 		// graders.put("BF", new BestFit()); // specific grader
 		graders.put("FF", new Constant(0)); // constant grader
 		graders.put("RF", new RandomGrader(100000)); // random grader

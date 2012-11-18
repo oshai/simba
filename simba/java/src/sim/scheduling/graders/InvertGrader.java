@@ -3,12 +3,12 @@ package sim.scheduling.graders;
 import sim.model.Host;
 import sim.model.Job;
 
-public class Invert implements Grader
+public class InvertGrader implements Grader
 {
 
 	private final Grader grader;
 
-	public Invert(Grader grader)
+	public InvertGrader(Grader grader)
 	{
 		this.grader = grader;
 	}
@@ -22,7 +22,7 @@ public class Invert implements Grader
 	@Override
 	public String toString()
 	{
-		return "Invert [grader=" + grader.getClass().getSimpleName() + "]";
+		return "InvertGrader [grader=" + grader.getClass().getSimpleName() + "]";
 	}
 
 }
