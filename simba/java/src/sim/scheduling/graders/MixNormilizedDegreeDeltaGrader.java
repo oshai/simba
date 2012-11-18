@@ -12,8 +12,7 @@ public class MixNormilizedDegreeDeltaGrader implements Grader
 	public double getGrade(Host host, Job job)
 	{
 		double usageRatio = ((host.usedMemory() + job.memory()) / host.memory()) / ((host.usedCores() + job.cores()) / host.cores());
-		// double hostRatio = 1;// host.memory() / host.cores();
-		double hostRationTan = CONST;// Math.atan(hostRatio);
+		double hostRationTan = CONST;
 		return Math.abs(hostRationTan - Math.atan(usageRatio));
 	}
 
