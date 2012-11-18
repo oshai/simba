@@ -14,11 +14,6 @@ public class MixDistanceGrader implements Grader
 		double x0 = (host.availableCores() + job.cores()) / host.cores();
 		double y0 = (host.availableMemory() + job.memory()) / host.memory();
 		return Math.abs(x0 - y0) / CONST;
-		// double usageRatio = ((host.usedMemory() + job.memory()) /
-		// host.memory()) / ((host.usedCores() + job.cores()) / host.cores());
-		// // double hostRatio = 1;// host.memory() / host.cores();
-		// double hostRationTan = CONST;// Math.atan(hostRatio);
-		// return Math.abs(hostRationTan - Math.atan(usageRatio));
 	}
 
 }
