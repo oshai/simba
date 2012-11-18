@@ -1,9 +1,6 @@
 package sim.collectors;
 
-import org.apache.commons.math3.stat.descriptive.moment.Variance;
-
 import sim.model.Cluster;
-import sim.model.Host;
 import sim.scheduling.WaitingQueue;
 
 public class HostCollector extends Collector<Long>
@@ -24,30 +21,11 @@ public class HostCollector extends Collector<Long>
 	@Override
 	protected String collectLine(Long time)
 	{
-		long memory = 0;
-		long cores = 0;
-		long usedMemory = 0;
-		long usedCores = 0;
-		long memoryAverage = 0;
-		Variance memoryVariance = new Variance();
-		long mixAverage = 0;
-		Variance mixVariance = new Variance();
-		for (Host host : cluster.hosts())
-		{
-			cores += host.cores();
-			usedCores += host.usedCores();
-			memory += host.memory();
-			usedMemory += host.usedMemory();
-			memoryAverage += host.usedMemory();
-			memoryVariance.increment(host.usedMemory());
-			double usedRation = (host.usedMemory() + (host.memory() / 1000)) / (host.usedCores() + (host.cores() / 1000));
-			mixAverage += usedRation;
-			mixVariance.increment(usedRation);
-		}
-		mixAverage = mixAverage / cluster.hosts().size();
-		memoryAverage = memoryAverage / cluster.hosts().size();
-		String line = time + SEPERATOR + cores + SEPERATOR + usedCores + SEPERATOR + memory + SEPERATOR + usedMemory + SEPERATOR + memoryAverage + SEPERATOR
-				+ memoryVariance.getResult() + SEPERATOR + waitingQueue.size() + SEPERATOR + mixAverage + SEPERATOR + mixVariance.getResult();
+		HostStatistics statistics = new HostStatistics(cluster, waitingQueue);
+		String line = time
+				+ SEPERATOR
+				+ (statistics.cores() + SEPERATOR + statistics.usedCores() + SEPERATOR + statistics.memory() + SEPERATOR + statistics.usedMemory() + SEPERATOR + statistics.usedMemoryAverage() + SEPERATOR
+						+ statistics.usedMemoryVariance() + SEPERATOR + statistics.waitingJobs() + SEPERATOR + statistics.mixAverage() + SEPERATOR + statistics.mixVariance());
 		return line;
 	}
 

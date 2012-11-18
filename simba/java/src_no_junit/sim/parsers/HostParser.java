@@ -13,7 +13,7 @@ public class HostParser
 	private static final Logger log = Logger.getLogger(HostParser.class);
 	private static final String HOST_FILE = System.getProperty("hosts-file");
 	private static final double HOST_MEMORY_MULTIPLIER = getMultiplier();
-	private static final int HOST_MEMORY_UNIT_NORMILIZER = 1;
+	private static final int HOST_MEMORY_UNIT_NORMILIZER = Integer.getInteger("hosts-memory-noralize");
 
 	private static final int index_hostid = 0;
 	private static final int index_cores = 1;
