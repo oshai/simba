@@ -47,7 +47,7 @@ public class GradeMatcherTest
 		Grader grader = mock(Grader.class);
 		when(grader.getGrade(host1, job)).thenReturn(2.0);
 		when(grader.getGrade(host2, job)).thenReturn(1.0);
-		assertEquals(host1, new GradeMatcher(newArrayList(grader)).match(job, newArrayList(host1, host2)));
+		assertEquals(host1, new GradeMatcher(grader).match(job, newArrayList(host1, host2)));
 	}
 
 	@Test
