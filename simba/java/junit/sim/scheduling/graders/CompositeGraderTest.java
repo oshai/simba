@@ -24,4 +24,9 @@ public class CompositeGraderTest
 		assertEquals(21.0, new CompositeGrader(l, 10).getGrade(null, null), 0.1);
 	}
 
+	@Test
+	public void testToString()
+	{
+		assertFalse(new CompositeGrader(null, 0).toString().contains("@"));
+	}
 }
