@@ -7,6 +7,7 @@ import utils.GlobalUtils;
 public class SimpleMixGrader implements Grader
 {
 
+	private static final int RATIO = 4;
 	private final Grader availableMemoryGrader = new AvailableMemoryGrader();
 	private final InvertGrader invertAvailableMemoryGrader = new InvertGrader(new AvailableMemoryGrader());
 
@@ -18,7 +19,7 @@ public class SimpleMixGrader implements Grader
 	public double getGrade(Host host, Job job)
 	{
 		double ratio = job.memory() / job.cores();
-		if (GlobalUtils.equals(ratio, 8) || ratio > 8)
+		if (GlobalUtils.equals(ratio, RATIO) || ratio > RATIO)
 		{
 			return availableMemoryGrader.getGrade(host, job);
 		}
