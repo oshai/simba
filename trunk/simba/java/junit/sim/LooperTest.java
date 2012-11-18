@@ -38,6 +38,7 @@ public class LooperTest
 		SimpleScheduler scheduler = mock(SimpleScheduler.class);
 		Looper looper = new Looper(clock, eventQueue, new WaitingQueue(), scheduler, mock(HostCollector.class), mock(JobFinisher.class));
 		looper.setTimeToLog(1);
+		looper.setTimeToSchedule(1);
 		looper.execute();
 		verify(scheduler).schedule(1);
 		assertEquals(1, clock.time());
@@ -88,6 +89,7 @@ public class LooperTest
 		WaitingQueue waitingQueue = new WaitingQueue();
 		Scheduler scheduler = mock(SimpleScheduler.class);
 		Looper looper = new Looper(clock, eventQueue, waitingQueue, scheduler, mock(HostCollector.class), mock(JobFinisher.class));
+		looper.setTimeToSchedule(1);
 		assertFalse(looper.tick());
 		verify(scheduler).schedule(1);
 		assertFalse(looper.tick());
@@ -104,6 +106,7 @@ public class LooperTest
 		waitingQueue.add(job);
 		Scheduler scheduler = mock(SimpleScheduler.class);
 		Looper looper = new Looper(clock, eventQueue, waitingQueue, scheduler, mock(HostCollector.class), mock(JobFinisher.class));
+		looper.setTimeToSchedule(1);
 		assertFalse(looper.tick());
 		verify(scheduler).schedule(1);
 	}
@@ -118,6 +121,7 @@ public class LooperTest
 		WaitingQueue waitingQueue = new WaitingQueue();
 		SimpleScheduler scheduler = mock(SimpleScheduler.class);
 		Looper looper = new Looper(clock, eventQueue, waitingQueue, scheduler, mock(HostCollector.class), mock(JobFinisher.class));
+		looper.setTimeToSchedule(1);
 		assertTrue(looper.tick());
 		verify(scheduler).schedule(1);
 	}

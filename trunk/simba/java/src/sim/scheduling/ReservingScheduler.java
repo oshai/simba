@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import sim.Looper;
 import sim.model.Cluster;
 import sim.model.Host;
 import sim.model.Job;
@@ -36,7 +37,7 @@ public class ReservingScheduler implements Scheduler
 		int reservingJobsCount = 0;
 		int processedJobsCount = 0;
 		Iterator<Job> iterator = waitingQueue.iterator();
-		while (iterator.hasNext() && processedJobsCount < 100)
+		while (iterator.hasNext() && processedJobsCount < Looper.JOBS_CHECKED_BY_SCHEDULER)
 		{
 			processedJobsCount++;
 			Job job = iterator.next();

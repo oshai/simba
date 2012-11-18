@@ -18,6 +18,8 @@ public class Looper
 {
 	private static final Logger log = Logger.getLogger(Looper.class);
 	private long timeToLog = 60 * 60 * 24;// 1 day
+	private int timeToSchedule = 10;
+	public static final int JOBS_CHECKED_BY_SCHEDULER = 100;
 	private long timeToLogPassed;
 	private final Clock clock;
 	private final EventQueue eventQueue;
@@ -26,6 +28,7 @@ public class Looper
 	private HostCollector hostCollector;
 	private final JobFinisher jobFinisher;
 	private boolean firstCycle = true;
+	private boolean hasEventsNotScheduleYet = true;
 
 	public Looper(Clock clock, EventQueue eventQueue, WaitingQueue waitingQueue, Scheduler scheduler, HostCollector hostCollector, JobFinisher jobFinisher)
 	{
@@ -57,9 +60,11 @@ public class Looper
 	{
 		long time = clock.tick();
 		boolean handeledEvents = handleEvents(time);
-		if (handeledEvents || firstCycle)
+		hasEventsNotScheduleYet = hasEventsNotScheduleYet || handeledEvents;
+		if (time % timeToSchedule == 0 && (hasEventsNotScheduleYet || firstCycle))
 		{
 			scheduler.schedule(time);
+			hasEventsNotScheduleYet = false;
 		}
 		hostCollector.collect(time);
 		if (time % timeToLog == 0 || firstCycle)
@@ -76,16 +81,20 @@ public class Looper
 		boolean $ = false;
 		while (eventQueue.peek() != null && eventQueue.peek().time() == time)
 		{
-			$ = true;
 			Event event = eventQueue.removeFirst();
 			if (event instanceof Submit)
 			{
 				Submit submit = (Submit) event;
 				Job job = submit.job();
 				waitingQueue.add(job);
+				if (!(waitingQueue.size() > JOBS_CHECKED_BY_SCHEDULER))
+				{
+					$ = true;
+				}
 			}
 			else if (event instanceof Finish)
 			{
+				$ = true;
 				Finish finish = (Finish) event;
 				jobFinisher.finish(finish);
 
@@ -101,5 +110,10 @@ public class Looper
 	public void setTimeToLog(long time)
 	{
 		timeToLog = time;
+	}
+
+	public void setTimeToSchedule(int time)
+	{
+		timeToSchedule = time;
 	}
 }
