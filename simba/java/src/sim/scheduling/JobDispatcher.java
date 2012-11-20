@@ -5,17 +5,17 @@ import sim.events.Finish;
 import sim.model.Host;
 import sim.model.Job;
 
-public class Dispatcher
+public class JobDispatcher
 {
 	
 	private final EventQueue eventQueue;
 	
-	public Dispatcher(EventQueue eventQueue)
+	public JobDispatcher(EventQueue eventQueue)
 	{
 		this.eventQueue = eventQueue;
 	}
 	
-	public void dipatch(Job job, Host host, long currentTime)
+	public void dispatch(Job job, Host host, long currentTime)
 	{
 		host.dispatchJob(job);
 		eventQueue.add(new Finish(currentTime + job.length(), job, host));

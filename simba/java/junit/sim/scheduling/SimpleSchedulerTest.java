@@ -27,12 +27,12 @@ public class SimpleSchedulerTest
 		cluster.add(host);
 		Matcher matcher = mock(Matcher.class);
 		when(matcher.match(job, cluster.hosts())).thenReturn(host);
-		Dispatcher dispatcher = mock(Dispatcher.class);
+		JobDispatcher dispatcher = mock(JobDispatcher.class);
 		Scheduler scheduler = new SimpleScheduler(waitingQueue, cluster, matcher, dispatcher);
 		long time = 1;
 		scheduler.schedule(time);
 		assertTrue(waitingQueue.isEmpty());
-		verify(dispatcher).dipatch(job, host, time);
+		verify(dispatcher).dispatch(job, host, time);
 	}
 
 	@Test
@@ -45,7 +45,7 @@ public class SimpleSchedulerTest
 		Host host = Host.create().cores(0).memory(0).build();
 		cluster.add(host);
 		Matcher matcher = mock(Matcher.class);
-		Dispatcher dispatcher = mock(Dispatcher.class);
+		JobDispatcher dispatcher = mock(JobDispatcher.class);
 		Scheduler scheduler = new SimpleScheduler(waitingQueue, cluster, matcher, dispatcher);
 		scheduler.schedule(0);
 		assertEquals(1, waitingQueue.size());

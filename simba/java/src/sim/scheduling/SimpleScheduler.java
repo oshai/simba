@@ -11,9 +11,9 @@ public class SimpleScheduler implements Scheduler
 	private final WaitingQueue waitingQueue;
 	private final Cluster cluster;
 	private final Matcher matcher;
-	private final Dispatcher dispatcher;
+	private final JobDispatcher dispatcher;
 
-	public SimpleScheduler(WaitingQueue waitingQueue, Cluster cluster, Matcher matcher, Dispatcher dispatcher)
+	public SimpleScheduler(WaitingQueue waitingQueue, Cluster cluster, Matcher matcher, JobDispatcher dispatcher)
 	{
 		this.cluster = cluster;
 		this.waitingQueue = waitingQueue;
@@ -34,7 +34,7 @@ public class SimpleScheduler implements Scheduler
 			}
 			Job jobRemoved = waitingQueue.remove();
 			asserter().assertEquals(job, jobRemoved, "someone is modifying queue while scheduling");
-			dispatcher.dipatch(job, host, time);
+			dispatcher.dispatch(job, host, time);
 		}
 	}
 }

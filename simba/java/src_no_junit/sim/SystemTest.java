@@ -16,7 +16,7 @@ import sim.events.Submit;
 import sim.model.Cluster;
 import sim.model.Host;
 import sim.model.Job;
-import sim.scheduling.Dispatcher;
+import sim.scheduling.JobDispatcher;
 import sim.scheduling.Scheduler;
 import sim.scheduling.SimpleScheduler;
 import sim.scheduling.WaitingQueue;
@@ -100,7 +100,7 @@ public class SystemTest
 		}
 		WaitingQueue waitingQueue = new WaitingQueue();
 		WaitingQueueStatistics waitingQueueStatistics = new WaitingQueueStatistics(waitingQueue, Looper.JOBS_CHECKED_BY_SCHEDULER, clock);
-		Dispatcher dispatcher = new Dispatcher(eventQueue);
+		JobDispatcher dispatcher = new JobDispatcher(eventQueue);
 		Matcher matcher = new FirstFit();
 		Scheduler scheduler = new SimpleScheduler(waitingQueue, cluster, matcher, dispatcher);
 		JobCollector jobCollector = new JobCollector();
