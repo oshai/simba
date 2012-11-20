@@ -5,6 +5,7 @@ import static org.mockito.Mockito.*;
 
 import org.junit.Test;
 
+import sim.event_handling.EventQueue;
 import sim.model.Job;
 
 public class ByTraceSchedulerTest
@@ -16,12 +17,12 @@ public class ByTraceSchedulerTest
 		WaitingQueue waitingQueue = new WaitingQueue();
 		Job job = Job.create(1).startTime(1).build();
 		waitingQueue.add(job);
-		Dispatcher dispatcher = mock(Dispatcher.class);
-		Scheduler scheduler = new ByTraceScheduler(waitingQueue, dispatcher);
+		JobDispatcher dispatcher = new JobDispatcher(mock(EventQueue.class));
+		Scheduler tested = new ByTraceScheduler(waitingQueue, dispatcher);
 		long time = 1;
-		scheduler.schedule(time);
+		tested.schedule(time);
 		assertTrue(waitingQueue.isEmpty());
-		verify(dispatcher).dipatch(job, null, time);
+		verify(dispatcher).dispatch(job, null, time);
 	}
 
 	@Test
@@ -30,10 +31,10 @@ public class ByTraceSchedulerTest
 		WaitingQueue waitingQueue = new WaitingQueue();
 		Job job = Job.create(1).startTime(1).build();
 		waitingQueue.add(job);
-		Dispatcher dispatcher = mock(Dispatcher.class);
-		Scheduler scheduler = new ByTraceScheduler(waitingQueue, dispatcher);
+		JobDispatcher dispatcher = mock(JobDispatcher.class);
+		Scheduler tested = new ByTraceScheduler(waitingQueue, dispatcher);
 		long time = 0;
-		scheduler.schedule(time);
+		tested.schedule(time);
 		assertEquals(1, waitingQueue.size());
 	}
 

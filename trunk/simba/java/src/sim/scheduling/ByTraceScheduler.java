@@ -2,14 +2,16 @@ package sim.scheduling;
 
 import java.util.Iterator;
 
+import sim.model.Host;
 import sim.model.Job;
 
 public class ByTraceScheduler implements Scheduler
 {
+	private static final Host DUMMY_HOST = Host.create().build();
 	private final WaitingQueue waitingQueue;
-	private final Dispatcher dispatcher;
+	private final JobDispatcher dispatcher;
 
-	public ByTraceScheduler(WaitingQueue waitingQueue, Dispatcher dispatcher)
+	public ByTraceScheduler(WaitingQueue waitingQueue, JobDispatcher dispatcher)
 	{
 		this.waitingQueue = waitingQueue;
 		this.dispatcher = dispatcher;
@@ -25,7 +27,7 @@ public class ByTraceScheduler implements Scheduler
 			if (job.startTime() <= time)
 			{
 				iterator.remove();
-				dispatcher.dipatch(job, null, time);
+				dispatcher.dispatch(job, DUMMY_HOST, time);
 			}
 		}
 	}

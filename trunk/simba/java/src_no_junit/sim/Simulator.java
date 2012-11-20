@@ -21,7 +21,7 @@ import sim.model.Job;
 import sim.parsers.HostParser;
 import sim.parsers.JobParser;
 import sim.scheduling.ByTraceScheduler;
-import sim.scheduling.Dispatcher;
+import sim.scheduling.JobDispatcher;
 import sim.scheduling.ReservingScheduler;
 import sim.scheduling.Scheduler;
 import sim.scheduling.SimpleScheduler;
@@ -127,7 +127,7 @@ public class Simulator
 
 	protected Looper createLooper(Cluster cluster, EventQueue eventQueue, Clock clock, Grader grader)
 	{
-		Dispatcher dispatcher = new Dispatcher(eventQueue);
+		JobDispatcher dispatcher = new JobDispatcher(eventQueue);
 		WaitingQueue waitingQueue = new WaitingQueue();
 		WaitingQueueStatistics waitingQueueStatistics = new WaitingQueueStatistics(waitingQueue, Looper.JOBS_CHECKED_BY_SCHEDULER, clock);
 		if (submitImmediately())
@@ -143,7 +143,7 @@ public class Simulator
 		return looper;
 	}
 
-	private Scheduler createSchduler(Cluster cluster, Grader grader, Dispatcher dispatcher, WaitingQueue waitingQueue)
+	private Scheduler createSchduler(Cluster cluster, Grader grader, JobDispatcher dispatcher, WaitingQueue waitingQueue)
 	{
 		if ("fifo".equals(getSchedulerProperty()))
 		{

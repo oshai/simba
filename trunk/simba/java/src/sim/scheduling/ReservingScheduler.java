@@ -21,12 +21,12 @@ public class ReservingScheduler implements Scheduler
 	private final WaitingQueue waitingQueue;
 	private final Cluster cluster;
 	private final Grader grader;
-	private final Dispatcher dispatcher;
+	private final JobDispatcher dispatcher;
 	private Map<String, Reservation> reservations;
 	private List<Host> currentCycleHosts;
 	private static final Job DUMMY_JOB = Job.create(1).build();
 
-	public ReservingScheduler(WaitingQueue waitingQueue, Cluster cluster, Grader grader, Dispatcher dispatcher)
+	public ReservingScheduler(WaitingQueue waitingQueue, Cluster cluster, Grader grader, JobDispatcher dispatcher)
 	{
 		this.cluster = cluster;
 		this.waitingQueue = waitingQueue;
@@ -48,7 +48,7 @@ public class ReservingScheduler implements Scheduler
 			Host host = getBestHost(job);
 			if (isAvailable(host, job))
 			{
-				dispatcher.dipatch(job, host, time);
+				dispatcher.dispatch(job, host, time);
 				iterator.remove();
 			}
 			else

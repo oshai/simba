@@ -22,7 +22,7 @@ public class DispatcherTest
 		Job job = Job.create(jobLength).priority(0).submitTime(0).cores(0).memory(0).build();
 		Host host = mock(Host.class);
 		EventQueue eventQueue = new EventQueue(new Clock());
-		new Dispatcher(eventQueue).dipatch(job, host, currentTime);
+		new JobDispatcher(eventQueue).dispatch(job, host, currentTime);
 		verify(host).dispatchJob(job);
 		assertEquals(job.startTime(), currentTime);
 		assertEquals(1, eventQueue.size());
