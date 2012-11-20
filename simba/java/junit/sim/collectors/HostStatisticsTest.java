@@ -7,7 +7,6 @@ import org.junit.Test;
 import sim.model.Cluster;
 import sim.model.Host;
 import sim.model.Job;
-import sim.scheduling.WaitingQueue;
 
 public class HostStatisticsTest
 {
@@ -34,7 +33,6 @@ public class HostStatisticsTest
 		assertEquals(0, tested.reverseMixVariance(), 0.1);
 		assertEquals(0, tested.usedCores());
 		assertEquals(0, tested.usedMemory());
-		assertEquals(0, tested.waitingJobs());
 	}
 
 	@Test
@@ -59,8 +57,7 @@ public class HostStatisticsTest
 
 	public HostStatistics create(Cluster c)
 	{
-		WaitingQueue w = new WaitingQueue();
-		HostStatistics tested = new HostStatistics(c, w);
+		HostStatistics tested = new HostStatistics(c);
 		return tested;
 	}
 

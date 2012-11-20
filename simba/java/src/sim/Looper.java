@@ -4,7 +4,7 @@ import static utils.assertions.Asserter.*;
 
 import org.apache.log4j.Logger;
 
-import sim.collectors.HostCollector;
+import sim.collectors.IntervalCollector;
 import sim.event_handling.EventQueue;
 import sim.events.Event;
 import sim.events.Finish;
@@ -25,12 +25,12 @@ public class Looper
 	private final EventQueue eventQueue;
 	private final WaitingQueue waitingQueue;
 	private final Scheduler scheduler;
-	private HostCollector hostCollector;
+	private IntervalCollector hostCollector;
 	private final JobFinisher jobFinisher;
 	private boolean firstCycle = true;
 	private boolean hasEventsNotScheduleYet = true;
 
-	public Looper(Clock clock, EventQueue eventQueue, WaitingQueue waitingQueue, Scheduler scheduler, HostCollector hostCollector, JobFinisher jobFinisher)
+	public Looper(Clock clock, EventQueue eventQueue, WaitingQueue waitingQueue, Scheduler scheduler, IntervalCollector hostCollector, JobFinisher jobFinisher)
 	{
 		this.scheduler = scheduler;
 		this.waitingQueue = waitingQueue;
@@ -97,7 +97,6 @@ public class Looper
 				$ = true;
 				Finish finish = (Finish) event;
 				jobFinisher.finish(finish);
-
 			}
 			else
 			{

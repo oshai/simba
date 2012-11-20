@@ -8,8 +8,9 @@ import java.util.ArrayList;
 import org.junit.Before;
 import org.junit.Test;
 
-import sim.collectors.HostCollector;
+import sim.collectors.IntervalCollector;
 import sim.collectors.JobCollector;
+import sim.collectors.WaitingQueueStatistics;
 import sim.event_handling.EventQueue;
 import sim.events.Submit;
 import sim.model.Cluster;
@@ -98,11 +99,12 @@ public class SystemTest
 			eventQueue.add(new Submit(job));
 		}
 		WaitingQueue waitingQueue = new WaitingQueue();
+		WaitingQueueStatistics waitingQueueStatistics = new WaitingQueueStatistics(waitingQueue, Looper.JOBS_CHECKED_BY_SCHEDULER, clock);
 		Dispatcher dispatcher = new Dispatcher(eventQueue);
 		Matcher matcher = new FirstFit();
 		Scheduler scheduler = new SimpleScheduler(waitingQueue, cluster, matcher, dispatcher);
 		JobCollector jobCollector = new JobCollector();
-		HostCollector statistics = new HostCollector(cluster, 1, waitingQueue);
+		IntervalCollector statistics = new IntervalCollector(cluster, 1, waitingQueueStatistics);
 		JobFinisher jobFinisher = new JobFinisher(jobCollector);
 		Looper looper = new Looper(clock, eventQueue, waitingQueue, scheduler, statistics, jobFinisher);
 		return looper;
