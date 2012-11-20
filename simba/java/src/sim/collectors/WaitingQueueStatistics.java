@@ -14,16 +14,17 @@ public class WaitingQueueStatistics
 	private double avgWaitTimeFront;
 	private final int front;
 	private final Clock clock;
+	private int dispatchedJobs;
+	private int submittedJobs;
 
 	public WaitingQueueStatistics(WaitingQueue waitingQueue, int front, Clock clock)
 	{
 		this.front = front;
 		this.waitingQueue = waitingQueue;
 		this.clock = clock;
-		calculateAverageMemoryFront();
 	}
 
-	private void calculateAverageMemoryFront()
+	public void updateStatistics()
 	{
 		if (waitingQueue.isEmpty())
 		{
@@ -42,6 +43,8 @@ public class WaitingQueueStatistics
 		}
 		avgMemoryFront = sumMemory / i;
 		avgWaitTimeFront = sumWaitTime / i;
+		dispatchedJobs = waitingQueue.collectRemove();
+		submittedJobs = waitingQueue.collectAdd();
 	}
 
 	public int waitingJobs()
@@ -57,6 +60,16 @@ public class WaitingQueueStatistics
 	public double avgWaitTimeFront()
 	{
 		return avgWaitTimeFront;
+	}
+
+	public int dispatchedJobs()
+	{
+		return dispatchedJobs;
+	}
+
+	public int submittedJobs()
+	{
+		return submittedJobs;
 	}
 
 }
