@@ -105,7 +105,7 @@ public class Simulator
 		graders.put("FF", new Constant(0)); // constant grader
 		graders.put("RF", new RandomGrader(100000)); // random grader
 		graders.put("WF", new AvailableMemoryGrader()); // specific grader
-		graders.put("BTG", new ThrowingExceptionGrader());
+		graders.put("BT", new ThrowingExceptionGrader());
 
 		Grader $ = graders.get(getGraderProperty().toUpperCase());
 		if (null == $)
