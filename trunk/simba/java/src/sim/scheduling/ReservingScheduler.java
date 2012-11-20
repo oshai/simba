@@ -1,10 +1,12 @@
 package sim.scheduling;
 
+import static com.google.common.collect.Lists.*;
 import static utils.GlobalUtils.*;
 import static utils.assertions.Asserter.*;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import sim.Looper;
@@ -21,6 +23,8 @@ public class ReservingScheduler implements Scheduler
 	private final Grader grader;
 	private final Dispatcher dispatcher;
 	private Map<String, Reservation> reservations;
+	private List<Host> currentCycleHosts;
+	private static final Job DUMMY_JOB = Job.create(1).build();
 
 	public ReservingScheduler(WaitingQueue waitingQueue, Cluster cluster, Grader grader, Dispatcher dispatcher)
 	{
@@ -37,7 +41,7 @@ public class ReservingScheduler implements Scheduler
 		int reservingJobsCount = 0;
 		int processedJobsCount = 0;
 		Iterator<Job> iterator = waitingQueue.iterator();
-		while (iterator.hasNext() && processedJobsCount < Looper.JOBS_CHECKED_BY_SCHEDULER)
+		while (iterator.hasNext() && processedJobsCount < Looper.JOBS_CHECKED_BY_SCHEDULER && !currentCycleHosts.isEmpty())
 		{
 			processedJobsCount++;
 			Job job = iterator.next();
@@ -55,12 +59,40 @@ public class ReservingScheduler implements Scheduler
 					reservingJobsCount++;
 				}
 			}
+			updateCurrentCycleHosts(host);
 		}
+	}
+
+	private void updateCurrentCycleHosts(Host host)
+	{
+		if (isFull(host))
+		{
+			currentCycleHosts.remove(host);
+		}
+	}
+
+	private List<Host> removeHostsThatAreFull(List<Host> hosts)
+	{
+		List<Host> $ = newArrayList();
+		for (Host host : hosts)
+		{
+			if (!isFull(host))
+			{
+				$.add(host);
+			}
+		}
+		return $;
+	}
+
+	private boolean isFull(Host host)
+	{
+		return !isAvailable(host, DUMMY_JOB);
 	}
 
 	private void init()
 	{
 		reservations = new HashMap<String, Reservation>();
+		currentCycleHosts = removeHostsThatAreFull(cluster.hosts());
 	}
 
 	private void reserve(Host host, Job job)
@@ -118,7 +150,7 @@ public class ReservingScheduler implements Scheduler
 	{
 		Host selectedHost = null;
 		boolean isAvailable = false;
-		for (Host host : cluster.hosts())
+		for (Host host : currentCycleHosts)
 		{
 			double grade = grader.getGrade(host, job);
 			if (null == selectedHost)
