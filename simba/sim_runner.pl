@@ -17,23 +17,25 @@ my $jobsFile = "/nfs/iil/stod/stod048/w.nbdist.104/oshai/jobs.${testName}.csv";
 #my $jobsFile = "/nfs/iil/iec/sws/work/oshai/public/workload/traces2/iil1_trace_14-10-28-10-2012.csv";
 my @tests = ( 
 			'bf',
-			'bfi',
+#			'bfi',
+			'bt',
 			'nf',
-			'ff',
-			'wf',
-			'rf',
+#			'ff',
+#			'wf',
+#			'rf',
 			'mf',
-			'mf4',
-			'smf',
+#			'mf4',
+#			'smf',
 			);
 my $simulatorJar = "/nfs/iil/iec/sws/work/oshai/simba.jar";
 print "running test $testName\n";
 foreach (@tests) 
 {
 	my $algo = $_;
+	my $sched = $algo eq 'bt' ? "by-trace" : $scheduler;
 	my $specificTestDir = $testDir."/$algo";
 	system("mkdir -p $specificTestDir");
-	my $cmd = "echo algo $algo pid \$\$ dir $specificTestDir ; cd $specificTestDir; /usr/intel/pkgs/java/1.6.0.31-64/bin/java -Xmx15g -Dscheduler=$scheduler -Dhosts-file=$hostsFile -Dhosts-memory-noralize=$normalizer -Dhost-memory-multiplier=$multiplier -Djobs-file=$jobsFile -Dgrader=$algo -jar $simulatorJar > sim.out &";
+	my $cmd = "echo algo $algo pid \$\$ dir $specificTestDir ; cd $specificTestDir; /usr/intel/pkgs/java/1.6.0.31-64/bin/java -Xmx15g -Dscheduler=$sched -Dhosts-file=$hostsFile -Dhosts-memory-noralize=$normalizer -Dhost-memory-multiplier=$multiplier -Djobs-file=$jobsFile -Dgrader=$algo -jar $simulatorJar > sim.out &";
 #	print "executing $cmd\n"; 
   	system("$cmd");
 }
