@@ -4,14 +4,12 @@ import org.apache.commons.math3.stat.descriptive.moment.Variance;
 
 import sim.model.Cluster;
 import sim.model.Host;
-import sim.scheduling.WaitingQueue;
 
 public class HostStatistics
 {
 
 	private static final double CONST = 0.01;
 	private final Cluster cluster;
-	private final WaitingQueue waitingQueue;
 	private long memory = 0;
 	private long cores = 0;
 	private long usedMemory = 0;
@@ -23,10 +21,9 @@ public class HostStatistics
 	private double reverseMixSum;
 	private Variance reverseMixVariance = new Variance();
 
-	public HostStatistics(Cluster cluster, WaitingQueue waitingQueue)
+	public HostStatistics(Cluster cluster)
 	{
 		this.cluster = cluster;
-		this.waitingQueue = waitingQueue;
 		if (cluster.hosts().isEmpty())
 		{
 			throw new IllegalArgumentException("cluster is empty");
@@ -42,11 +39,6 @@ public class HostStatistics
 	public double mixAverage()
 	{
 		return mixSum / cluster.hosts().size();
-	}
-
-	public int waitingJobs()
-	{
-		return waitingQueue.size();
 	}
 
 	public double usedMemoryVariance()

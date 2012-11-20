@@ -6,7 +6,7 @@ import static org.mockito.Mockito.*;
 
 import org.junit.Test;
 
-import sim.collectors.HostCollector;
+import sim.collectors.IntervalCollector;
 import sim.event_handling.EventQueue;
 import sim.events.Finish;
 import sim.events.NoOp;
@@ -24,7 +24,7 @@ public class LooperTest
 	public void testEmpty()
 	{
 		Clock clock = new Clock();
-		Looper looper = new Looper(clock, new EventQueue(clock), new WaitingQueue(), mock(SimpleScheduler.class), mock(HostCollector.class),
+		Looper looper = new Looper(clock, new EventQueue(clock), new WaitingQueue(), mock(SimpleScheduler.class), mock(IntervalCollector.class),
 				mock(JobFinisher.class));
 		looper.execute();
 	}
@@ -36,7 +36,7 @@ public class LooperTest
 		EventQueue eventQueue = new EventQueue(clock);
 		eventQueue.add(new NoOp(1));
 		SimpleScheduler scheduler = mock(SimpleScheduler.class);
-		Looper looper = new Looper(clock, eventQueue, new WaitingQueue(), scheduler, mock(HostCollector.class), mock(JobFinisher.class));
+		Looper looper = new Looper(clock, eventQueue, new WaitingQueue(), scheduler, mock(IntervalCollector.class), mock(JobFinisher.class));
 		looper.setTimeToLog(1);
 		looper.setTimeToSchedule(1);
 		looper.execute();
@@ -53,7 +53,7 @@ public class LooperTest
 		Job job = Job.create(1).priority(0).submitTime(1).cores(0).memory(0).build();
 		eventQueue.add(new Submit(job));
 		WaitingQueue waitingQueue = new WaitingQueue();
-		Looper looper = new Looper(clock, eventQueue, waitingQueue, mock(SimpleScheduler.class), mock(HostCollector.class), mock(JobFinisher.class));
+		Looper looper = new Looper(clock, eventQueue, waitingQueue, mock(SimpleScheduler.class), mock(IntervalCollector.class), mock(JobFinisher.class));
 		looper.tick();
 		assertEquals(1, clock.time());
 		assertTrue(eventQueue.isEmpty());
@@ -72,7 +72,7 @@ public class LooperTest
 		eventQueue.add(new Finish(1, job, host));
 		WaitingQueue waitingQueue = new WaitingQueue();
 		JobFinisher jobFinisher = mock(JobFinisher.class);
-		Looper looper = new Looper(clock, eventQueue, waitingQueue, mock(SimpleScheduler.class), mock(HostCollector.class), jobFinisher);
+		Looper looper = new Looper(clock, eventQueue, waitingQueue, mock(SimpleScheduler.class), mock(IntervalCollector.class), jobFinisher);
 		looper.tick();
 		assertEquals(1, clock.time());
 		assertTrue(eventQueue.isEmpty());
@@ -88,7 +88,7 @@ public class LooperTest
 		eventQueue.add(new Submit(job));
 		WaitingQueue waitingQueue = new WaitingQueue();
 		Scheduler scheduler = mock(SimpleScheduler.class);
-		Looper looper = new Looper(clock, eventQueue, waitingQueue, scheduler, mock(HostCollector.class), mock(JobFinisher.class));
+		Looper looper = new Looper(clock, eventQueue, waitingQueue, scheduler, mock(IntervalCollector.class), mock(JobFinisher.class));
 		looper.setTimeToSchedule(1);
 		assertFalse(looper.tick());
 		verify(scheduler).schedule(1);
@@ -105,7 +105,7 @@ public class LooperTest
 		WaitingQueue waitingQueue = new WaitingQueue();
 		waitingQueue.add(job);
 		Scheduler scheduler = mock(SimpleScheduler.class);
-		Looper looper = new Looper(clock, eventQueue, waitingQueue, scheduler, mock(HostCollector.class), mock(JobFinisher.class));
+		Looper looper = new Looper(clock, eventQueue, waitingQueue, scheduler, mock(IntervalCollector.class), mock(JobFinisher.class));
 		looper.setTimeToSchedule(1);
 		assertFalse(looper.tick());
 		verify(scheduler).schedule(1);
@@ -120,7 +120,7 @@ public class LooperTest
 		eventQueue.add(new Submit(job));
 		WaitingQueue waitingQueue = new WaitingQueue();
 		SimpleScheduler scheduler = mock(SimpleScheduler.class);
-		Looper looper = new Looper(clock, eventQueue, waitingQueue, scheduler, mock(HostCollector.class), mock(JobFinisher.class));
+		Looper looper = new Looper(clock, eventQueue, waitingQueue, scheduler, mock(IntervalCollector.class), mock(JobFinisher.class));
 		looper.setTimeToSchedule(1);
 		assertTrue(looper.tick());
 		verify(scheduler).schedule(1);

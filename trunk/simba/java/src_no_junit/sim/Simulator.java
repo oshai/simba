@@ -10,8 +10,9 @@ import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
-import sim.collectors.HostCollector;
+import sim.collectors.IntervalCollector;
 import sim.collectors.JobCollector;
+import sim.collectors.WaitingQueueStatistics;
 import sim.event_handling.EventQueue;
 import sim.events.Event;
 import sim.events.Submit;
@@ -125,6 +126,7 @@ public class Simulator
 	{
 		Dispatcher dispatcher = new Dispatcher(eventQueue);
 		WaitingQueue waitingQueue = new WaitingQueue();
+		WaitingQueueStatistics waitingQueueStatistics = new WaitingQueueStatistics(waitingQueue, Looper.JOBS_CHECKED_BY_SCHEDULER, clock);
 		if (submitImmediately())
 		{
 			moveJobsToWaitQueue(eventQueue, waitingQueue);
@@ -133,7 +135,7 @@ public class Simulator
 		log.info("createLooper() - scheduler is " + scheduler.getClass().getSimpleName());
 		JobCollector jobCollector = new JobCollector();
 		JobFinisher jobFinisher = new JobFinisher(jobCollector);
-		HostCollector hostCollector = new HostCollector(cluster, 300, waitingQueue);
+		IntervalCollector hostCollector = new IntervalCollector(cluster, 300, waitingQueueStatistics);
 		Looper looper = new Looper(clock, eventQueue, waitingQueue, scheduler, hostCollector, jobFinisher);
 		return looper;
 	}
