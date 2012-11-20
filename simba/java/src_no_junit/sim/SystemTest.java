@@ -104,8 +104,8 @@ public class SystemTest
 		Matcher matcher = new FirstFit();
 		Scheduler scheduler = new SimpleScheduler(waitingQueue, cluster, matcher, dispatcher);
 		JobCollector jobCollector = new JobCollector();
-		IntervalCollector statistics = new IntervalCollector(cluster, 1, waitingQueueStatistics);
 		JobFinisher jobFinisher = new JobFinisher(jobCollector);
+		IntervalCollector statistics = new IntervalCollector(cluster, 1, waitingQueueStatistics, jobFinisher);
 		Looper looper = new Looper(clock, eventQueue, waitingQueue, scheduler, statistics, jobFinisher);
 		return looper;
 	}
