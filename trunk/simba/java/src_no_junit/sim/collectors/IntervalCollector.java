@@ -24,11 +24,12 @@ public class IntervalCollector extends Collector<Long>
 	protected String collectLine(Long time)
 	{
 		HostStatistics hostStatistics = new HostStatistics(cluster);
+		waitingQueueStatistics.updateStatistics();
 		String line = time + SEPERATOR + hostStatistics.cores() + SEPERATOR + hostStatistics.usedCores() + SEPERATOR + hostStatistics.memory() + SEPERATOR
 				+ hostStatistics.usedMemory() + SEPERATOR + hostStatistics.usedMemoryAverage() + SEPERATOR + hostStatistics.usedMemoryVariance() + SEPERATOR
 				+ waitingQueueStatistics.waitingJobs() + SEPERATOR + hostStatistics.reverseMixAverage() + SEPERATOR + hostStatistics.reverseMixVariance()
 				+ SEPERATOR + waitingQueueStatistics.avgMemoryFront() + SEPERATOR + waitingQueueStatistics.avgWaitTimeFront() + SEPERATOR
-				+ jobFinisher.collectFinishedJobs();
+				+ jobFinisher.collectFinishedJobs() + SEPERATOR + waitingQueueStatistics.dispatchedJobs() + SEPERATOR + waitingQueueStatistics.submittedJobs();
 		return line;
 	}
 
@@ -38,7 +39,7 @@ public class IntervalCollector extends Collector<Long>
 		String line = "#time" + SEPERATOR + "cores" + SEPERATOR + "usedCores" + SEPERATOR + "memory" + SEPERATOR + "usedMemory" + SEPERATOR + "memoryAverage"
 				+ SEPERATOR + "memoryVariance" + SEPERATOR + "waitQueueSize" + SEPERATOR + "mixAverage" + SEPERATOR + "mixVariance" + SEPERATOR
 				+ "reverseMixAverage" + SEPERATOR + "reverseMixVariance" + SEPERATOR + "avgMemoryFront" + SEPERATOR + "avgWaitTimeFront" + SEPERATOR
-				+ "finishedJobs";
+				+ "finishedJobs" + SEPERATOR + "dispatchedJobs" + SEPERATOR + "submittedJobs";
 		return line;
 	}
 
