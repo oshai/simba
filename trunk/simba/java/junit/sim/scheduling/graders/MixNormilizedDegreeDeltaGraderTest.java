@@ -6,7 +6,6 @@ import org.junit.Test;
 
 import sim.model.Host;
 import sim.model.Job;
-import sim.scheduling.matchers.GradeMatcherProvider;
 
 public class MixNormilizedDegreeDeltaGraderTest
 {

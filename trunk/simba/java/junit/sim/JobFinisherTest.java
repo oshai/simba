@@ -1,5 +1,6 @@
 package sim;
 
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 import org.apache.commons.math3.util.Pair;
@@ -23,6 +24,8 @@ public class JobFinisherTest
 		jobFinisher.finish(new Finish(5, job, host));
 		verify(c).collect(new Pair<Job, Host>(job, host));
 		verify(host).finishJob(job);
+		assertEquals(1, jobFinisher.collectFinishedJobs());
+		assertEquals(0, jobFinisher.collectFinishedJobs());
 	}
 
 	@Test

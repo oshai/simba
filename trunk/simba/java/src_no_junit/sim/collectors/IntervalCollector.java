@@ -1,5 +1,6 @@
 package sim.collectors;
 
+import sim.JobFinisher;
 import sim.model.Cluster;
 
 public class IntervalCollector extends Collector<Long>
@@ -8,13 +9,15 @@ public class IntervalCollector extends Collector<Long>
 	private Cluster cluster;
 	private long modulo;
 	private final WaitingQueueStatistics waitingQueueStatistics;
+	private final JobFinisher jobFinisher;
 
-	public IntervalCollector(Cluster cluster, long modulo, WaitingQueueStatistics waitingQueueStatistics)
+	public IntervalCollector(Cluster cluster, long modulo, WaitingQueueStatistics waitingQueueStatistics, JobFinisher jobFinisher)
 	{
 		super();
 		this.cluster = cluster;
 		this.modulo = modulo;
 		this.waitingQueueStatistics = waitingQueueStatistics;
+		this.jobFinisher = jobFinisher;
 	}
 
 	@Override
@@ -24,7 +27,8 @@ public class IntervalCollector extends Collector<Long>
 		String line = time + SEPERATOR + hostStatistics.cores() + SEPERATOR + hostStatistics.usedCores() + SEPERATOR + hostStatistics.memory() + SEPERATOR
 				+ hostStatistics.usedMemory() + SEPERATOR + hostStatistics.usedMemoryAverage() + SEPERATOR + hostStatistics.usedMemoryVariance() + SEPERATOR
 				+ waitingQueueStatistics.waitingJobs() + SEPERATOR + hostStatistics.reverseMixAverage() + SEPERATOR + hostStatistics.reverseMixVariance()
-				+ SEPERATOR + waitingQueueStatistics.avgMemoryFront() + SEPERATOR + waitingQueueStatistics.avgWaitTimeFront();
+				+ SEPERATOR + waitingQueueStatistics.avgMemoryFront() + SEPERATOR + waitingQueueStatistics.avgWaitTimeFront() + SEPERATOR
+				+ jobFinisher.collectFinishedJobs();
 		return line;
 	}
 
@@ -33,7 +37,8 @@ public class IntervalCollector extends Collector<Long>
 	{
 		String line = "#time" + SEPERATOR + "cores" + SEPERATOR + "usedCores" + SEPERATOR + "memory" + SEPERATOR + "usedMemory" + SEPERATOR + "memoryAverage"
 				+ SEPERATOR + "memoryVariance" + SEPERATOR + "waitQueueSize" + SEPERATOR + "mixAverage" + SEPERATOR + "mixVariance" + SEPERATOR
-				+ "reverseMixAverage" + SEPERATOR + "reverseMixVariance" + SEPERATOR + "avgMemoryFront" + SEPERATOR + "avgWaitTimeFront";
+				+ "reverseMixAverage" + SEPERATOR + "reverseMixVariance" + SEPERATOR + "avgMemoryFront" + SEPERATOR + "avgWaitTimeFront" + SEPERATOR
+				+ "finishedJobs";
 		return line;
 	}
 

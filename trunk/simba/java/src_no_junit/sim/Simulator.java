@@ -135,7 +135,7 @@ public class Simulator
 		log.info("createLooper() - scheduler is " + scheduler.getClass().getSimpleName());
 		JobCollector jobCollector = new JobCollector();
 		JobFinisher jobFinisher = new JobFinisher(jobCollector);
-		IntervalCollector hostCollector = new IntervalCollector(cluster, 300, waitingQueueStatistics);
+		IntervalCollector hostCollector = new IntervalCollector(cluster, 300, waitingQueueStatistics, jobFinisher);
 		Looper looper = new Looper(clock, eventQueue, waitingQueue, scheduler, hostCollector, jobFinisher);
 		return looper;
 	}
