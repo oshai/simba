@@ -32,6 +32,7 @@ public class JobParser
 	private static final int index_actualclassreservation = 21;// iil-new20
 	private static final int index_jobid = 0;// iil-new also
 	private static final int index_iterationsubmittime = 18;// iil-new4
+	private static final int index_startttime = 5;// iil-new?
 	private static final int index_wtime = 9;// iil-new also
 
 	public EventQueue parse(Provider<Clock> clockProvider, final Cluster cluster)
@@ -65,7 +66,7 @@ public class JobParser
 					updateRunTimeBuckets(length);
 					updateMemoryBuckets(memory);
 					Job job = Job.create(length).id(cols[index_jobid]).priority(l(cols[index_iterationsubmittime]))
-							.submitTime(l(cols[index_iterationsubmittime])).cores(cores).memory(memory).build();
+							.submitTime(l(cols[index_iterationsubmittime])).cores(cores).memory(memory).startTime(l(cols[index_startttime])).build();
 					if (canRun(job, cluster))
 					{
 						$.add(new Submit(job));
