@@ -3,17 +3,16 @@ package sim.model;
 public class Job
 {
 	private static final long MAX_JOB_LENGTH = 60 * 60 * 24 * 31;// 1 month
-	// configuration
+
 	private String id;
 	private long priority;
 	private long submitTime;
 	private long length;
 	private double cores;
 	private double memory;
-	// runtime
 	private long startTime;
 
-	private Job(String id, long priority, long submitTime, long length, double cores, double memory)
+	private Job(String id, long priority, long submitTime, long length, double cores, double memory, long startTime)
 	{
 		super();
 		this.id = id;
@@ -22,6 +21,7 @@ public class Job
 		this.length = length;
 		this.cores = cores;
 		this.memory = memory;
+		this.startTime = startTime;
 		validate();
 	}
 
@@ -46,6 +46,7 @@ public class Job
 		private long length;
 		private double cores;
 		private double memory;
+		private long startTime;
 
 		private Builder(long length)
 		{
@@ -82,9 +83,15 @@ public class Job
 			return this;
 		}
 
+		public Builder startTime(long startTime)
+		{
+			this.startTime = startTime;
+			return this;
+		}
+
 		public Job build()
 		{
-			return new Job(id, priority, submitTime, length, cores, memory);
+			return new Job(id, priority, submitTime, length, cores, memory, startTime);
 		}
 	}
 
