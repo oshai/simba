@@ -20,6 +20,7 @@ import sim.model.Cluster;
 import sim.model.Job;
 import sim.parsers.HostParser;
 import sim.parsers.JobParser;
+import sim.scheduling.ByTraceScheduler;
 import sim.scheduling.Dispatcher;
 import sim.scheduling.ReservingScheduler;
 import sim.scheduling.Scheduler;
@@ -29,6 +30,7 @@ import sim.scheduling.graders.AvailableMemoryGrader;
 import sim.scheduling.graders.Constant;
 import sim.scheduling.graders.Grader;
 import sim.scheduling.graders.RandomGrader;
+import sim.scheduling.graders.ThrowingExceptionGrader;
 import sim.scheduling.matchers.GradeMatcher;
 import sim.scheduling.matchers.GradeMatcherProvider;
 
@@ -103,6 +105,7 @@ public class Simulator
 		graders.put("FF", new Constant(0)); // constant grader
 		graders.put("RF", new RandomGrader(100000)); // random grader
 		graders.put("WF", new AvailableMemoryGrader()); // specific grader
+		graders.put("BTG", new ThrowingExceptionGrader());
 
 		Grader $ = graders.get(getGraderProperty().toUpperCase());
 		if (null == $)
@@ -149,6 +152,10 @@ public class Simulator
 		if ("reservation".equals(getSchedulerProperty()))
 		{
 			return new ReservingScheduler(waitingQueue, cluster, grader, dispatcher);
+		}
+		if ("by-trace".equals(getSchedulerProperty()))
+		{
+			return new ByTraceScheduler(waitingQueue, dispatcher);
 		}
 		throw new RuntimeException("no scheduler " + getSchedulerProperty());
 	}
