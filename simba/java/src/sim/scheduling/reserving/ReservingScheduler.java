@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 import sim.model.Cluster;
@@ -48,6 +49,7 @@ public class ReservingScheduler implements Scheduler
 		this.grader = grader;
 		this.dispatcher = dispatcher;
 		this.reservationsLimit = reservationsLimit;
+		log.setLevel(Level.DEBUG);
 	}
 
 	@Override
@@ -58,6 +60,7 @@ public class ReservingScheduler implements Scheduler
 		int processedJobsCount = 0;
 		int scheduledJobs = 0;
 		Iterator<Job> iterator = waitingQueue.iterator();
+		int startingHostsCount = currentCycleHosts.size();
 		while (iterator.hasNext() && processedJobsCount < ReservingScheduler.JOBS_CHECKED_BY_SCHEDULER && !currentCycleHosts.isEmpty())
 		{
 			processedJobsCount++;
@@ -81,14 +84,15 @@ public class ReservingScheduler implements Scheduler
 		}
 		if (log.isDebugEnabled() && time % 3600 == 0)
 		{
-			logScheduler(time, scheduledJobs);
+			logScheduler(time, scheduledJobs, processedJobsCount, startingHostsCount);
 		}
 	}
 
-	private void logScheduler(long time, int scheduledJobs)
+	private void logScheduler(long time, int scheduledJobs, int processedJobsCount, int startingHostsCount)
 	{
-		log.info("schedule() - time " + time + " scheduled jobs " + scheduledJobs);
-		log.info("schedule() - avail-hosts " + currentCycleHosts.size() + " wait-jobs " + waitingQueue.size());
+		log.info("=============================================");
+		log.info("schedule() - time " + time + " scheduled jobs " + scheduledJobs + " processed jobs " + processedJobsCount);
+		log.info("schedule() - avail-hosts start " + startingHostsCount + " avail-host end " + currentCycleHosts.size() + " wait-jobs " + waitingQueue.size());
 		log.info("schedule() -  first job " + waitingQueue.peek());
 		if (!currentCycleHosts.isEmpty())
 		{
