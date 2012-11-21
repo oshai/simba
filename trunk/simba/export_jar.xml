@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project default="create_run_jar" name="Create Runnable Jar for Project simba">
-	<delete file="/nfs/iil/disks/home20/oshai/work/simba.jar"/>
 	<target name="create_run_jar">
+	<delete file="/nfs/iil/disks/home20/oshai/work/simba.jar"/>
         <jar destfile="/nfs/iil/disks/home20/oshai/work/simba.jar" filesetmanifest="mergewithoutmain">
             <manifest>
                 <attribute name="Main-Class" value="sim.Simulator"/>
