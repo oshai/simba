@@ -2,6 +2,8 @@ package sim.collectors;
 
 import java.util.Iterator;
 
+import org.apache.log4j.Logger;
+
 import sim.Clock;
 import sim.model.Job;
 import sim.scheduling.WaitingQueue;
@@ -9,6 +11,7 @@ import sim.scheduling.WaitingQueue;
 public class WaitingQueueStatistics
 {
 
+	private static final Logger log = Logger.getLogger(WaitingQueueStatistics.class);
 	private final WaitingQueue waitingQueue;
 	private double avgMemoryFront;
 	private double avgWaitTimeFront;
@@ -45,6 +48,11 @@ public class WaitingQueueStatistics
 		avgWaitTimeFront = sumWaitTime / i;
 		dispatchedJobs = waitingQueue.collectRemove();
 		submittedJobs = waitingQueue.collectAdd();
+		if (log.isDebugEnabled())
+		{
+			log.debug("updateStatistics() - dispatchedJobs" + dispatchedJobs);
+			log.debug("updateStatistics() - submittedJobs" + submittedJobs);
+		}
 	}
 
 	public int waitingJobs()

@@ -1,10 +1,13 @@
 package sim.collectors;
 
+import org.apache.log4j.Logger;
+
 import sim.JobFinisher;
 import sim.model.Cluster;
 
 public class IntervalCollector extends Collector<Long>
 {
+	private static final Logger log = Logger.getLogger(IntervalCollector.class);
 	private static final String MACHINES_UTILIZATION_FILE = "machines_utilization";
 	private Cluster cluster;
 	private long modulo;
@@ -30,6 +33,10 @@ public class IntervalCollector extends Collector<Long>
 				+ waitingQueueStatistics.waitingJobs() + SEPERATOR + hostStatistics.reverseMixAverage() + SEPERATOR + hostStatistics.reverseMixVariance()
 				+ SEPERATOR + waitingQueueStatistics.avgMemoryFront() + SEPERATOR + waitingQueueStatistics.avgWaitTimeFront() + SEPERATOR
 				+ jobFinisher.collectFinishedJobs() + SEPERATOR + waitingQueueStatistics.dispatchedJobs() + SEPERATOR + waitingQueueStatistics.submittedJobs();
+		if (log.isDebugEnabled())
+		{
+			log.debug("collectLine() - " + line.replace(' ', ','));
+		}
 		return line;
 	}
 
