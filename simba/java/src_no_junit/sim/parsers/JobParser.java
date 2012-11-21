@@ -39,14 +39,14 @@ public class JobParser
 	private static final int index_iterationsubmittime = 18;// iil-new4
 	private static final int index_startttime = 5;// iil-new?
 	private static final int index_wtime = 9;// iil-new also
-	private static boolean DEBUG = true;
+	private static boolean DEBUG = false;
 
 	public EventQueue parse(Provider<Clock> clockProvider, final Cluster cluster)
 	{
 		log.info("parse() - starting with file " + JOBS_FILE);
 		if (DEBUG)
 		{
-			log.info("parse() - DEBUG MODE!!!");
+			log.info("parse() - DEBUG MODE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 		}
 		final EventQueue $ = new EventQueue(clockProvider);
 		Predicate<String> predicate = new Predicate<String>()
