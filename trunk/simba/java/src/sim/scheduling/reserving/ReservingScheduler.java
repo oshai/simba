@@ -7,7 +7,6 @@ import static utils.assertions.Asserter.*;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 import sim.model.Cluster;
@@ -49,7 +48,7 @@ public class ReservingScheduler implements Scheduler
 		this.dispatcher = dispatcher;
 		this.reservationsLimit = reservationsLimit;
 		reservationsSupplier = new ReservationsHolderSupplier(reservationsLimit);
-		log.setLevel(Level.DEBUG);
+		// log.setLevel(Level.DEBUG);
 	}
 
 	@Override
