@@ -51,8 +51,7 @@
     <target depends="init" name="build-project">
         <echo message="${ant.project.name}: ${ant.file}"/>
         <javac debug="true" debuglevel="${debuglevel}" destdir="compiled_classes" source="${source}" target="${target}">
-            <src path="java/src"/>
-            <src path="java/src_no_junit"/>
+            <src path="java/src:java/src_no_junit"/>
             <classpath refid="simba.classpath"/>
         </javac>
         <javac debug="true" debuglevel="${debuglevel}" destdir="compiled_classes" source="${source}" target="${target}">
