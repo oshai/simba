@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- WARNING: Eclipse auto-generated file.
+              Any modifications will be overwritten.
+              To include a user specific buildfile here, simply create one in the same
+              directory with the processing instruction <?eclipse.ant.import?>
+              as the first entry and export the buildfile again. -->
+<project basedir="." default="build" name="simba">
+    <property environment="env"/>
+    <property name="ECLIPSE_HOME" value="/home/ohadshai/eclipse_3_7_2"/>
+    <property name="junit.output.dir" value="junit"/>
+    <property name="debuglevel" value="source,lines,vars"/>
+    <property name="target" value="1.6"/>
+    <property name="source" value="1.6"/>
+    <path id="JUnit 4.libraryclasspath">
+        <pathelement location="${ECLIPSE_HOME}/plugins/org.junit_4.8.2.v4_8_2_v20110321-1705/junit.jar"/>
+        <pathelement location="${ECLIPSE_HOME}/plugins/org.hamcrest.core_1.1.0.v20090501071000.jar"/>
+    </path>
+    <path id="simba.classpath">
+        <pathelement location="compiled_classes"/>
+        <pathelement location="libs/log4j-1.2.17.jar"/>
+        <pathelement location="libs/guava-13.0.1.jar"/>
+        <pathelement location="libs/javax.inject.jar"/>
+        <pathelement location="libs/mockito-all-1.9.5.jar"/>
+        <pathelement location="libs/commons-math3-3.0.jar"/>
+        <path refid="JUnit 4.libraryclasspath"/>
+    </path>
+    <target name="init">
+        <mkdir dir="compiled_classes"/>
+        <copy includeemptydirs="false" todir="compiled_classes">
+            <fileset dir="java/src">
+                <exclude name="**/*.java"/>
+            </fileset>
+        </copy>
+        <copy includeemptydirs="false" todir="compiled_classes">
+            <fileset dir="java/src_no_junit">
+                <exclude name="**/*.java"/>
+            </fileset>
+        </copy>
+        <copy includeemptydirs="false" todir="compiled_classes">
+            <fileset dir="java/junit">
+                <exclude name="**/*.java"/>
+            </fileset>
+        </copy>
+    </target>
+    <target name="clean">
+        <delete dir="compiled_classes"/>
+    </target>
+    <target depends="clean" name="cleanall"/>
+    <target depends="build-subprojects,build-project" name="build"/>
+    <target name="build-subprojects"/>
+    <target depends="init" name="build-project">
+        <echo message="${ant.project.name}: ${ant.file}"/>
+        <javac debug="true" debuglevel="${debuglevel}" destdir="compiled_classes" source="${source}" target="${target}">
+            <src path="java/src"/>
+            <classpath refid="simba.classpath"/>
+        </javac>
+        <javac debug="true" debuglevel="${debuglevel}" destdir="compiled_classes" source="${source}" target="${target}">
+            <src path="java/src_no_junit"/>
+            <classpath refid="simba.classpath"/>
+        </javac>
+        <javac debug="true" debuglevel="${debuglevel}" destdir="compiled_classes" source="${source}" target="${target}">
+            <src path="java/junit"/>
+            <classpath refid="simba.classpath"/>
+        </javac>
+    </target>
+    <target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects"/>
+    <target name="simba-junit">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="sim.JobFinisherTest" todir="${junit.output.dir}"/>
+            <test name="sim.LooperTest" todir="${junit.output.dir}"/>
+            <test name="sim.collectors.HostStatisticsTest" todir="${junit.output.dir}"/>
+            <test name="sim.collectors.WaitingQueueStatisticsTest" todir="${junit.output.dir}"/>
+            <test name="sim.event_handling.EventQueueTest" todir="${junit.output.dir}"/>
+            <test name="sim.model.HostTest" todir="${junit.output.dir}"/>
+            <test name="sim.model.JobTest" todir="${junit.output.dir}"/>
+            <test name="sim.scheduling.ByTraceSchedulerTest" todir="${junit.output.dir}"/>
+            <test name="sim.scheduling.DispatcherTest" todir="${junit.output.dir}"/>
+            <test name="sim.scheduling.JobPriorityComparatorTest" todir="${junit.output.dir}"/>
+            <test name="sim.scheduling.ReservingSchedulerTest" todir="${junit.output.dir}"/>
+            <test name="sim.scheduling.SimpleSchedulerTest" todir="${junit.output.dir}"/>
+            <test name="sim.scheduling.WaitingQueueTest" todir="${junit.output.dir}"/>
+            <test name="sim.scheduling.graders.AvailableCoresGraderTest" todir="${junit.output.dir}"/>
+            <test name="sim.scheduling.graders.AvailableMemoryGraderTest" todir="${junit.output.dir}"/>
+            <test name="sim.scheduling.graders.CompositeGraderTest" todir="${junit.output.dir}"/>
+            <test name="sim.scheduling.graders.ConfiguredMemoryGraderTest" todir="${junit.output.dir}"/>
+            <test name="sim.scheduling.graders.DegreeMixFitTest" todir="${junit.output.dir}"/>
+            <test name="sim.scheduling.graders.InvertGraderTest" todir="${junit.output.dir}"/>
+            <test name="sim.scheduling.graders.MixDistanceGraderTest" todir="${junit.output.dir}"/>
+            <test name="sim.scheduling.graders.MixNormilizedDegreeDeltaGraderTest" todir="${junit.output.dir}"/>
+            <test name="sim.scheduling.graders.MixNormilizedDegreeFromTopLeftViewDeltaGraderTest" todir="${junit.output.dir}"/>
+            <test name="sim.scheduling.graders.MixNormilizedDegreeFromTopViewDeltaGraderTest" todir="${junit.output.dir}"/>
+            <test name="sim.scheduling.graders.RandomGraderTest" todir="${junit.output.dir}"/>
+            <test name="sim.scheduling.graders.SimpleMixFitTest" todir="${junit.output.dir}"/>
+            <test name="sim.scheduling.graders.ThrowingExceptionGraderTest" todir="${junit.output.dir}"/>
+            <test name="sim.scheduling.matchers.ActualBestFitTest" todir="${junit.output.dir}"/>
+            <test name="sim.scheduling.matchers.BestFitTest" todir="${junit.output.dir}"/>
+            <test name="sim.scheduling.matchers.FirstFitTest" todir="${junit.output.dir}"/>
+            <test name="sim.scheduling.matchers.GradeMatcherTest" todir="${junit.output.dir}"/>
+            <test name="sim.scheduling.matchers.RandomFitTest" todir="${junit.output.dir}"/>
+            <test name="sim.scheduling.matchers.WorseFitTest" todir="${junit.output.dir}"/>
+            <classpath refid="simba.classpath"/>
+        </junit>
+    </target>
+    <target name="JobTest">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="sim.model.JobTest" todir="${junit.output.dir}"/>
+            <classpath refid="simba.classpath"/>
+        </junit>
+    </target>
+    <target name="RandomFitTest">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="sim.scheduling.matchers.RandomFitTest" todir="${junit.output.dir}"/>
+            <classpath refid="simba.classpath"/>
+        </junit>
+    </target>
+    <target name="RandomFitTest.testAccpetingBestHost">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="sim.scheduling.matchers.RandomFitTest" todir="${junit.output.dir}"/>
+            <classpath refid="simba.classpath"/>
+        </junit>
+    </target>
+    <target name="ReservingSchedulerTest.test2ReservingSameHost">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="sim.scheduling.ReservingSchedulerTest" todir="${junit.output.dir}"/>
+            <classpath refid="simba.classpath"/>
+        </junit>
+    </target>
+    <target name="WorseFitTest">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="sim.scheduling.matchers.WorseFitTest" todir="${junit.output.dir}"/>
+            <classpath refid="simba.classpath"/>
+        </junit>
+    </target>
+    <target name="simba">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="sim.JobFinisherTest" todir="${junit.output.dir}"/>
+            <test name="sim.LooperTest" todir="${junit.output.dir}"/>
+            <test name="sim.SystemTest" todir="${junit.output.dir}"/>
+            <test name="sim.collectors.HostStatisticsTest" todir="${junit.output.dir}"/>
+            <test name="sim.collectors.WaitingQueueStatisticsTest" todir="${junit.output.dir}"/>
+            <test name="sim.event_handling.EventQueueTest" todir="${junit.output.dir}"/>
+            <test name="sim.model.HostTest" todir="${junit.output.dir}"/>
+            <test name="sim.model.JobTest" todir="${junit.output.dir}"/>
+            <test name="sim.scheduling.ByTraceSchedulerTest" todir="${junit.output.dir}"/>
+            <test name="sim.scheduling.DispatcherTest" todir="${junit.output.dir}"/>
+            <test name="sim.scheduling.JobPriorityComparatorTest" todir="${junit.output.dir}"/>
+            <test name="sim.scheduling.ReservingSchedulerTest" todir="${junit.output.dir}"/>
+            <test name="sim.scheduling.SimpleSchedulerTest" todir="${junit.output.dir}"/>
+            <test name="sim.scheduling.WaitingQueueTest" todir="${junit.output.dir}"/>
+            <test name="sim.scheduling.graders.AvailableCoresGraderTest" todir="${junit.output.dir}"/>
+            <test name="sim.scheduling.graders.AvailableMemoryGraderTest" todir="${junit.output.dir}"/>
+            <test name="sim.scheduling.graders.CompositeGraderTest" todir="${junit.output.dir}"/>
+            <test name="sim.scheduling.graders.ConfiguredMemoryGraderTest" todir="${junit.output.dir}"/>
+            <test name="sim.scheduling.graders.DegreeMixFitTest" todir="${junit.output.dir}"/>
+            <test name="sim.scheduling.graders.InvertGraderTest" todir="${junit.output.dir}"/>
+            <test name="sim.scheduling.graders.MixDistanceGraderTest" todir="${junit.output.dir}"/>
+            <test name="sim.scheduling.graders.MixNormilizedDegreeDeltaGraderTest" todir="${junit.output.dir}"/>
+            <test name="sim.scheduling.graders.MixNormilizedDegreeFromTopLeftViewDeltaGraderTest" todir="${junit.output.dir}"/>
+            <test name="sim.scheduling.graders.MixNormilizedDegreeFromTopViewDeltaGraderTest" todir="${junit.output.dir}"/>
+            <test name="sim.scheduling.graders.RandomGraderTest" todir="${junit.output.dir}"/>
+            <test name="sim.scheduling.graders.SimpleMixFitTest" todir="${junit.output.dir}"/>
+            <test name="sim.scheduling.graders.ThrowingExceptionGraderTest" todir="${junit.output.dir}"/>
+            <test name="sim.scheduling.matchers.ActualBestFitTest" todir="${junit.output.dir}"/>
+            <test name="sim.scheduling.matchers.BestFitTest" todir="${junit.output.dir}"/>
+            <test name="sim.scheduling.matchers.FirstFitTest" todir="${junit.output.dir}"/>
+            <test name="sim.scheduling.matchers.GradeMatcherTest" todir="${junit.output.dir}"/>
+            <test name="sim.scheduling.matchers.RandomFitTest" todir="${junit.output.dir}"/>
+            <test name="sim.scheduling.matchers.WorseFitTest" todir="${junit.output.dir}"/>
+            <classpath refid="simba.classpath"/>
+        </junit>
+    </target>
+    <target name="MixFitTest">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="sim.scheduling.matchers.MixFitTest" todir="${junit.output.dir}"/>
+            <classpath refid="simba.classpath"/>
+        </junit>
+    </target>
+    <target name="HostCollector">
+        <java classname="sim.collectors.HostCollector" failonerror="true" fork="yes">
+            <classpath refid="simba.classpath"/>
+        </java>
+    </target>
+    <target name="JobFinisherTest">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="sim.JobFinisherTest" todir="${junit.output.dir}"/>
+            <classpath refid="simba.classpath"/>
+        </junit>
+    </target>
+    <target name="RandomFitTest.testAccpetingNextHostIfNotAvailableTheReturnToListStart">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="sim.scheduling.matchers.RandomFitTest" todir="${junit.output.dir}"/>
+            <classpath refid="simba.classpath"/>
+        </junit>
+    </target>
+    <target name="WaitingQueueTest">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="sim.scheduling.WaitingQueueTest" todir="${junit.output.dir}"/>
+            <classpath refid="simba.classpath"/>
+        </junit>
+    </target>
+    <target name="InvertGraderTest">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="sim.scheduling.graders.InvertGraderTest" todir="${junit.output.dir}"/>
+            <classpath refid="simba.classpath"/>
+        </junit>
+    </target>
+    <target name="ReservingSchedulerTest.testReservationIsOnHighestMemoryHost">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="sim.scheduling.ReservingSchedulerTest" todir="${junit.output.dir}"/>
+            <classpath refid="simba.classpath"/>
+        </junit>
+    </target>
+    <target name="ReservingSchedulerTest">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="sim.scheduling.ReservingSchedulerTest" todir="${junit.output.dir}"/>
+            <classpath refid="simba.classpath"/>
+        </junit>
+    </target>
+    <target name="SystemTest">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="sim.SystemTest" todir="${junit.output.dir}"/>
+            <classpath refid="simba.classpath"/>
+        </junit>
+    </target>
+    <target name="GradeMatcherTest">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="sim.scheduling.matchers.GradeMatcherTest" todir="${junit.output.dir}"/>
+            <classpath refid="simba.classpath"/>
+        </junit>
+    </target>
+    <target name="HostTest">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="sim.model.HostTest" todir="${junit.output.dir}"/>
+            <classpath refid="simba.classpath"/>
+        </junit>
+    </target>
+    <target name="junitreport">
+        <junitreport todir="${junit.output.dir}">
+            <fileset dir="${junit.output.dir}">
+                <include name="TEST-*.xml"/>
+            </fileset>
+            <report format="frames" todir="${junit.output.dir}"/>
+        </junitreport>
+    </target>
+</project>
