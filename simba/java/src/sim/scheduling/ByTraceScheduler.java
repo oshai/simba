@@ -2,19 +2,35 @@ package sim.scheduling;
 
 import java.util.Iterator;
 
+import sim.model.Cluster;
 import sim.model.Host;
 import sim.model.Job;
 
 public class ByTraceScheduler implements Scheduler
 {
-	private static final Host DUMMY_HOST = Host.create().build();
 	private final WaitingQueue waitingQueue;
 	private final JobDispatcher dispatcher;
+	private Host host;
 
-	public ByTraceScheduler(WaitingQueue waitingQueue, JobDispatcher dispatcher)
+	public ByTraceScheduler(WaitingQueue waitingQueue, Cluster cluster, JobDispatcher dispatcher)
 	{
 		this.waitingQueue = waitingQueue;
 		this.dispatcher = dispatcher;
+		updateCluster(cluster);
+	}
+
+	private void updateCluster(Cluster cluster)
+	{
+		double memory = 0;
+		double cores = 0;
+		for (Host host1 : cluster.hosts())
+		{
+			memory += host1.memory();
+			cores += host1.cores();
+		}
+		cluster.hosts().clear();
+		host = Host.create().cores(cores).memory(memory).build();
+		cluster.add(host);
 	}
 
 	@Override
@@ -27,7 +43,7 @@ public class ByTraceScheduler implements Scheduler
 			if (job.startTime() <= time)
 			{
 				iterator.remove();
-				dispatcher.dispatch(job, DUMMY_HOST, time);
+				dispatcher.dispatch(job, host, time);
 			}
 		}
 	}

@@ -9,7 +9,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import sim.Looper;
+import org.apache.log4j.Logger;
+
 import sim.model.Cluster;
 import sim.model.Host;
 import sim.model.Job;
@@ -18,13 +19,16 @@ import utils.GlobalUtils;
 
 public class ReservingScheduler implements Scheduler
 {
+	private static final Logger log = Logger.getLogger(ReservingScheduler.class);
 	private final WaitingQueue waitingQueue;
 	private final Cluster cluster;
 	private final Grader grader;
 	private final JobDispatcher dispatcher;
 	private Map<String, Reservation> reservations;
 	private List<Host> currentCycleHosts;
-	private static final Job DUMMY_JOB = Job.create(1).build();
+	private static final Job DUMMY_JOB = Job.create(1).cores(1).memory(1).build();
+	private static final int RESERVATIONS = 1;
+	public static final int JOBS_CHECKED_BY_SCHEDULER = 1000;
 
 	public ReservingScheduler(WaitingQueue waitingQueue, Cluster cluster, Grader grader, JobDispatcher dispatcher)
 	{
@@ -40,8 +44,9 @@ public class ReservingScheduler implements Scheduler
 		init();
 		int reservingJobsCount = 0;
 		int processedJobsCount = 0;
+		int scheduledJobs = 0;
 		Iterator<Job> iterator = waitingQueue.iterator();
-		while (iterator.hasNext() && processedJobsCount < Looper.JOBS_CHECKED_BY_SCHEDULER && !currentCycleHosts.isEmpty())
+		while (iterator.hasNext() && processedJobsCount < ReservingScheduler.JOBS_CHECKED_BY_SCHEDULER && !currentCycleHosts.isEmpty())
 		{
 			processedJobsCount++;
 			Job job = iterator.next();
@@ -50,16 +55,28 @@ public class ReservingScheduler implements Scheduler
 			{
 				dispatcher.dispatch(job, host, time);
 				iterator.remove();
+				scheduledJobs++;
 			}
 			else
 			{
-				if (reservingJobsCount < 1)
+				if (reservingJobsCount < RESERVATIONS)
 				{
 					reserve(host, job);
 					reservingJobsCount++;
 				}
 			}
 			updateCurrentCycleHosts(host);
+		}
+		if (log.isDebugEnabled() && time % 3600 == 0)
+		{
+			log.info("schedule() - time " + time + " scheduled jobs " + scheduledJobs);
+			log.info("schedule() - avail-hosts " + currentCycleHosts.size() + " wait-jobs " + waitingQueue.size());
+			log.info("schedule() -  first job " + waitingQueue.peek());
+			if (!currentCycleHosts.isEmpty())
+			{
+				Host host = currentCycleHosts.get(0);
+				log.info("schedule() -  first host availableCores " + host.availableCores() + " availableMemory " + host.availableMemory());
+			}
 		}
 	}
 

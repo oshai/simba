@@ -1,11 +1,13 @@
 package sim.scheduling;
 
 import static org.junit.Assert.*;
+import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.*;
 
 import org.junit.Test;
 
-import sim.event_handling.EventQueue;
+import sim.model.Cluster;
+import sim.model.Host;
 import sim.model.Job;
 
 public class ByTraceSchedulerTest
@@ -17,12 +19,24 @@ public class ByTraceSchedulerTest
 		WaitingQueue waitingQueue = new WaitingQueue();
 		Job job = Job.create(1).startTime(1).build();
 		waitingQueue.add(job);
-		JobDispatcher dispatcher = new JobDispatcher(mock(EventQueue.class));
-		Scheduler tested = new ByTraceScheduler(waitingQueue, dispatcher);
+		JobDispatcher dispatcher = mock(JobDispatcher.class);
+		Scheduler tested = new ByTraceScheduler(waitingQueue, new Cluster(), dispatcher);
 		long time = 1;
 		tested.schedule(time);
 		assertTrue(waitingQueue.isEmpty());
-		verify(dispatcher).dispatch(job, null, time);
+		verify(dispatcher).dispatch(eq(job), (Host) any(), eq(time));
+	}
+
+	@Test
+	public void testHost()
+	{
+		Cluster cluster = new Cluster();
+		cluster.add(Host.create().cores(1.0).memory(2.0).build());
+		cluster.add(Host.create().cores(0.5).memory(0.5).build());
+		new ByTraceScheduler(null, cluster, null);
+		assertEquals(1, cluster.hosts().size());
+		assertEquals(1.5, cluster.hosts().get(0).cores(), 0.1);
+		assertEquals(2.5, cluster.hosts().get(0).memory(), 0.1);
 	}
 
 	@Test
@@ -32,7 +46,7 @@ public class ByTraceSchedulerTest
 		Job job = Job.create(1).startTime(1).build();
 		waitingQueue.add(job);
 		JobDispatcher dispatcher = mock(JobDispatcher.class);
-		Scheduler tested = new ByTraceScheduler(waitingQueue, dispatcher);
+		Scheduler tested = new ByTraceScheduler(waitingQueue, new Cluster(), dispatcher);
 		long time = 0;
 		tested.schedule(time);
 		assertEquals(1, waitingQueue.size());

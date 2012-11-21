@@ -129,7 +129,7 @@ public class Simulator
 	{
 		JobDispatcher dispatcher = new JobDispatcher(eventQueue);
 		WaitingQueue waitingQueue = new WaitingQueue();
-		WaitingQueueStatistics waitingQueueStatistics = new WaitingQueueStatistics(waitingQueue, Looper.JOBS_CHECKED_BY_SCHEDULER, clock);
+		WaitingQueueStatistics waitingQueueStatistics = new WaitingQueueStatistics(waitingQueue, ReservingScheduler.JOBS_CHECKED_BY_SCHEDULER, clock);
 		if (submitImmediately())
 		{
 			moveJobsToWaitQueue(eventQueue, waitingQueue);
@@ -155,7 +155,7 @@ public class Simulator
 		}
 		if ("by-trace".equals(getSchedulerProperty()))
 		{
-			return new ByTraceScheduler(waitingQueue, dispatcher);
+			return new ByTraceScheduler(waitingQueue, cluster, dispatcher);
 		}
 		throw new RuntimeException("no scheduler " + getSchedulerProperty());
 	}

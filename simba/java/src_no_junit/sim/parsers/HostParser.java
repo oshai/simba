@@ -32,8 +32,8 @@ public class HostParser
 			try
 			{
 				String[] cols = line.split(",");
-				cluster.add(Host.create().id(cols[index_hostid]).cores(Double.valueOf(cols[index_cores]))
-						.memory(HOST_MEMORY_MULTIPLIER * Double.valueOf(cols[index_memory]) / HOST_MEMORY_UNIT_NORMILIZER).build());
+				double memory = Math.round(HOST_MEMORY_MULTIPLIER * Double.valueOf(cols[index_memory]) / HOST_MEMORY_UNIT_NORMILIZER);
+				cluster.add(Host.create().id(cols[index_hostid]).cores(Double.valueOf(cols[index_cores])).memory(memory).build());
 			}
 			catch (Exception ex)
 			{
