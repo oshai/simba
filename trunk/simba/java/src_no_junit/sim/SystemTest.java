@@ -17,12 +17,12 @@ import sim.model.Cluster;
 import sim.model.Host;
 import sim.model.Job;
 import sim.scheduling.JobDispatcher;
-import sim.scheduling.ReservingScheduler;
 import sim.scheduling.Scheduler;
 import sim.scheduling.SimpleScheduler;
 import sim.scheduling.WaitingQueue;
 import sim.scheduling.matchers.FirstFit;
 import sim.scheduling.matchers.Matcher;
+import sim.scheduling.reserving.ReservingScheduler;
 
 public class SystemTest
 {

@@ -14,7 +14,7 @@ public class HostStatistics
 	private long cores = 0;
 	private long usedMemory = 0;
 	private long usedCores = 0;
-	private long usedMemoryAverage = 0;
+	private double usedMemoryAverage = 0;
 	private Variance usedMemoryVariance = new Variance();
 	private double mixSum = 0;
 	private Variance mixVariance = new Variance();
@@ -46,7 +46,7 @@ public class HostStatistics
 		return usedMemoryVariance.getResult();
 	}
 
-	public long usedMemoryAverage()
+	public double usedMemoryAverage()
 	{
 		return usedMemoryAverage;
 	}
@@ -73,15 +73,17 @@ public class HostStatistics
 
 	private void calculate()
 	{
+		double usedMemoryPrecentComul = 0;
 		for (Host host : cluster.hosts())
 		{
 			cores += host.cores();
 			usedCores += host.usedCores();
 			memory += host.memory();
 			usedMemory += host.usedMemory();
-			usedMemoryAverage += host.usedMemory();
-			usedMemoryVariance.increment(host.usedMemory());
-			double usedMemoryNormalized = (host.usedMemory() / host.memory()) + CONST;
+			double usedMemoryPrecent = (host.usedMemory() + CONST) / (host.memory() + CONST);
+			usedMemoryPrecentComul += usedMemoryPrecent;
+			usedMemoryVariance.increment(usedMemoryPrecent);
+			double usedMemoryNormalized = usedMemoryPrecent + CONST;
 			double usedCoresNormalized = (host.usedCores() / host.cores()) + CONST;
 			double usedRatio = usedMemoryNormalized / usedCoresNormalized;
 			mixSum += usedRatio;
@@ -93,7 +95,10 @@ public class HostStatistics
 			reverseMixVariance.increment(availableRatio);
 
 		}
-		usedMemoryAverage = usedMemoryAverage() / cluster.hosts().size();
+		if (!cluster.hosts().isEmpty())
+		{
+			usedMemoryAverage = usedMemoryPrecentComul / cluster.hosts().size();
+		}
 	}
 
 	public double reverseMixAverage()

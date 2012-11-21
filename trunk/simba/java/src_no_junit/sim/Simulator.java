@@ -22,7 +22,6 @@ import sim.parsers.HostParser;
 import sim.parsers.JobParser;
 import sim.scheduling.ByTraceScheduler;
 import sim.scheduling.JobDispatcher;
-import sim.scheduling.ReservingScheduler;
 import sim.scheduling.Scheduler;
 import sim.scheduling.SimpleScheduler;
 import sim.scheduling.WaitingQueue;
@@ -33,6 +32,7 @@ import sim.scheduling.graders.RandomGrader;
 import sim.scheduling.graders.ThrowingExceptionGrader;
 import sim.scheduling.matchers.GradeMatcher;
 import sim.scheduling.matchers.GradeMatcherProvider;
+import sim.scheduling.reserving.ReservingScheduler;
 
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.Maps;
