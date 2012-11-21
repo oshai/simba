@@ -1,5 +1,10 @@
 package sim.parsers;
 
+import static sim.parsers.MySplitter.*;
+
+import java.util.Iterator;
+import java.util.List;
+
 import javax.inject.Provider;
 
 import org.apache.log4j.Logger;
@@ -52,12 +57,12 @@ public class JobParser
 				total++;
 				try
 				{
-					String[] cols = line.split(",");
-					double cores = getMapValue("cores", cols[index_actualclassreservation]);
-					double memory = getMapValue("memory", cols[index_actualclassreservation]);
+					List<String> cols = splitComma(line);
+					double cores = getMapValue("cores", cols.get(index_actualclassreservation));
+					double memory = getMapValue("memory", cols.get(index_actualclassreservation));
 					// long length = l(cols[index_finishtime]) -
 					// l(cols[index_starttime]);
-					long length = d2l(cols[index_wtime]);
+					long length = d2l(cols.get(index_wtime));
 					if (length < 1)
 					{
 						length = 1;
@@ -70,8 +75,8 @@ public class JobParser
 					}
 					updateRunTimeBuckets(length);
 					updateMemoryBuckets(memory);
-					Job job = Job.create(length).id(cols[index_jobid]).priority(l(cols[index_iterationsubmittime]))
-							.submitTime(l(cols[index_iterationsubmittime])).cores(cores).memory(memory).startTime(l(cols[index_startttime])).build();
+					Job job = Job.create(length).id(cols.get(index_jobid)).priority(l(cols.get(index_iterationsubmittime)))
+							.submitTime(l(cols.get(index_iterationsubmittime))).cores(cores).memory(memory).startTime(l(cols.get(index_startttime))).build();
 					if (canRun(job, cluster))
 					{
 						$.add(new Submit(job));
@@ -133,13 +138,12 @@ public class JobParser
 
 	private double getMapValue(String key, String map)
 	{
-		String[] keyValues = map.trim().split(";");
-		for (String entry : keyValues)
+		for (String entry : splitSemicolon(map.trim()))
 		{
-			String[] keyValue = entry.split("=");
-			if (key.equals(keyValue[0]))
+			Iterator<String> keyValue = splitEquals(entry).iterator();
+			if (key.equals(keyValue.next()))
 			{
-				return Double.valueOf(keyValue[1]);
+				return Double.valueOf(keyValue.next());
 			}
 		}
 		throw new RuntimeException("not found in map");

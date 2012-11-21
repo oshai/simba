@@ -73,6 +73,21 @@ public class HostTest
 	}
 
 	@Test
+	public void testUsedResources()
+	{
+		Host host = Host.create().cores(2).memory(1).build();
+		Job job = Job.create(1).cores(2).memory(1).build();
+		assertEquals(0, host.usedCores(), 0.1);
+		assertEquals(0, host.usedMemory(), 0.1);
+		host.dispatchJob(job);
+		assertEquals(2, host.usedCores(), 0.1);
+		assertEquals(1, host.usedMemory(), 0.1);
+		host.finishJob(job);
+		assertEquals(0, host.usedCores(), 0.1);
+		assertEquals(0, host.usedMemory(), 0.1);
+	}
+
+	@Test
 	public void testToString()
 	{
 		Host host = Host.create().cores(0.1).memory(1.1).id("id").build();

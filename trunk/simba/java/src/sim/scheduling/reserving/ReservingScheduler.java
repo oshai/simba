@@ -4,10 +4,8 @@ import static com.google.common.collect.Lists.*;
 import static utils.GlobalUtils.*;
 import static utils.assertions.Asserter.*;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -32,10 +30,11 @@ public class ReservingScheduler implements Scheduler
 	private final Cluster cluster;
 	private final Grader grader;
 	private final JobDispatcher dispatcher;
-	private Map<String, Reservation> reservations;
+	private ReservationsHolderSupplier reservationsSupplier;
 	private List<Host> currentCycleHosts;
 	private double maxAvailableMemory;
 	public final int reservationsLimit;
+	private Reservations reservations;
 
 	public ReservingScheduler(WaitingQueue waitingQueue, Cluster cluster, Grader grader, JobDispatcher dispatcher)
 	{
@@ -49,6 +48,7 @@ public class ReservingScheduler implements Scheduler
 		this.grader = grader;
 		this.dispatcher = dispatcher;
 		this.reservationsLimit = reservationsLimit;
+		reservationsSupplier = new ReservationsHolderSupplier(reservationsLimit);
 		log.setLevel(Level.DEBUG);
 	}
 
@@ -56,11 +56,14 @@ public class ReservingScheduler implements Scheduler
 	public void schedule(long time)
 	{
 		init();
+		long started = System.currentTimeMillis();
 		int reservingJobsCount = 0;
 		int processedJobsCount = 0;
 		int scheduledJobs = 0;
+		int skippedJobs = 0;
 		Iterator<Job> iterator = waitingQueue.iterator();
 		int startingHostsCount = currentCycleHosts.size();
+		int startingJobsCount = waitingQueue.size();
 		while (iterator.hasNext() && processedJobsCount < ReservingScheduler.JOBS_CHECKED_BY_SCHEDULER && !currentCycleHosts.isEmpty())
 		{
 			processedJobsCount++;
@@ -81,23 +84,29 @@ public class ReservingScheduler implements Scheduler
 			}
 			updateCurrentCycleHosts(host);
 			reservingJobsCount++;
+			if (DUMMY_HOST.equals(host))
+			{
+				skippedJobs++;
+			}
 		}
 		if (log.isDebugEnabled() && time % 3600 == 0)
 		{
-			logScheduler(time, scheduledJobs, processedJobsCount, startingHostsCount);
+			logScheduler(time, scheduledJobs, processedJobsCount, startingHostsCount, skippedJobs, started, startingJobsCount);
 		}
 	}
 
-	private void logScheduler(long time, int scheduledJobs, int processedJobsCount, int startingHostsCount)
+	private void logScheduler(long time, int scheduledJobs, int processedJobsCount, int startingHostsCount, int skippedJobs, long started, int startingJobsCount)
 	{
 		log.info("=============================================");
-		log.info("schedule() - time " + time + " scheduled jobs " + scheduledJobs + " processed jobs " + processedJobsCount);
-		log.info("schedule() - avail-hosts start " + startingHostsCount + " avail-host end " + currentCycleHosts.size() + " wait-jobs " + waitingQueue.size());
-		log.info("schedule() -  first job " + waitingQueue.peek());
+		log.info("schedule took " + (System.currentTimeMillis() - started));
+		log.info("schedule - time " + time + " scheduled jobs " + scheduledJobs + " processed jobs " + processedJobsCount + " skippedJobs " + skippedJobs);
+		log.info("schedule - avail-hosts start " + startingHostsCount + " avail-host end " + currentCycleHosts.size() + " wait-jobs start " + startingJobsCount
+				+ " wait-jobs end " + waitingQueue.size());
+		log.info("schedule -  first job " + waitingQueue.peek());
 		if (!currentCycleHosts.isEmpty())
 		{
 			Host host = currentCycleHosts.get(0);
-			log.info("schedule() -  first host availableCores " + host.availableCores() + " availableMemory " + host.availableMemory());
+			log.info("schedule -  first host availableCores " + host.availableCores() + " availableMemory " + host.availableMemory());
 		}
 	}
 
@@ -149,7 +158,7 @@ public class ReservingScheduler implements Scheduler
 
 	private void init()
 	{
-		reservations = new HashMap<String, Reservation>();
+		reservations = reservationsSupplier.get();
 		currentCycleHosts = removeHostsThatAreFull(cluster.hosts());
 	}
 
@@ -168,13 +177,13 @@ public class ReservingScheduler implements Scheduler
 
 	private Reservation getReservation(Host host)
 	{
-		return reservations.containsKey(host.id()) ? reservations.get(host.id()) : Reservation.NULL_OBJECT;
+		return reservations.get(host.id());
 	}
 
 	private boolean isAvailable(Host host, Job job)
 	{
-		Reservation r = createExistingReservation(host, job);
-		return greaterOrEquals(host.availableCores(), r.cores()) && greaterOrEquals(host.availableMemory(), r.memory());
+		Reservation r = getReservation(host);
+		return greaterOrEquals(host.availableCores(), r.cores() + job.cores()) && greaterOrEquals(host.availableMemory(), r.memory() + job.memory());
 	}
 
 	private Host getBestHost(Job job, boolean shouldReserve)
