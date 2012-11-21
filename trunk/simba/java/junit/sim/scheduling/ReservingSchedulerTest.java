@@ -23,8 +23,7 @@ public class ReservingSchedulerTest
 		Job job = mock(Job.class);
 		waitingQueue.add(job);
 		Cluster cluster = new Cluster();
-		Host host = mock(Host.class);
-		when(host.hasAvailableResourcesFor(job)).thenReturn(true);
+		Host host = createHost(job);
 		cluster.add(host);
 		Grader grader = mock(Grader.class);
 		JobDispatcher dispatcher = mock(JobDispatcher.class);
@@ -33,6 +32,15 @@ public class ReservingSchedulerTest
 		scheduler.schedule(time);
 		assertTrue(waitingQueue.isEmpty());
 		verify(dispatcher).dispatch(job, host, time);
+	}
+
+	private Host createHost(Job job)
+	{
+		Host host = mock(Host.class);
+		when(host.availableMemory()).thenReturn(1.0);
+		when(host.availableCores()).thenReturn(1.0);
+		when(host.hasAvailableResourcesFor(job)).thenReturn(true);
+		return host;
 	}
 
 	@Test
@@ -108,8 +116,8 @@ public class ReservingSchedulerTest
 		Job job = mock(Job.class);
 		waitingQueue.add(job);
 		Cluster cluster = new Cluster();
-		Host host1 = mock(Host.class);
-		Host host2 = mock(Host.class);
+		Host host1 = createHost(job);
+		Host host2 = createHost(job);
 		cluster.add(host1);
 		cluster.add(host2);
 		Grader grader = mock(Grader.class);
@@ -135,8 +143,8 @@ public class ReservingSchedulerTest
 		waitingQueue.add(job2);
 		waitingQueue.add(job3);
 		Cluster cluster = new Cluster();
-		Host host1 = Host.create().id("1").memory(3).build();
-		Host host2 = Host.create().id("2").memory(6).build();
+		Host host1 = Host.create().id("1").cores(1).memory(3).build();
+		Host host2 = Host.create().id("2").cores(1).memory(6).build();
 		cluster.add(host1);
 		cluster.add(host2);
 		Grader grader = mock(Grader.class);
