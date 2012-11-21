@@ -11,6 +11,7 @@ import sim.events.Finish;
 import sim.events.NoOp;
 import sim.events.Submit;
 import sim.model.Job;
+import sim.scheduling.ReservingScheduler;
 import sim.scheduling.Scheduler;
 import sim.scheduling.WaitingQueue;
 
@@ -19,7 +20,6 @@ public class Looper
 	private static final Logger log = Logger.getLogger(Looper.class);
 	private long timeToLog = 60 * 60 * 24;// 1 day
 	private int timeToSchedule = 10;
-	public static final int JOBS_CHECKED_BY_SCHEDULER = 100;
 	private long timeToLogPassed;
 	private final Clock clock;
 	private final EventQueue eventQueue;
@@ -87,7 +87,7 @@ public class Looper
 				Submit submit = (Submit) event;
 				Job job = submit.job();
 				waitingQueue.add(job);
-				if (!(waitingQueue.size() > JOBS_CHECKED_BY_SCHEDULER))
+				if (!(waitingQueue.size() > ReservingScheduler.JOBS_CHECKED_BY_SCHEDULER))
 				{
 					$ = true;
 				}
