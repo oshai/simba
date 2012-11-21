@@ -20,10 +20,10 @@ if not found - make reservation: take the best host (more resources) and put res
 
 
 TODO:
-
-maybe add statistics file to each run
-change job length field to runTime
-make running jobs a seperate queue?
+change configuraiton of each scheduler to be optimal for runtime (ff)
+maybe add guice
+make configuration more simple
+optimize run
 
  
 
