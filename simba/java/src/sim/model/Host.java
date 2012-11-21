@@ -1,8 +1,10 @@
 package sim.model;
 
 import static com.google.common.collect.Lists.*;
+import static utils.GlobalUtils.*;
 import static utils.assertions.Asserter.*;
 
+import java.util.Collections;
 import java.util.List;
 
 public class Host
@@ -10,6 +12,8 @@ public class Host
 	private String id;
 	private double cores;
 	private double memory;
+	private double usedCores;
+	private double usedMemory;
 	private List<Job> jobs = newArrayList();
 
 	private Host(String id, double cores, double memory)
@@ -58,7 +62,7 @@ public class Host
 
 	public List<Job> jobs()
 	{
-		return jobs;
+		return Collections.unmodifiableList(jobs);
 	}
 
 	public static Builder create()
@@ -69,16 +73,20 @@ public class Host
 	public void dispatchJob(Job job)
 	{
 		jobs.add(job);
+		usedCores += job.cores();
+		usedMemory += job.memory();
 	}
 
 	public void finishJob(Job job)
 	{
 		asserter().assertTrue(jobs.remove(job));
+		usedCores -= job.cores();
+		usedMemory -= job.memory();
 	}
 
 	public boolean hasAvailableResourcesFor(Job job)
 	{
-		return availableCores() >= job.cores() && availableMemory() >= job.memory();
+		return greaterOrEquals(availableCores(), job.cores()) && greaterOrEquals(availableMemory(), job.memory());
 	}
 
 	public double availableMemory()
@@ -88,12 +96,7 @@ public class Host
 
 	public double usedMemory()
 	{
-		double $ = 0;
-		for (Job job : jobs)
-		{
-			$ += job.memory();
-		}
-		return $;
+		return usedMemory;
 	}
 
 	public double availableCores()
@@ -103,12 +106,7 @@ public class Host
 
 	public double usedCores()
 	{
-		double $ = 0;
-		for (Job job : jobs)
-		{
-			$ += job.cores();
-		}
-		return $;
+		return usedCores;
 	}
 
 	public double cores()
