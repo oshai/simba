@@ -11,9 +11,9 @@ import sim.events.Finish;
 import sim.events.NoOp;
 import sim.events.Submit;
 import sim.model.Job;
-import sim.scheduling.ReservingScheduler;
 import sim.scheduling.Scheduler;
 import sim.scheduling.WaitingQueue;
+import sim.scheduling.reserving.ReservingScheduler;
 
 public class Looper
 {

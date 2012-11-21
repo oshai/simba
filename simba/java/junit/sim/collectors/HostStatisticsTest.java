@@ -25,7 +25,7 @@ public class HostStatisticsTest
 		HostStatistics tested = create(c);
 		assertEquals(0, tested.cores());
 		assertEquals(0, tested.memory());
-		assertEquals(0, tested.usedMemoryAverage());
+		assertEquals(1, tested.usedMemoryAverage(), 0.1);
 		assertEquals(0, tested.usedMemoryVariance(), 0.1);
 		// assertEquals(0, tested.mixAverage(), 0.1);
 		assertEquals(0, tested.mixVariance(), 0.1);
@@ -45,7 +45,7 @@ public class HostStatisticsTest
 		HostStatistics tested = create(c);
 		assertEquals(2, tested.cores());
 		assertEquals(2, tested.memory());
-		assertEquals(1, tested.usedMemoryAverage());
+		assertEquals(0.5, tested.usedMemoryAverage(), 0.1);
 		assertEquals(0, tested.usedMemoryVariance(), 0.1);
 		assertEquals(1, tested.mixAverage(), 0.1);
 		assertEquals(0, tested.mixVariance(), 0.1);

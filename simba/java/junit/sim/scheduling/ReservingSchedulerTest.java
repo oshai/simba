@@ -12,6 +12,7 @@ import sim.model.Cluster;
 import sim.model.Host;
 import sim.model.Job;
 import sim.scheduling.graders.Grader;
+import sim.scheduling.reserving.ReservingScheduler;
 
 public class ReservingSchedulerTest
 {
@@ -75,12 +76,34 @@ public class ReservingSchedulerTest
 		cluster.add(host);
 		Grader grader = mock(Grader.class);
 		JobDispatcher dispatcher = new JobDispatcher(mock(EventQueue.class));
-		Scheduler scheduler = new ReservingScheduler(waitingQueue, cluster, grader, dispatcher);
+		Scheduler scheduler = new ReservingScheduler(waitingQueue, cluster, grader, dispatcher, 2);
 		scheduler.schedule(0);
 		assertEquals(2, waitingQueue.size());
 		Iterator<Job> iterator = waitingQueue.iterator();
 		assertEquals(job1, iterator.next());
 		assertEquals(job2, iterator.next());
+	}
+
+	@Test
+	public void testJob2NotReserving()
+	{
+		WaitingQueue waitingQueue = new WaitingQueue();
+		Job job0 = Job.create(1).cores(1).memory(1).priority(0).build();
+		Job job1 = Job.create(1).cores(1).memory(3).priority(1).build();
+		Job job2 = Job.create(1).cores(1).memory(1).priority(2).build();
+		waitingQueue.add(job0);
+		waitingQueue.add(job1);
+		waitingQueue.add(job2);
+		Cluster cluster = new Cluster();
+		Host host = Host.create().id("1").cores(3).memory(2).build();
+		cluster.add(host);
+		Grader grader = mock(Grader.class);
+		JobDispatcher dispatcher = new JobDispatcher(mock(EventQueue.class));
+		Scheduler scheduler = new ReservingScheduler(waitingQueue, cluster, grader, dispatcher, 1);
+		scheduler.schedule(0);
+		assertEquals(1, waitingQueue.size());
+		Iterator<Job> iterator = waitingQueue.iterator();
+		assertEquals(job1, iterator.next());
 	}
 
 	@Test
@@ -100,7 +123,7 @@ public class ReservingSchedulerTest
 		cluster.add(host);
 		Grader grader = mock(Grader.class);
 		JobDispatcher dispatcher = new JobDispatcher(mock(EventQueue.class));
-		Scheduler scheduler = new ReservingScheduler(waitingQueue, cluster, grader, dispatcher);
+		Scheduler scheduler = new ReservingScheduler(waitingQueue, cluster, grader, dispatcher, 2);
 		scheduler.schedule(0);
 		assertEquals(3, waitingQueue.size());
 		Iterator<Job> iterator = waitingQueue.iterator();
