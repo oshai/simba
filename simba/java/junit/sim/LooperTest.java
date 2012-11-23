@@ -11,8 +11,11 @@ import sim.event_handling.EventQueue;
 import sim.events.Finish;
 import sim.events.NoOp;
 import sim.events.Submit;
+import sim.model.Cluster;
 import sim.model.Host;
 import sim.model.Job;
+import sim.scheduling.ByTraceScheduler;
+import sim.scheduling.JobDispatcher;
 import sim.scheduling.Scheduler;
 import sim.scheduling.SimpleScheduler;
 import sim.scheduling.WaitingQueue;
@@ -43,6 +46,22 @@ public class LooperTest
 		verify(scheduler).schedule(1);
 		assertEquals(2, clock.time());
 		assertTrue(eventQueue.isEmpty());
+	}
+
+	@Test
+	public void testSubmit0IsNotExit()
+	{
+		Clock clock = new Clock();
+		EventQueue eventQueue = new EventQueue(clock);
+		WaitingQueue waitingQueue = new WaitingQueue();
+		waitingQueue.add(Job.create(5).build());
+		Scheduler scheduler = new ByTraceScheduler(waitingQueue, new Cluster(), new JobDispatcher(eventQueue));
+		Looper looper = new Looper(clock, eventQueue, waitingQueue, scheduler, mock(IntervalCollector.class), mock(JobFinisher.class));
+		looper.setTimeToLog(1);
+		looper.execute();
+		assertEquals(7, clock.time());
+		assertTrue(eventQueue.isEmpty());
+		assertTrue(waitingQueue.isEmpty());
 	}
 
 	@Test

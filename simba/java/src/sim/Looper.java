@@ -63,7 +63,7 @@ public class Looper
 		long time = clock.tick();
 		boolean handeledEvents = handleEvents(time);
 		hasEventsNotScheduleYet = hasEventsNotScheduleYet || handeledEvents;
-		if (time % timeToSchedule == 0 && (hasEventsNotScheduleYet || firstCycle))
+		if ((time - 1) % timeToSchedule == 0 && (hasEventsNotScheduleYet || firstCycle))
 		{
 			scheduler.schedule(time);
 			hasEventsNotScheduleYet = false;
