@@ -42,12 +42,14 @@ public class Looper
 
 	public void execute()
 	{
-		while (firstCycle || !(eventQueue.isEmpty()))
+		boolean shouldContinue = true;
+		while (shouldContinue)
 		{
-			tick();
+			shouldContinue = tick();
 		}
 		log.info("execute() - loop finished, calling finish()");
 		finish();
+		asserter().throwsError().assertTrue(waitingQueue.isEmpty(), waitingQueue.toString());
 	}
 
 	private void finish()
@@ -72,8 +74,9 @@ public class Looper
 			timeToLogPassed++;
 			log.info("tick() - time passed " + timeToLogPassed + " days events left " + eventQueue.size() + " waiting jobs " + waitingQueue.size());
 		}
+		boolean shouldContinue = firstCycle || handeledEvents || !(eventQueue.isEmpty());
 		firstCycle = false;
-		return handeledEvents;
+		return shouldContinue;
 	}
 
 	private boolean handleEvents(long time)
