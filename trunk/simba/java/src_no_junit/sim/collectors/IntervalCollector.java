@@ -30,9 +30,10 @@ public class IntervalCollector extends Collector<Long>
 		waitingQueueStatistics.updateStatistics();
 		String line = time + SEPERATOR + hostStatistics.cores() + SEPERATOR + hostStatistics.usedCores() + SEPERATOR + hostStatistics.memory() + SEPERATOR
 				+ hostStatistics.usedMemory() + SEPERATOR + hostStatistics.usedMemoryAverage() + SEPERATOR + hostStatistics.usedMemoryVariance() + SEPERATOR
-				+ waitingQueueStatistics.waitingJobs() + SEPERATOR + hostStatistics.reverseMixAverage() + SEPERATOR + hostStatistics.reverseMixVariance()
-				+ SEPERATOR + waitingQueueStatistics.avgMemoryFront() + SEPERATOR + waitingQueueStatistics.avgWaitTimeFront() + SEPERATOR
-				+ jobFinisher.collectFinishedJobs() + SEPERATOR + waitingQueueStatistics.dispatchedJobs() + SEPERATOR + waitingQueueStatistics.submittedJobs();
+				+ waitingQueueStatistics.waitingJobs() + SEPERATOR + hostStatistics.mixAverage() + SEPERATOR + hostStatistics.mixVariance() + SEPERATOR
+				+ hostStatistics.reverseMixAverage() + SEPERATOR + hostStatistics.reverseMixVariance() + SEPERATOR + waitingQueueStatistics.avgMemoryFront()
+				+ SEPERATOR + waitingQueueStatistics.avgWaitTimeFront() + SEPERATOR + jobFinisher.collectFinishedJobs() + SEPERATOR
+				+ waitingQueueStatistics.dispatchedJobs() + SEPERATOR + waitingQueueStatistics.submittedJobs();
 		if (log.isDebugEnabled())
 		{
 			log.debug("collectLine() - " + line.replace(' ', ','));
