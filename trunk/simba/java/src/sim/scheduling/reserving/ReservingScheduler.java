@@ -56,7 +56,6 @@ public class ReservingScheduler implements Scheduler
 	{
 		init();
 		long started = System.currentTimeMillis();
-		int reservingJobsCount = 0;
 		int processedJobsCount = 0;
 		int scheduledJobs = 0;
 		int skippedJobs = 0;
@@ -67,7 +66,7 @@ public class ReservingScheduler implements Scheduler
 		{
 			processedJobsCount++;
 			Job job = iterator.next();
-			Host host = getBestHost(job, shouldReserve(reservingJobsCount));
+			Host host = getBestHost(job, shouldReserve(processedJobsCount));
 			if (isAvailable(host, job))
 			{
 				dispatcher.dispatch(job, host, time);
@@ -76,13 +75,12 @@ public class ReservingScheduler implements Scheduler
 			}
 			else
 			{
-				if (shouldReserve(reservingJobsCount))
+				if (shouldReserve(processedJobsCount))
 				{
 					reserve(host, job);
 				}
 			}
 			updateCurrentCycleHosts(host);
-			reservingJobsCount++;
 			if (DUMMY_HOST.equals(host))
 			{
 				skippedJobs++;
@@ -111,7 +109,7 @@ public class ReservingScheduler implements Scheduler
 
 	private boolean shouldReserve(int reservingJobsCount)
 	{
-		return reservingJobsCount < reservationsLimit;
+		return reservingJobsCount <= reservationsLimit;
 	}
 
 	private void updateCurrentCycleHosts(Host host)
@@ -212,8 +210,12 @@ public class ReservingScheduler implements Scheduler
 				}
 				// else grade lower
 			}
-			else if (!isAvailable) // and current host also not available
+			else
+			// and current host also not available
 			{
+				asserter().assertFalse(isAvailable);
+				// TODO check for job that cannot run on the machine
+				// TODO change to grader 2
 				// select host with more available memory
 				double hostAvailable = availableMemory(host);
 				double selectedHostAvailable = availableMemory(selectedHost);
@@ -221,6 +223,7 @@ public class ReservingScheduler implements Scheduler
 				{
 					selectedHost = host;
 				}
+				// TODO add test for this case
 			}
 			// else selectedHost is available and this host not
 		}
