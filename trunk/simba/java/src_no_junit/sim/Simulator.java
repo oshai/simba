@@ -20,11 +20,13 @@ import sim.model.Cluster;
 import sim.model.Job;
 import sim.parsers.HostParser;
 import sim.parsers.JobParser;
+import sim.scheduling.AbstractWaitingQueue;
 import sim.scheduling.ByTraceScheduler;
 import sim.scheduling.JobDispatcher;
+import sim.scheduling.LinkedListWaitingQueue;
 import sim.scheduling.Scheduler;
 import sim.scheduling.SimpleScheduler;
-import sim.scheduling.WaitingQueue;
+import sim.scheduling.SortedWaitingQueue;
 import sim.scheduling.graders.AvailableMemoryGrader;
 import sim.scheduling.graders.Constant;
 import sim.scheduling.graders.Grader;
@@ -32,6 +34,7 @@ import sim.scheduling.graders.RandomGrader;
 import sim.scheduling.graders.ThrowingExceptionGrader;
 import sim.scheduling.matchers.GradeMatcher;
 import sim.scheduling.matchers.GradeMatcherProvider;
+import sim.scheduling.reserving.LoadedMachinesFirstScheduler;
 import sim.scheduling.reserving.ReservingScheduler;
 
 import com.google.common.base.Stopwatch;
@@ -125,10 +128,20 @@ public class Simulator
 		return System.getProperty("scheduler");
 	}
 
+	private String getWaitingQueueProperty()
+	{
+		return System.getProperty("waitQueue");
+	}
+
 	protected Looper createLooper(Cluster cluster, EventQueue eventQueue, Clock clock, Grader grader)
 	{
 		JobDispatcher dispatcher = new JobDispatcher(eventQueue);
-		WaitingQueue waitingQueue = new WaitingQueue();
+		AbstractWaitingQueue waitingQueue = new LinkedListWaitingQueue();
+		if (isSortedWaitingQueue())
+		{
+			waitingQueue = new SortedWaitingQueue();
+		}
+		log.info("wait queue is " + waitingQueue.getClass().getSimpleName());
 		WaitingQueueStatistics waitingQueueStatistics = new WaitingQueueStatistics(waitingQueue, ReservingScheduler.JOBS_CHECKED_BY_SCHEDULER, clock);
 		if (submitImmediately())
 		{
@@ -143,8 +156,17 @@ public class Simulator
 		return looper;
 	}
 
-	private Scheduler createSchduler(Cluster cluster, Grader grader, JobDispatcher dispatcher, WaitingQueue waitingQueue)
+	private boolean isSortedWaitingQueue()
 	{
+		return "sorted".equals(getWaitingQueueProperty());
+	}
+
+	private Scheduler createSchduler(Cluster cluster, Grader grader, JobDispatcher dispatcher, AbstractWaitingQueue waitingQueue)
+	{
+		if (isSortedWaitingQueue())
+		{
+			return new LoadedMachinesFirstScheduler(waitingQueue, cluster, grader, dispatcher);
+		}
 		if ("fifo".equals(getSchedulerProperty()))
 		{
 			return new SimpleScheduler(waitingQueue, cluster, new GradeMatcher(grader), dispatcher);
@@ -170,7 +192,7 @@ public class Simulator
 		return System.getProperty("submit");
 	}
 
-	private void moveJobsToWaitQueue(EventQueue eventQueue, WaitingQueue waitingQueue)
+	private void moveJobsToWaitQueue(EventQueue eventQueue, AbstractWaitingQueue waitingQueue)
 	{
 		log.info("moveJobsToWaitQueue() - start");
 		while (eventQueue.size() > 0)

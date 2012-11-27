@@ -10,6 +10,7 @@ import javax.inject.Provider;
 import org.apache.log4j.Logger;
 
 import sim.Clock;
+import sim.SimbaConsts;
 import sim.event_handling.EventQueue;
 import sim.events.Submit;
 import sim.model.Cluster;
@@ -60,9 +61,7 @@ public class JobParser
 					List<String> cols = splitComma(line);
 					double cores = getMapValue("cores", cols.get(index_actualclassreservation));
 					double memory = getMapValue("memory", cols.get(index_actualclassreservation));
-					// long length = l(cols[index_finishtime]) -
-					// l(cols[index_starttime]);
-					long length = d2l(cols.get(index_wtime));
+					long length = SimbaConsts.isBucketTest() ? 1 : d2l(cols.get(index_wtime));
 					if (length < 1)
 					{
 						length = 1;
@@ -75,8 +74,13 @@ public class JobParser
 					}
 					updateRunTimeBuckets(length);
 					updateMemoryBuckets(memory);
-					Job job = Job.create(length).id(cols.get(index_jobid)).priority(l(cols.get(index_iterationsubmittime)))
-							.submitTime(l(cols.get(index_iterationsubmittime))).cores(cores).memory(memory).startTime(l(cols.get(index_startttime))).build();
+					long submitTime = l(cols.get(index_iterationsubmittime));
+					if (SimbaConsts.isBucketTest())
+					{
+						submitTime = submitTime / SimbaConsts.BUCKET_SIZE * SimbaConsts.BUCKET_SIZE;
+					}
+					Job job = Job.create(length).id(cols.get(index_jobid)).priority(submitTime).submitTime(submitTime).cores(cores).memory(memory)
+							.startTime(l(cols.get(index_startttime))).build();
 					if (canRun(job, cluster))
 					{
 						$.add(new Submit(job));

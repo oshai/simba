@@ -6,7 +6,8 @@ import org.junit.Test;
 
 import sim.Clock;
 import sim.model.Job;
-import sim.scheduling.WaitingQueue;
+import sim.scheduling.AbstractWaitingQueue;
+import sim.scheduling.LinkedListWaitingQueue;
 
 public class WaitingQueueStatisticsTest
 {
@@ -14,7 +15,7 @@ public class WaitingQueueStatisticsTest
 	@Test
 	public void testEmpty()
 	{
-		WaitingQueue w = new WaitingQueue();
+		AbstractWaitingQueue w = new LinkedListWaitingQueue();
 		Clock clock = new Clock();
 		WaitingQueueStatistics tested = new WaitingQueueStatistics(w, 2, clock);
 		tested.updateStatistics();
@@ -25,7 +26,7 @@ public class WaitingQueueStatisticsTest
 	@Test
 	public void testAvgMemory()
 	{
-		WaitingQueue w = new WaitingQueue();
+		AbstractWaitingQueue w = new LinkedListWaitingQueue();
 		w.add(Job.create(1).memory(2).build());
 		w.add(Job.create(1).memory(4).build());
 		Clock clock = new Clock();
@@ -37,7 +38,7 @@ public class WaitingQueueStatisticsTest
 	@Test
 	public void testAvgMemoryFront()
 	{
-		WaitingQueue w = new WaitingQueue();
+		AbstractWaitingQueue w = new LinkedListWaitingQueue();
 		w.add(Job.create(1).memory(2).build());
 		w.add(Job.create(1).memory(4).build());
 		Clock clock = new Clock();
@@ -49,7 +50,7 @@ public class WaitingQueueStatisticsTest
 	@Test
 	public void testAvgWaitTime()
 	{
-		WaitingQueue w = new WaitingQueue();
+		AbstractWaitingQueue w = new LinkedListWaitingQueue();
 		w.add(Job.create(1).submitTime(0).build());
 		w.add(Job.create(1).submitTime(1).build());
 		Clock clock = new Clock(1);
@@ -61,7 +62,7 @@ public class WaitingQueueStatisticsTest
 	@Test
 	public void testSubmittedDispatchedJobs()
 	{
-		WaitingQueue w = new WaitingQueue();
+		AbstractWaitingQueue w = new LinkedListWaitingQueue();
 		Clock clock = new Clock();
 		WaitingQueueStatistics tested = new WaitingQueueStatistics(w, 2, clock);
 		w.add(Job.create(1).build());

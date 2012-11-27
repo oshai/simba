@@ -1,6 +1,6 @@
 package sim.event_handling;
 
-
+import java.util.Iterator;
 
 import javax.inject.Provider;
 
@@ -13,7 +13,7 @@ public class EventQueue
 {
 	private final MinMaxPriorityQueue<Event> queue = MinMaxPriorityQueue.orderedBy(new EventComparator()).create();
 	private final Provider<Clock> clockProvider;
-	
+
 	public EventQueue(Clock clock)
 	{
 		this(new ClockProvider(clock));
@@ -56,5 +56,10 @@ public class EventQueue
 	public int size()
 	{
 		return queue.size();
+	}
+
+	public Iterator<Event> iterator()
+	{
+		return queue.iterator();
 	}
 }

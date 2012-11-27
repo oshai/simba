@@ -19,7 +19,7 @@ public class SimpleSchedulerTest
 	@Test
 	public void testJobMatchHost()
 	{
-		WaitingQueue waitingQueue = new WaitingQueue();
+		AbstractWaitingQueue waitingQueue = new LinkedListWaitingQueue();
 		Job job = mock(Job.class);
 		waitingQueue.add(job);
 		Cluster cluster = new Cluster();
@@ -38,7 +38,7 @@ public class SimpleSchedulerTest
 	@Test
 	public void testJobMatchNull()
 	{
-		WaitingQueue waitingQueue = new WaitingQueue();
+		AbstractWaitingQueue waitingQueue = new LinkedListWaitingQueue();
 		Job job = mock(Job.class);
 		waitingQueue.add(job);
 		Cluster cluster = new Cluster();

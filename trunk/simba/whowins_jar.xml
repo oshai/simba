@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="create_run_jar" name="Create Runnable Jar for Project simba">
+    <!--this file was created by Eclipse Runnable JAR Export Wizard-->
+    <!--ANT 1.7 is required                                        -->
+    <target name="create_run_jar">
+        <jar destfile="/nfs/iil/disks/home20/oshai/work/whowins.jar" filesetmanifest="mergewithoutmain">
+            <manifest>
+                <attribute name="Main-Class" value="sim.WhoWins"/>
+                <attribute name="Class-Path" value="."/>
+            </manifest>
+            <fileset dir="/workarea/oshai/eclipse/workspace/simba/compiled_classes"/>
+            <zipfileset excludes="META-INF/*.SF" src="/workarea/oshai/eclipse/workspace/simba/libs/log4j-1.2.17.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/workarea/oshai/eclipse/workspace/simba/libs/guava-13.0.1.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/workarea/oshai/eclipse/workspace/simba/libs/javax.inject.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/workarea/oshai/eclipse/workspace/simba/libs/mockito-all-1.9.5.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/workarea/oshai/eclipse/workspace/simba/libs/commons-math3-3.0.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/workarea/oshai/eclipse/install/plugins/org.junit_4.8.2.v4_8_2_v20110321-1705/junit.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/workarea/oshai/eclipse/install/plugins/org.hamcrest.core_1.1.0.v20090501071000.jar"/>
+        </jar>
+    </target>
+</project>

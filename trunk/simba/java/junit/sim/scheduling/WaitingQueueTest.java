@@ -16,7 +16,7 @@ public class WaitingQueueTest
 	{
 		Job job1 = Job.create(1).priority(0).build();
 		Job job2 = Job.create(1).priority(1).build();
-		WaitingQueue waitingQueue = new WaitingQueue();
+		AbstractWaitingQueue waitingQueue = new LinkedListWaitingQueue();
 		waitingQueue.add(job1);
 		waitingQueue.add(job2);
 		assertEquals(job1, waitingQueue.peek());
@@ -31,7 +31,7 @@ public class WaitingQueueTest
 		Job job1 = Job.create(1).priority(1).build();
 		Job job2 = Job.create(1).priority(2).build();
 		Job job3 = Job.create(1).priority(3).build();
-		WaitingQueue waitingQueue = new WaitingQueue();
+		AbstractWaitingQueue waitingQueue = new LinkedListWaitingQueue();
 		waitingQueue.add(job0);
 		waitingQueue.add(job1);
 		waitingQueue.add(job2);

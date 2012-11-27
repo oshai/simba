@@ -12,9 +12,9 @@ import org.apache.log4j.Logger;
 import sim.model.Cluster;
 import sim.model.Host;
 import sim.model.Job;
+import sim.scheduling.AbstractWaitingQueue;
 import sim.scheduling.JobDispatcher;
 import sim.scheduling.Scheduler;
-import sim.scheduling.WaitingQueue;
 import sim.scheduling.graders.Grader;
 import utils.GlobalUtils;
 
@@ -25,7 +25,7 @@ public class ReservingScheduler implements Scheduler
 	public static final int RESERVATIONS = 1;
 	private static final Job DUMMY_JOB = Job.create(1).cores(1).memory(1).build();
 	private static final Host DUMMY_HOST = Host.create().id("dummy").cores(0).memory(0).build();
-	private final WaitingQueue waitingQueue;
+	private final AbstractWaitingQueue waitingQueue;
 	private final Cluster cluster;
 	private final Grader grader;
 	private final JobDispatcher dispatcher;
@@ -35,12 +35,12 @@ public class ReservingScheduler implements Scheduler
 	public final int reservationsLimit;
 	private Reservations reservations;
 
-	public ReservingScheduler(WaitingQueue waitingQueue, Cluster cluster, Grader grader, JobDispatcher dispatcher)
+	public ReservingScheduler(AbstractWaitingQueue waitingQueue, Cluster cluster, Grader grader, JobDispatcher dispatcher)
 	{
 		this(waitingQueue, cluster, grader, dispatcher, RESERVATIONS);
 	}
 
-	public ReservingScheduler(WaitingQueue waitingQueue, Cluster cluster, Grader grader, JobDispatcher dispatcher, int reservationsLimit)
+	public ReservingScheduler(AbstractWaitingQueue waitingQueue, Cluster cluster, Grader grader, JobDispatcher dispatcher, int reservationsLimit)
 	{
 		this.cluster = cluster;
 		this.waitingQueue = waitingQueue;
@@ -52,7 +52,7 @@ public class ReservingScheduler implements Scheduler
 	}
 
 	@Override
-	public void schedule(long time)
+	public int schedule(long time)
 	{
 		init();
 		long started = System.currentTimeMillis();
@@ -90,6 +90,7 @@ public class ReservingScheduler implements Scheduler
 		{
 			logScheduler(time, scheduledJobs, processedJobsCount, startingHostsCount, skippedJobs, started, startingJobsCount);
 		}
+		return scheduledJobs;
 	}
 
 	private void logScheduler(long time, int scheduledJobs, int processedJobsCount, int startingHostsCount, int skippedJobs, long started, int startingJobsCount)
@@ -210,7 +211,7 @@ public class ReservingScheduler implements Scheduler
 				}
 				// else grade lower
 			}
-			else
+			else if (!isAvailable)
 			// and current host also not available
 			{
 				asserter().assertFalse(isAvailable);
@@ -226,6 +227,7 @@ public class ReservingScheduler implements Scheduler
 				// TODO add test for this case
 			}
 			// else selectedHost is available and this host not
+			// TODO check this ???
 		}
 		return selectedHost;
 	}

@@ -24,6 +24,8 @@ change configuraiton of each scheduler to be optimal for runtime (ff)
 maybe add guice
 make configuration more simple
 optimize run
+buckets const (SimbaConst) change
+100% coverage back
 
  
 

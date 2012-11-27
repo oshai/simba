@@ -14,11 +14,12 @@ import sim.events.Submit;
 import sim.model.Cluster;
 import sim.model.Host;
 import sim.model.Job;
+import sim.scheduling.AbstractWaitingQueue;
 import sim.scheduling.ByTraceScheduler;
 import sim.scheduling.JobDispatcher;
 import sim.scheduling.Scheduler;
 import sim.scheduling.SimpleScheduler;
-import sim.scheduling.WaitingQueue;
+import sim.scheduling.LinkedListWaitingQueue;
 
 public class LooperTest
 {
@@ -27,7 +28,7 @@ public class LooperTest
 	public void testEmpty()
 	{
 		Clock clock = new Clock();
-		Looper looper = new Looper(clock, new EventQueue(clock), new WaitingQueue(), mock(SimpleScheduler.class), mock(IntervalCollector.class),
+		Looper looper = new Looper(clock, new EventQueue(clock), new LinkedListWaitingQueue(), mock(SimpleScheduler.class), mock(IntervalCollector.class),
 				mock(JobFinisher.class));
 		looper.execute();
 	}
@@ -39,7 +40,7 @@ public class LooperTest
 		EventQueue eventQueue = new EventQueue(clock);
 		eventQueue.add(new NoOp(1));
 		SimpleScheduler scheduler = mock(SimpleScheduler.class);
-		Looper looper = new Looper(clock, eventQueue, new WaitingQueue(), scheduler, mock(IntervalCollector.class), mock(JobFinisher.class));
+		Looper looper = new Looper(clock, eventQueue, new LinkedListWaitingQueue(), scheduler, mock(IntervalCollector.class), mock(JobFinisher.class));
 		looper.setTimeToLog(1);
 		looper.setTimeToSchedule(1);
 		looper.execute();
@@ -53,7 +54,7 @@ public class LooperTest
 	{
 		Clock clock = new Clock();
 		EventQueue eventQueue = new EventQueue(clock);
-		WaitingQueue waitingQueue = new WaitingQueue();
+		AbstractWaitingQueue waitingQueue = new LinkedListWaitingQueue();
 		waitingQueue.add(Job.create(5).build());
 		Scheduler scheduler = new ByTraceScheduler(waitingQueue, new Cluster(), new JobDispatcher(eventQueue));
 		Looper looper = new Looper(clock, eventQueue, waitingQueue, scheduler, mock(IntervalCollector.class), mock(JobFinisher.class));
@@ -71,7 +72,7 @@ public class LooperTest
 		EventQueue eventQueue = new EventQueue(clock);
 		Job job = Job.create(1).priority(0).submitTime(1).cores(0).memory(0).build();
 		eventQueue.add(new Submit(job));
-		WaitingQueue waitingQueue = new WaitingQueue();
+		AbstractWaitingQueue waitingQueue = new LinkedListWaitingQueue();
 		Looper looper = new Looper(clock, eventQueue, waitingQueue, mock(SimpleScheduler.class), mock(IntervalCollector.class), mock(JobFinisher.class));
 		looper.tick();
 		assertEquals(1, clock.time());
@@ -89,7 +90,7 @@ public class LooperTest
 		Host host = Host.create().cores(0).memory(0).build();
 		host.dispatchJob(job);
 		eventQueue.add(new Finish(1, job, host));
-		WaitingQueue waitingQueue = new WaitingQueue();
+		AbstractWaitingQueue waitingQueue = new LinkedListWaitingQueue();
 		JobFinisher jobFinisher = mock(JobFinisher.class);
 		Looper looper = new Looper(clock, eventQueue, waitingQueue, mock(SimpleScheduler.class), mock(IntervalCollector.class), jobFinisher);
 		looper.tick();
@@ -105,7 +106,7 @@ public class LooperTest
 		EventQueue eventQueue = new EventQueue(clock);
 		Job job = Job.create(1).priority(0).submitTime(12).cores(0).memory(0).build();
 		eventQueue.add(new Submit(job));
-		WaitingQueue waitingQueue = new WaitingQueue();
+		AbstractWaitingQueue waitingQueue = new LinkedListWaitingQueue();
 		Scheduler scheduler = mock(SimpleScheduler.class);
 		Looper looper = new Looper(clock, eventQueue, waitingQueue, scheduler, mock(IntervalCollector.class), mock(JobFinisher.class));
 		looper.setTimeToSchedule(1);
@@ -121,7 +122,7 @@ public class LooperTest
 		Clock clock = new Clock();
 		EventQueue eventQueue = new EventQueue(clock);
 		Job job = Job.create(1).priority(0).submitTime(2).cores(0).memory(0).build();
-		WaitingQueue waitingQueue = new WaitingQueue();
+		AbstractWaitingQueue waitingQueue = new LinkedListWaitingQueue();
 		waitingQueue.add(job);
 		Scheduler scheduler = mock(SimpleScheduler.class);
 		Looper looper = new Looper(clock, eventQueue, waitingQueue, scheduler, mock(IntervalCollector.class), mock(JobFinisher.class));
@@ -137,7 +138,7 @@ public class LooperTest
 		EventQueue eventQueue = new EventQueue(clock);
 		Job job = Job.create(1).priority(0).submitTime(1).cores(0).memory(0).build();
 		eventQueue.add(new Submit(job));
-		WaitingQueue waitingQueue = new WaitingQueue();
+		AbstractWaitingQueue waitingQueue = new LinkedListWaitingQueue();
 		SimpleScheduler scheduler = mock(SimpleScheduler.class);
 		Looper looper = new Looper(clock, eventQueue, waitingQueue, scheduler, mock(IntervalCollector.class), mock(JobFinisher.class));
 		looper.setTimeToSchedule(1);
