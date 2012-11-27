@@ -2,7 +2,7 @@ package sim.scheduling;
 
 public interface Scheduler
 {
-	
-	public void schedule(long time);
-	
+
+	public int schedule(long time);
+
 }

@@ -8,11 +8,11 @@ import sim.model.Job;
 
 public class ByTraceScheduler implements Scheduler
 {
-	private final WaitingQueue waitingQueue;
+	private final AbstractWaitingQueue waitingQueue;
 	private final JobDispatcher dispatcher;
 	private Host host;
 
-	public ByTraceScheduler(WaitingQueue waitingQueue, Cluster cluster, JobDispatcher dispatcher)
+	public ByTraceScheduler(AbstractWaitingQueue waitingQueue, Cluster cluster, JobDispatcher dispatcher)
 	{
 		this.waitingQueue = waitingQueue;
 		this.dispatcher = dispatcher;
@@ -34,8 +34,9 @@ public class ByTraceScheduler implements Scheduler
 	}
 
 	@Override
-	public void schedule(long time)
+	public int schedule(long time)
 	{
+		int $ = 0;
 		Iterator<Job> iterator = waitingQueue.iterator();
 		while (iterator.hasNext())
 		{
@@ -44,7 +45,9 @@ public class ByTraceScheduler implements Scheduler
 			{
 				iterator.remove();
 				dispatcher.dispatch(job, host, time);
+				$++;
 			}
 		}
+		return $;
 	}
 }

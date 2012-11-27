@@ -16,10 +16,11 @@ import sim.events.Submit;
 import sim.model.Cluster;
 import sim.model.Host;
 import sim.model.Job;
+import sim.scheduling.AbstractWaitingQueue;
 import sim.scheduling.JobDispatcher;
 import sim.scheduling.Scheduler;
 import sim.scheduling.SimpleScheduler;
-import sim.scheduling.WaitingQueue;
+import sim.scheduling.LinkedListWaitingQueue;
 import sim.scheduling.matchers.FirstFit;
 import sim.scheduling.matchers.Matcher;
 import sim.scheduling.reserving.ReservingScheduler;
@@ -99,7 +100,7 @@ public class SystemTest
 		{
 			eventQueue.add(new Submit(job));
 		}
-		WaitingQueue waitingQueue = new WaitingQueue();
+		AbstractWaitingQueue waitingQueue = new LinkedListWaitingQueue();
 		WaitingQueueStatistics waitingQueueStatistics = new WaitingQueueStatistics(waitingQueue, ReservingScheduler.JOBS_CHECKED_BY_SCHEDULER, clock);
 		JobDispatcher dispatcher = new JobDispatcher(eventQueue);
 		Matcher matcher = new FirstFit();

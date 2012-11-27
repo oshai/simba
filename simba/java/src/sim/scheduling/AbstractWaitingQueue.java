@@ -1,51 +1,57 @@
 package sim.scheduling;
 
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.Queue;
 
 import sim.model.Job;
 
 import com.google.common.collect.ForwardingIterator;
 
-public class WaitingQueue
+public abstract class AbstractWaitingQueue
 {
-	private Queue<Job> queue = new LinkedList<Job>();
+
 	private int added;
 	private int removed;
 
+	public AbstractWaitingQueue()
+	{
+		super();
+	}
+
+	public abstract Queue<Job> getQueue();
+
 	public boolean isEmpty()
 	{
-		return queue.isEmpty();
+		return getQueue().isEmpty();
 	}
 
 	public int size()
 	{
-		return queue.size();
+		return getQueue().size();
 	}
 
 	public Job peek()
 	{
-		return queue.peek();
+		return getQueue().peek();
 	}
 
 	public void add(Job job)
 	{
-		queue.add(job);
+		getQueue().add(job);
 		added++;
 	}
 
 	public Job remove()
 	{
 		removed++;
-		return queue.remove();
+		return getQueue().remove();
 	}
 
 	public Iterator<Job> iterator()
 	{
 		return new ForwardingIterator<Job>()
 		{
-			private Iterator<Job> iterator = queue.iterator();
+			private Iterator<Job> iterator = getQueue().iterator();
 
 			@Override
 			protected Iterator<Job> delegate()

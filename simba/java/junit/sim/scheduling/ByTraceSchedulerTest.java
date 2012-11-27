@@ -16,7 +16,7 @@ public class ByTraceSchedulerTest
 	@Test
 	public void testJobDispatched()
 	{
-		WaitingQueue waitingQueue = new WaitingQueue();
+		AbstractWaitingQueue waitingQueue = new LinkedListWaitingQueue();
 		Job job = Job.create(1).startTime(1).build();
 		waitingQueue.add(job);
 		JobDispatcher dispatcher = mock(JobDispatcher.class);
@@ -42,7 +42,7 @@ public class ByTraceSchedulerTest
 	@Test
 	public void testJobNotDispatched()
 	{
-		WaitingQueue waitingQueue = new WaitingQueue();
+		AbstractWaitingQueue waitingQueue = new LinkedListWaitingQueue();
 		Job job = Job.create(1).startTime(1).build();
 		waitingQueue.add(job);
 		JobDispatcher dispatcher = mock(JobDispatcher.class);

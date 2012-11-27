@@ -2,6 +2,8 @@ package sim;
 
 import static utils.assertions.Asserter.*;
 
+import java.util.Iterator;
+
 import org.apache.log4j.Logger;
 
 import sim.collectors.IntervalCollector;
@@ -11,8 +13,8 @@ import sim.events.Finish;
 import sim.events.NoOp;
 import sim.events.Submit;
 import sim.model.Job;
+import sim.scheduling.AbstractWaitingQueue;
 import sim.scheduling.Scheduler;
-import sim.scheduling.WaitingQueue;
 import sim.scheduling.reserving.ReservingScheduler;
 
 public class Looper
@@ -23,14 +25,15 @@ public class Looper
 	private long timeToLogPassed;
 	private final Clock clock;
 	private final EventQueue eventQueue;
-	private final WaitingQueue waitingQueue;
+	private final AbstractWaitingQueue waitingQueue;
 	private final Scheduler scheduler;
 	private IntervalCollector hostCollector;
 	private final JobFinisher jobFinisher;
 	private boolean firstCycle = true;
 	private boolean hasEventsNotScheduleYet = true;
 
-	public Looper(Clock clock, EventQueue eventQueue, WaitingQueue waitingQueue, Scheduler scheduler, IntervalCollector hostCollector, JobFinisher jobFinisher)
+	public Looper(Clock clock, EventQueue eventQueue, AbstractWaitingQueue waitingQueue, Scheduler scheduler, IntervalCollector hostCollector,
+			JobFinisher jobFinisher)
 	{
 		this.scheduler = scheduler;
 		this.waitingQueue = waitingQueue;
@@ -49,7 +52,7 @@ public class Looper
 		}
 		log.info("execute() - loop finished, calling finish()");
 		finish();
-		asserter().throwsError().assertTrue(waitingQueue.isEmpty(), waitingQueue.toString());
+		asserter().throwsError().assertTrue(waitingQueue.isEmpty(), "waitingQueue not empty, size: " + waitingQueue.size());
 	}
 
 	private void finish()
@@ -61,14 +64,23 @@ public class Looper
 	boolean tick()
 	{
 		long time = clock.tick();
-		boolean handeledEvents = handleEvents(time);
-		hasEventsNotScheduleYet = hasEventsNotScheduleYet || handeledEvents;
-		if ((time - 1) % timeToSchedule == 0 && (hasEventsNotScheduleYet || firstCycle))
+		if (SimbaConsts.isBucketTest() && time % SimbaConsts.BUCKET_SIZE == 0)
 		{
-			scheduler.schedule(time);
+			removeAllRunningJobs();
+		}
+		boolean handeledEvents = handleEvents(time);
+		int scheduledJobs = 0;
+		hasEventsNotScheduleYet = hasEventsNotScheduleYet || handeledEvents;
+		if (time % timeToSchedule == 0 && hasEventsNotScheduleYet || time % timeToSchedule == 1 && firstCycle)
+		{
+			scheduledJobs = scheduler.schedule(time);
 			hasEventsNotScheduleYet = false;
 		}
-		hostCollector.collect(time);
+		if (time % SimbaConsts.BUCKET_SIZE == 0)
+		{
+			log.info("schduled jobs " + scheduledJobs);
+		}
+		hostCollector.collect(time);// TODO , handeledEvents, scheduledJobs);
 		if (time % timeToLog == 0 || firstCycle)
 		{
 			timeToLogPassed++;
@@ -77,6 +89,24 @@ public class Looper
 		boolean shouldContinue = firstCycle || handeledEvents || !(eventQueue.isEmpty());
 		firstCycle = false;
 		return shouldContinue;
+	}
+
+	private void removeAllRunningJobs()
+	{
+		int i = 0;
+		Iterator<Event> it = eventQueue.iterator();
+		while (it.hasNext())
+		{
+			Event event = it.next();
+			if (event instanceof Finish)
+			{
+				Finish finish = (Finish) event;
+				jobFinisher.finish(finish);
+				i++;
+				it.remove();
+			}
+		}
+		log.info("removed jobs " + i);
 	}
 
 	private boolean handleEvents(long time)

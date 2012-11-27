@@ -20,7 +20,7 @@ public class ReservingSchedulerTest
 	@Test
 	public void testJobMatchHost()
 	{
-		WaitingQueue waitingQueue = new WaitingQueue();
+		AbstractWaitingQueue waitingQueue = new LinkedListWaitingQueue();
 		Job job = mock(Job.class);
 		waitingQueue.add(job);
 		Cluster cluster = new Cluster();
@@ -47,7 +47,7 @@ public class ReservingSchedulerTest
 	@Test
 	public void testJobMatchNothing()
 	{
-		WaitingQueue waitingQueue = new WaitingQueue();
+		AbstractWaitingQueue waitingQueue = new LinkedListWaitingQueue();
 		Job job = Job.create(1).cores(2).priority(1).build();
 		waitingQueue.add(job);
 		Cluster cluster = new Cluster();
@@ -64,7 +64,7 @@ public class ReservingSchedulerTest
 	@Test
 	public void testJob2IsReserving()
 	{
-		WaitingQueue waitingQueue = new WaitingQueue();
+		AbstractWaitingQueue waitingQueue = new LinkedListWaitingQueue();
 		Job job0 = Job.create(1).cores(1).memory(1).priority(0).build();
 		Job job1 = Job.create(1).cores(1).memory(2).priority(1).build();
 		Job job2 = Job.create(1).cores(1).memory(1).priority(2).build();
@@ -87,7 +87,7 @@ public class ReservingSchedulerTest
 	@Test
 	public void testJob2NotReserving()
 	{
-		WaitingQueue waitingQueue = new WaitingQueue();
+		AbstractWaitingQueue waitingQueue = new LinkedListWaitingQueue();
 		Job job0 = Job.create(1).cores(1).memory(1).priority(0).build();
 		Job job1 = Job.create(1).cores(1).memory(3).priority(1).build();
 		Job job2 = Job.create(1).cores(1).memory(1).priority(2).build();
@@ -109,7 +109,7 @@ public class ReservingSchedulerTest
 	@Test
 	public void test2ReservingSameHost()
 	{
-		WaitingQueue waitingQueue = new WaitingQueue();
+		AbstractWaitingQueue waitingQueue = new LinkedListWaitingQueue();
 		Job job0 = Job.create(1).cores(1).memory(1).priority(0).build();
 		Job job1 = Job.create(1).cores(1).memory(2).priority(1).build();
 		Job job2 = Job.create(1).cores(1).memory(1).priority(2).build();
@@ -135,7 +135,7 @@ public class ReservingSchedulerTest
 	@Test
 	public void testRunOnHighestGradeHost()
 	{
-		WaitingQueue waitingQueue = new WaitingQueue();
+		AbstractWaitingQueue waitingQueue = new LinkedListWaitingQueue();
 		Job job = mock(Job.class);
 		waitingQueue.add(job);
 		Cluster cluster = new Cluster();
@@ -156,7 +156,7 @@ public class ReservingSchedulerTest
 	@Test
 	public void testReservationIsOnHighestMemoryHost()
 	{
-		WaitingQueue waitingQueue = new WaitingQueue();
+		AbstractWaitingQueue waitingQueue = new LinkedListWaitingQueue();
 		Job job0 = Job.create(1).priority(0).memory(2).build();
 		Job job1 = Job.create(1).priority(1).memory(4).build();
 		Job job2 = Job.create(1).priority(2).memory(3).build();
