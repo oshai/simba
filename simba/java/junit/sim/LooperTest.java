@@ -17,9 +17,9 @@ import sim.model.Job;
 import sim.scheduling.AbstractWaitingQueue;
 import sim.scheduling.ByTraceScheduler;
 import sim.scheduling.JobDispatcher;
+import sim.scheduling.LinkedListWaitingQueue;
 import sim.scheduling.Scheduler;
 import sim.scheduling.SimpleScheduler;
-import sim.scheduling.LinkedListWaitingQueue;
 
 public class LooperTest
 {
@@ -144,6 +144,32 @@ public class LooperTest
 		looper.setTimeToSchedule(1);
 		assertTrue(looper.tick());
 		verify(scheduler).schedule(1);
+	}
+
+	@Test
+	public void testBucketSimulation()
+	{
+		SimbaConsts.bucketSimulation = true;
+		int original = SimbaConsts.BUCKET_SIZE;
+		SimbaConsts.BUCKET_SIZE = 1;
+		try
+		{
+			Clock clock = new Clock();
+			EventQueue eventQueue = new EventQueue(clock);
+			Job job = Job.create(1).priority(0).submitTime(0).cores(0).memory(0).build();
+			AbstractWaitingQueue waitingQueue = new LinkedListWaitingQueue();
+			eventQueue.add(new Finish(5, job, null));
+			SimpleScheduler scheduler = mock(SimpleScheduler.class);
+			Looper looper = new Looper(clock, eventQueue, waitingQueue, scheduler, mock(IntervalCollector.class), mock(JobFinisher.class));
+			looper.setTimeToSchedule(1);
+			assertTrue(looper.tick());
+			assertTrue(eventQueue.isEmpty());
+		}
+		finally
+		{
+			SimbaConsts.bucketSimulation = false;
+			SimbaConsts.BUCKET_SIZE = original;
+		}
 	}
 
 }

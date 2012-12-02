@@ -20,4 +20,15 @@ public class SortedWaitingQueueTest
 		assertEquals(job2, tested.peek());
 	}
 
+	@Test
+	public void testEquals()
+	{
+		SortedWaitingQueue tested = new SortedWaitingQueue();
+		Job job1 = Job.create(1).memory(1).build();
+		tested.add(job1);
+		Job job2 = Job.create(1).memory(1).build();
+		tested.add(job2);
+		assertEquals(job1, tested.peek());
+	}
+
 }
