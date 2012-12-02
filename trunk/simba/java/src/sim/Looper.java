@@ -64,7 +64,7 @@ public class Looper
 	boolean tick()
 	{
 		long time = clock.tick();
-		if (SimbaConsts.isBucketTest() && time % SimbaConsts.BUCKET_SIZE == 0)
+		if (SimbaConsts.isBucketSimulation() && time % SimbaConsts.BUCKET_SIZE == 0)
 		{
 			removeAllRunningJobs();
 		}

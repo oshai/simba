@@ -61,7 +61,7 @@ public class JobParser
 					List<String> cols = splitComma(line);
 					double cores = getMapValue("cores", cols.get(index_actualclassreservation));
 					double memory = getMapValue("memory", cols.get(index_actualclassreservation));
-					long length = SimbaConsts.isBucketTest() ? 1 : d2l(cols.get(index_wtime));
+					long length = SimbaConsts.isBucketSimulation() ? 1 : d2l(cols.get(index_wtime));
 					if (length < 1)
 					{
 						length = 1;
@@ -75,7 +75,7 @@ public class JobParser
 					updateRunTimeBuckets(length);
 					updateMemoryBuckets(memory);
 					long submitTime = l(cols.get(index_iterationsubmittime));
-					if (SimbaConsts.isBucketTest())
+					if (SimbaConsts.isBucketSimulation())
 					{
 						submitTime = submitTime / SimbaConsts.BUCKET_SIZE * SimbaConsts.BUCKET_SIZE;
 					}
