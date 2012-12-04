@@ -6,8 +6,11 @@ import static utils.assertions.Asserter.*;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.apache.log4j.Logger;
 
+import sim.SimbaConfiguration;
 import sim.model.Cluster;
 import sim.model.Host;
 import sim.model.Job;
@@ -20,8 +23,7 @@ public class ReservingScheduler implements Scheduler
 {
 	private static final Logger log = Logger.getLogger(ReservingScheduler.class);
 	public static final int JOBS_CHECKED_BY_SCHEDULER = Integer.MAX_VALUE;
-	public static final int RESERVATIONS = 1;
-	private static final Job DUMMY_JOB = Job.create(1).cores(1).memory(1).build();
+	private final Job DUMMY_JOB;
 	private static final Host DUMMY_HOST = Host.create().id("dummy").cores(0).memory(0).build();
 	private final AbstractWaitingQueue waitingQueue;
 	private final Cluster cluster;
@@ -30,23 +32,20 @@ public class ReservingScheduler implements Scheduler
 	private ReservationsHolderSupplier reservationsSupplier;
 	private List<Host> currentCycleHosts;
 	private double maxAvailableMemory;
-	public final int reservationsLimit;
 	private Reservations reservations;
 	private ReservingSchedulerUtils reservingSchedulerUtils;
+	private final SimbaConfiguration simbaConfiguration;
 
-	public ReservingScheduler(AbstractWaitingQueue waitingQueue, Cluster cluster, Grader grader, JobDispatcher dispatcher)
-	{
-		this(waitingQueue, cluster, grader, dispatcher, RESERVATIONS);
-	}
-
-	public ReservingScheduler(AbstractWaitingQueue waitingQueue, Cluster cluster, Grader grader, JobDispatcher dispatcher, int reservationsLimit)
+	@Inject
+	public ReservingScheduler(AbstractWaitingQueue waitingQueue, Cluster cluster, Grader grader, JobDispatcher dispatcher, SimbaConfiguration simbaConfiguration)
 	{
 		this.cluster = cluster;
 		this.waitingQueue = waitingQueue;
 		this.grader = grader;
 		this.dispatcher = dispatcher;
-		this.reservationsLimit = reservationsLimit;
-		reservationsSupplier = new ReservationsHolderSupplier(reservationsLimit);
+		this.simbaConfiguration = simbaConfiguration;
+		reservationsSupplier = new ReservationsHolderSupplier(this.simbaConfiguration.reservationsLimit());
+		DUMMY_JOB = Job.create(1).cores(this.simbaConfiguration.jobCoresRatio() * 1).memory(1).build();
 		// log.setLevel(Level.DEBUG);
 	}
 
@@ -109,7 +108,7 @@ public class ReservingScheduler implements Scheduler
 
 	private boolean shouldReserve(int reservingJobsCount)
 	{
-		return reservingJobsCount <= reservationsLimit;
+		return reservingJobsCount <= simbaConfiguration.reservationsLimit();
 	}
 
 	private void updateCurrentCycleHosts(Host host)

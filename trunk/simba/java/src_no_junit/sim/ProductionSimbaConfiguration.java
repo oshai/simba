@@ -43,4 +43,10 @@ public class ProductionSimbaConfiguration implements SimbaConfiguration
 	{
 		return memoryRatio;
 	}
+
+	@Override
+	public int reservationsLimit()
+	{
+		return 1;
+	}
 }

@@ -13,4 +13,6 @@ public interface SimbaConfiguration
 	double jobCoresRatio();
 
 	double hostMemoryRatio();
+
+	public int reservationsLimit();
 }

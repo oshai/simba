@@ -7,6 +7,7 @@ import java.util.Iterator;
 
 import org.junit.Test;
 
+import sim.ForTestingSimbaConfiguration;
 import sim.event_handling.EventQueue;
 import sim.model.Cluster;
 import sim.model.Host;
@@ -28,11 +29,16 @@ public class ReservingSchedulerTest
 		cluster.add(host);
 		Grader grader = mock(Grader.class);
 		JobDispatcher dispatcher = mock(JobDispatcher.class);
-		Scheduler scheduler = new ReservingScheduler(waitingQueue, cluster, grader, dispatcher);
+		Scheduler scheduler = createScheduler(waitingQueue, cluster, grader, dispatcher);
 		long time = 1;
 		scheduler.schedule(time);
 		assertTrue(waitingQueue.isEmpty());
 		verify(dispatcher).dispatch(job, host, time);
+	}
+
+	private ReservingScheduler createScheduler(AbstractWaitingQueue waitingQueue, Cluster cluster, Grader grader, JobDispatcher dispatcher)
+	{
+		return new ReservingScheduler(waitingQueue, cluster, grader, dispatcher, new ForTestingSimbaConfiguration());
 	}
 
 	private Host createHost(Job job)
@@ -55,7 +61,7 @@ public class ReservingSchedulerTest
 		cluster.add(host);
 		Grader grader = mock(Grader.class);
 		JobDispatcher dispatcher = mock(JobDispatcher.class);
-		Scheduler scheduler = new ReservingScheduler(waitingQueue, cluster, grader, dispatcher);
+		Scheduler scheduler = createScheduler(waitingQueue, cluster, grader, dispatcher);
 		scheduler.schedule(0);
 		assertEquals(1, waitingQueue.size());
 		assertEquals(job, waitingQueue.peek());
@@ -76,7 +82,7 @@ public class ReservingSchedulerTest
 		cluster.add(host);
 		Grader grader = mock(Grader.class);
 		JobDispatcher dispatcher = new JobDispatcher(mock(EventQueue.class));
-		Scheduler scheduler = new ReservingScheduler(waitingQueue, cluster, grader, dispatcher, 2);
+		Scheduler scheduler = createScheduler(waitingQueue, cluster, grader, dispatcher, 2);
 		scheduler.schedule(0);
 		assertEquals(2, waitingQueue.size());
 		Iterator<Job> iterator = waitingQueue.iterator();
@@ -99,7 +105,8 @@ public class ReservingSchedulerTest
 		cluster.add(host);
 		Grader grader = mock(Grader.class);
 		JobDispatcher dispatcher = new JobDispatcher(mock(EventQueue.class));
-		Scheduler scheduler = new ReservingScheduler(waitingQueue, cluster, grader, dispatcher, 1);
+		int reservationsLimit = 1;
+		Scheduler scheduler = createScheduler(waitingQueue, cluster, grader, dispatcher, reservationsLimit);
 		scheduler.schedule(0);
 		assertEquals(1, waitingQueue.size());
 		Iterator<Job> iterator = waitingQueue.iterator();
@@ -123,13 +130,27 @@ public class ReservingSchedulerTest
 		cluster.add(host);
 		Grader grader = mock(Grader.class);
 		JobDispatcher dispatcher = new JobDispatcher(mock(EventQueue.class));
-		Scheduler scheduler = new ReservingScheduler(waitingQueue, cluster, grader, dispatcher, 2);
+		int reservationsLimit = 2;
+		Scheduler scheduler = createScheduler(waitingQueue, cluster, grader, dispatcher, reservationsLimit);
 		scheduler.schedule(0);
 		assertEquals(3, waitingQueue.size());
 		Iterator<Job> iterator = waitingQueue.iterator();
 		assertEquals(job1, iterator.next());
 		assertEquals(job2, iterator.next());
 		assertEquals(job3, iterator.next());
+	}
+
+	private ReservingScheduler createScheduler(AbstractWaitingQueue waitingQueue, Cluster cluster, Grader grader, JobDispatcher dispatcher,
+			final int reservationsLimit)
+	{
+		return new ReservingScheduler(waitingQueue, cluster, grader, dispatcher, new ForTestingSimbaConfiguration()
+		{
+			@Override
+			public int reservationsLimit()
+			{
+				return reservationsLimit;
+			}
+		});
 	}
 
 	@Test
@@ -147,7 +168,7 @@ public class ReservingSchedulerTest
 		when(grader.getGrade(host1, job)).thenReturn(0.0);
 		when(grader.getGrade(host2, job)).thenReturn(1.0);
 		JobDispatcher dispatcher = mock(JobDispatcher.class);
-		Scheduler scheduler = new ReservingScheduler(waitingQueue, cluster, grader, dispatcher);
+		Scheduler scheduler = createScheduler(waitingQueue, cluster, grader, dispatcher);
 		scheduler.schedule(0);
 		assertEquals(0, waitingQueue.size());
 		verify(dispatcher).dispatch(job, host2, 0);
@@ -172,7 +193,7 @@ public class ReservingSchedulerTest
 		cluster.add(host2);
 		Grader grader = mock(Grader.class);
 		JobDispatcher dispatcher = new JobDispatcher(mock(EventQueue.class));
-		Scheduler scheduler = new ReservingScheduler(waitingQueue, cluster, grader, dispatcher);
+		Scheduler scheduler = createScheduler(waitingQueue, cluster, grader, dispatcher);
 		scheduler.schedule(0);
 		assertEquals(1, waitingQueue.size());
 		assertEquals(job2, waitingQueue.remove());

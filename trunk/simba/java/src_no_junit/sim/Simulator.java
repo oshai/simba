@@ -187,7 +187,7 @@ public class Simulator
 		}
 		if ("reservation".equals(getSchedulerProperty()))
 		{
-			return new ReservingScheduler(waitingQueue, cluster, grader, dispatcher);
+			return new ReservingScheduler(waitingQueue, cluster, grader, dispatcher, getConfiguration());
 		}
 		if ("by-trace".equals(getSchedulerProperty()))
 		{
