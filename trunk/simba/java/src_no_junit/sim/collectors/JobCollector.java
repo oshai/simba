@@ -1,11 +1,9 @@
 package sim.collectors;
 
-import org.apache.commons.math3.util.Pair;
-
 import sim.model.Host;
 import sim.model.Job;
 
-public class JobCollector extends Collector<Pair<Job, Host>>
+public class JobCollector extends Collector
 {
 
 	private static final String JOBS_FILE_NAME = "jobs_trace";
@@ -17,11 +15,13 @@ public class JobCollector extends Collector<Pair<Job, Host>>
 				+ "priority" + SEPERATOR + "host";
 	}
 
-	@Override
-	protected String collectLine(Pair<Job, Host> pair)
+	public void collect(Host host, Job job)
 	{
-		Job job = pair.getKey();
-		Host host = pair.getValue();
+		appendLine(collectLine(host, job));
+	}
+
+	private String collectLine(Host host, Job job)
+	{
 		return job.id() + SEPERATOR + job.submitTime() + SEPERATOR + job.waitTime() + SEPERATOR + job.length() + SEPERATOR + job.cores() + SEPERATOR
 				+ job.memory() + SEPERATOR + job.priority() + SEPERATOR + host.id();
 	}

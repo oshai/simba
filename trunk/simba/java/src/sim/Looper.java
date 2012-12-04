@@ -85,7 +85,7 @@ public class Looper
 		{
 			log.info("schduled jobs " + scheduledJobs);
 		}
-		hostCollector.collect(time);// TODO , handeledEvents, scheduledJobs);
+		hostCollector.collect(time, handeledEvents, scheduledJobs);
 		if (time % simbaConsts.timeToLog() == 0 || firstCycle)
 		{
 			timeToLogPassed++;
