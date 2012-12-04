@@ -1,7 +1,6 @@
 package sim.scheduling.reserving;
 
 import static com.google.common.collect.Lists.*;
-import static utils.GlobalUtils.*;
 import static utils.assertions.Asserter.*;
 
 import java.util.Iterator;
@@ -16,7 +15,6 @@ import sim.scheduling.AbstractWaitingQueue;
 import sim.scheduling.JobDispatcher;
 import sim.scheduling.Scheduler;
 import sim.scheduling.graders.Grader;
-import utils.GlobalUtils;
 
 public class ReservingScheduler implements Scheduler
 {
@@ -34,6 +32,7 @@ public class ReservingScheduler implements Scheduler
 	private double maxAvailableMemory;
 	public final int reservationsLimit;
 	private Reservations reservations;
+	private ReservingSchedulerUtils reservingSchedulerUtils;
 
 	public ReservingScheduler(AbstractWaitingQueue waitingQueue, Cluster cluster, Grader grader, JobDispatcher dispatcher)
 	{
@@ -67,7 +66,7 @@ public class ReservingScheduler implements Scheduler
 			processedJobsCount++;
 			Job job = iterator.next();
 			Host host = getBestHost(job, shouldReserve(processedJobsCount));
-			if (isAvailable(host, job))
+			if (reservingSchedulerUtils.isAvailable(host, job))
 			{
 				dispatcher.dispatch(job, host, time);
 				iterator.remove();
@@ -86,7 +85,7 @@ public class ReservingScheduler implements Scheduler
 				skippedJobs++;
 			}
 		}
-		if (log.isDebugEnabled() && time % 3600 == 0)
+		if (time % 10800 == 0)
 		{
 			logScheduler(time, scheduledJobs, processedJobsCount, startingHostsCount, skippedJobs, started, startingJobsCount);
 		}
@@ -130,33 +129,21 @@ public class ReservingScheduler implements Scheduler
 			if (!isFull(host))
 			{
 				$.add(host);
-				updateMaxAvailableMemory(host);
+				maxAvailableMemory = reservingSchedulerUtils.updateMaxAvailableMemory(host, maxAvailableMemory);
 			}
 		}
 		return $;
 	}
 
-	private void updateMaxAvailableMemory(Host host)
-	{
-		if (greater(availableMemory(host), maxAvailableMemory))
-		{
-			maxAvailableMemory = host.availableMemory();
-		}
-	}
-
-	private double availableMemory(Host host)
-	{
-		return host.availableMemory() - getReservation(host).memory();
-	}
-
 	private boolean isFull(Host host)
 	{
-		return !isAvailable(host, DUMMY_JOB);
+		return !reservingSchedulerUtils.isAvailable(host, DUMMY_JOB);
 	}
 
 	private void init()
 	{
 		reservations = reservationsSupplier.get();
+		reservingSchedulerUtils = new ReservingSchedulerUtils(reservations);
 		currentCycleHosts = removeHostsThatAreFull(cluster.hosts());
 	}
 
@@ -178,57 +165,15 @@ public class ReservingScheduler implements Scheduler
 		return reservations.get(host.id());
 	}
 
-	private boolean isAvailable(Host host, Job job)
-	{
-		Reservation r = getReservation(host);
-		return greaterOrEquals(host.availableCores(), r.cores() + job.cores()) && greaterOrEquals(host.availableMemory(), r.memory() + job.memory());
-	}
-
 	private Host getBestHost(Job job, boolean shouldReserve)
 	{
-		if (!shouldReserve && GlobalUtils.greater(job.memory(), maxAvailableMemory))
+		if (!shouldReserve && job.memory() > maxAvailableMemory)
 		{
 			return DUMMY_HOST;
 		}
-		Host selectedHost = null;
-		boolean isAvailable = false;
-		maxAvailableMemory = 0;
-		for (Host host : currentCycleHosts)
-		{
-			updateMaxAvailableMemory(host);
-			double grade = grader.getGrade(host, job);
-			if (null == selectedHost)
-			{
-				selectedHost = host;
-				isAvailable = isAvailable(host, job);
-			}
-			else if (isAvailable(host, job))
-			{
-				if (!isAvailable || greater(grade, grader.getGrade(selectedHost, job)))
-				{
-					selectedHost = host;
-					isAvailable = true;
-				}
-				// else grade lower
-			}
-			else if (!isAvailable)
-			// and current host also not available
-			{
-				asserter().assertFalse(isAvailable);
-				// TODO check for job that cannot run on the machine
-				// TODO change to grader 2
-				// select host with more available memory
-				double hostAvailable = availableMemory(host);
-				double selectedHostAvailable = availableMemory(selectedHost);
-				if (GlobalUtils.greater(hostAvailable, selectedHostAvailable))
-				{
-					selectedHost = host;
-				}
-				// TODO add test for this case
-			}
-			// else selectedHost is available and this host not
-			// TODO check this ???
-		}
-		return selectedHost;
+		HostPicker hostPicker = new HostPicker(reservingSchedulerUtils, currentCycleHosts, grader);
+		Host bestHost = hostPicker.getBestHost(job);
+		maxAvailableMemory = hostPicker.maxAvailableMemory();
+		return bestHost;
 	}
 }

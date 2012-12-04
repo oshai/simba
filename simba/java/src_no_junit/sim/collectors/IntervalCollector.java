@@ -32,8 +32,7 @@ public class IntervalCollector extends Collector
 				+ waitingQueueStatistics.waitingJobs() + SEPERATOR + hostStatistics.mixAverage() + SEPERATOR + hostStatistics.mixVariance() + SEPERATOR
 				+ hostStatistics.reverseMixAverage() + SEPERATOR + hostStatistics.reverseMixVariance() + SEPERATOR + waitingQueueStatistics.avgMemoryFront()
 				+ SEPERATOR + waitingQueueStatistics.avgWaitTimeFront() + SEPERATOR + jobFinisher.collectFinishedJobs() + SEPERATOR
-				+ waitingQueueStatistics.dispatchedJobs() + SEPERATOR + waitingQueueStatistics.submittedJobs() + SEPERATOR + scheduledJobs + SEPERATOR
-				+ waitingQueueStatistics.waitingJobs();
+				+ waitingQueueStatistics.dispatchedJobs() + SEPERATOR + waitingQueueStatistics.submittedJobs() + SEPERATOR + scheduledJobs + SEPERATOR;
 		if (log.isDebugEnabled())
 		{
 			log.debug("collectLine() - " + line.replace(' ', ','));
@@ -45,9 +44,9 @@ public class IntervalCollector extends Collector
 	protected String collectHeader()
 	{
 		String line = "#time" + SEPERATOR + "cores" + SEPERATOR + "usedCores" + SEPERATOR + "memory" + SEPERATOR + "usedMemory" + SEPERATOR + "memoryAverage"
-				+ SEPERATOR + "memoryVariance" + SEPERATOR + "waitQueueSize" + SEPERATOR + "mixAverage" + SEPERATOR + "mixVariance" + SEPERATOR
+				+ SEPERATOR + "memoryVariance" + SEPERATOR + "waitingJobs" + SEPERATOR + "mixAverage" + SEPERATOR + "mixVariance" + SEPERATOR
 				+ "reverseMixAverage" + SEPERATOR + "reverseMixVariance" + SEPERATOR + "avgMemoryFront" + SEPERATOR + "avgWaitTimeFront" + SEPERATOR
-				+ "finishedJobs" + SEPERATOR + "dispatchedJobs" + SEPERATOR + "submittedJobs" + SEPERATOR + "scheduledJobs" + SEPERATOR + "waitingJobs";
+				+ "finishedJobs" + SEPERATOR + "dispatchedJobs" + SEPERATOR + "submittedJobs" + SEPERATOR + "scheduledJobs";
 		return line;
 	}
 
