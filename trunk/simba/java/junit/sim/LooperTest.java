@@ -88,7 +88,7 @@ public class LooperTest
 		eventQueue.add(new Finish(1, job, host));
 		AbstractWaitingQueue waitingQueue = new LinkedListWaitingQueue();
 		JobFinisher jobFinisher = mock(JobFinisher.class);
-		Looper looper = createLooper(clock, eventQueue, waitingQueue, mock(SimpleScheduler.class), jobFinisher, new ProductionSimbaConsts());
+		Looper looper = createLooper(clock, eventQueue, waitingQueue, mock(SimpleScheduler.class), jobFinisher, new ProductionSimbaConfiguration());
 		looper.tick();
 		assertEquals(1, clock.time());
 		assertTrue(eventQueue.isEmpty());
@@ -145,7 +145,7 @@ public class LooperTest
 	}
 
 	private Looper createLooper(Clock clock, EventQueue eventQueue, AbstractWaitingQueue waitingQueue, Scheduler scheduler, JobFinisher jobFinisher,
-			SimbaConsts consts)
+			SimbaConfiguration consts)
 	{
 		return new Looper(clock, eventQueue, waitingQueue, scheduler, mock(IntervalCollector.class), jobFinisher, consts);
 	}
@@ -159,15 +159,15 @@ public class LooperTest
 		AbstractWaitingQueue waitingQueue = new LinkedListWaitingQueue();
 		eventQueue.add(new Finish(5, job, null));
 		SimpleScheduler scheduler = mock(SimpleScheduler.class);
-		SimbaConsts consts = createBucketConsts();
+		SimbaConfiguration consts = createBucketConsts();
 		Looper looper = createLooper(clock, eventQueue, waitingQueue, scheduler, mock(JobFinisher.class), consts);
 		assertTrue(looper.tick());
 		assertTrue(eventQueue.isEmpty());
 	}
 
-	private SimbaConsts createConsts()
+	private SimbaConfiguration createConsts()
 	{
-		SimbaConsts consts = new SimbaConsts()
+		SimbaConfiguration consts = new SimbaConfiguration()
 		{
 			@Override
 			public boolean isBucketSimulation()
@@ -192,13 +192,25 @@ public class LooperTest
 			{
 				return 1;
 			}
+
+			@Override
+			public double jobCoresRatio()
+			{
+				return 1.0;
+			}
+
+			@Override
+			public double hostMemoryRatio()
+			{
+				return 1.0;
+			}
 		};
 		return consts;
 	}
 
-	private SimbaConsts createBucketConsts()
+	private SimbaConfiguration createBucketConsts()
 	{
-		SimbaConsts consts = new SimbaConsts()
+		SimbaConfiguration consts = new SimbaConfiguration()
 		{
 			@Override
 			public boolean isBucketSimulation()
@@ -222,6 +234,18 @@ public class LooperTest
 			public long timeToLog()
 			{
 				return 1;
+			}
+
+			@Override
+			public double jobCoresRatio()
+			{
+				return 1.0;
+			}
+
+			@Override
+			public double hostMemoryRatio()
+			{
+				return 1.0;
 			}
 		};
 		return consts;

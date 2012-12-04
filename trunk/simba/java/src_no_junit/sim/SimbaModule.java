@@ -11,9 +11,9 @@ import com.google.inject.assistedinject.FactoryModuleBuilder;
 
 public class SimbaModule extends AbstractModule implements Module
 {
-	private final SimbaConsts simbaConsts;
+	private final SimbaConfiguration simbaConsts;
 
-	public SimbaModule(SimbaConsts simbaConsts)
+	public SimbaModule(SimbaConfiguration simbaConsts)
 	{
 		super();
 		this.simbaConsts = simbaConsts;
@@ -22,7 +22,7 @@ public class SimbaModule extends AbstractModule implements Module
 	@Override
 	protected void configure()
 	{
-		bind(SimbaConsts.class).toInstance(simbaConsts);
+		bind(SimbaConfiguration.class).toInstance(simbaConsts);
 		install(new FactoryModuleBuilder().implement(Looper.class, Looper.class).build(LooperFactory.class));
 	}
 
