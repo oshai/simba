@@ -11,7 +11,7 @@ import javax.inject.Provider;
 import org.apache.log4j.Logger;
 
 import sim.Clock;
-import sim.SimbaConsts;
+import sim.SimbaConfiguration;
 import sim.event_handling.EventQueue;
 import sim.events.Submit;
 import sim.model.Cluster;
@@ -42,8 +42,15 @@ public class JobParser
 	private static final int index_startttime = 5;// iil-new?
 	private static final int index_wtime = 9;// iil-new also
 	private static boolean DEBUG = false;
+
+	private final SimbaConfiguration simbaConfiguration;
+
 	@Inject
-	private SimbaConsts simbaConsts;
+	public JobParser(SimbaConfiguration simbaConfiguration)
+	{
+		super();
+		this.simbaConfiguration = simbaConfiguration;
+	}
 
 	public EventQueue parse(Provider<Clock> clockProvider, final Cluster cluster)
 	{
@@ -63,9 +70,9 @@ public class JobParser
 				try
 				{
 					List<String> cols = splitComma(line);
-					double cores = getMapValue("cores", cols.get(index_actualclassreservation));
+					double cores = getMapValue("cores", cols.get(index_actualclassreservation)) * simbaConfiguration.jobCoresRatio();
 					double memory = getMapValue("memory", cols.get(index_actualclassreservation));
-					long length = simbaConsts.isBucketSimulation() ? 1 : d2l(cols.get(index_wtime));
+					long length = simbaConfiguration.isBucketSimulation() ? 1 : d2l(cols.get(index_wtime));
 					if (length < 1)
 					{
 						length = 1;
@@ -79,9 +86,9 @@ public class JobParser
 					updateRunTimeBuckets(length);
 					updateMemoryBuckets(memory);
 					long submitTime = l(cols.get(index_iterationsubmittime));
-					if (simbaConsts.isBucketSimulation())
+					if (simbaConfiguration.isBucketSimulation())
 					{
-						submitTime = submitTime / simbaConsts.bucketSize() * simbaConsts.bucketSize();
+						submitTime = submitTime / simbaConfiguration.bucketSize() * simbaConfiguration.bucketSize();
 					}
 					Job job = Job.create(length).id(cols.get(index_jobid)).priority(submitTime).submitTime(submitTime).cores(cores).memory(memory)
 							.startTime(l(cols.get(index_startttime))).build();

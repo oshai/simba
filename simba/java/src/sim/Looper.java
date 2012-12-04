@@ -33,11 +33,11 @@ public class Looper
 	private final JobFinisher jobFinisher;
 	private boolean firstCycle = true;
 	private boolean hasEventsNotScheduleYet = true;
-	private final SimbaConsts simbaConsts;
+	private final SimbaConfiguration simbaConsts;
 
 	@Inject
 	public Looper(@Assisted Clock clock, @Assisted EventQueue eventQueue, @Assisted AbstractWaitingQueue waitingQueue, @Assisted Scheduler scheduler,
-			@Assisted IntervalCollector hostCollector, @Assisted JobFinisher jobFinisher, SimbaConsts simbaConsts)
+			@Assisted IntervalCollector hostCollector, @Assisted JobFinisher jobFinisher, SimbaConfiguration simbaConsts)
 	{
 		this.scheduler = scheduler;
 		this.waitingQueue = waitingQueue;

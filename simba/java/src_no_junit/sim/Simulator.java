@@ -50,7 +50,7 @@ public class Simulator
 
 	public Simulator()
 	{
-		injector = Guice.createInjector(new SimbaModule(new ProductionSimbaConsts()));
+		injector = Guice.createInjector(new SimbaModule(new ProductionSimbaConfiguration()));
 	}
 
 	public static void main(String[] args)
@@ -73,7 +73,7 @@ public class Simulator
 	{
 		log.info("execute() - starting at " + new Date());
 		Stopwatch stopwatch = new Stopwatch().start();
-		Cluster cluster = new HostParser().parse();
+		Cluster cluster = injector.getInstance(HostParser.class).parse();
 		ClockProvider clockProvider = new ClockProvider();
 		EventQueue eventQueue = injector.getInstance(JobParser.class).parse(clockProvider, cluster);
 		Event event = eventQueue.peek();
@@ -155,8 +155,7 @@ public class Simulator
 		log.info("createLooper() - scheduler is " + scheduler.getClass().getSimpleName());
 		JobCollector jobCollector = new JobCollector();
 		JobFinisher jobFinisher = new JobFinisher(jobCollector);
-		SimbaConsts conf = injector.getInstance(SimbaConsts.class);
-		int collectTime = conf.isBucketSimulation() ? (int) conf.bucketSize() : 300;
+		int collectTime = getConfiguration().isBucketSimulation() ? (int) getConfiguration().bucketSize() : 300;
 		IntervalCollector hostCollector = new IntervalCollector(cluster, collectTime, waitingQueueStatistics, jobFinisher);
 		Looper looper = injector.getInstance(LooperFactory.class).create(clock, eventQueue, waitingQueue, scheduler, hostCollector, jobFinisher);
 
@@ -164,6 +163,11 @@ public class Simulator
 		// // waitingQueue, scheduler,
 		// hostCollector, jobFinisher);
 		return looper;
+	}
+
+	private SimbaConfiguration getConfiguration()
+	{
+		return injector.getInstance(SimbaConfiguration.class);
 	}
 
 	private boolean isSortedWaitingQueue()

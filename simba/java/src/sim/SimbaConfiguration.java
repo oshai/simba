@@ -1,6 +1,6 @@
 package sim;
 
-public interface SimbaConsts
+public interface SimbaConfiguration
 {
 	public boolean isBucketSimulation();
 
@@ -9,4 +9,8 @@ public interface SimbaConsts
 	public long timeToSchedule();
 
 	public long timeToLog();
+
+	double jobCoresRatio();
+
+	double hostMemoryRatio();
 }

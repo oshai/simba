@@ -40,7 +40,7 @@ public class SystemTest
 	{
 		clock = new Clock();
 		eventQueue = new EventQueue(clock);
-		injector = Guice.createInjector(new SimbaModule(new ProductionSimbaConsts()
+		injector = Guice.createInjector(new SimbaModule(new ProductionSimbaConfiguration()
 		{
 			@Override
 			public long timeToSchedule()

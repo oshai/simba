@@ -1,7 +1,9 @@
 package sim;
 
-public class ProductionSimbaConsts implements SimbaConsts
+public class ProductionSimbaConfiguration implements SimbaConfiguration
 {
+	private final double memoryRatio = Double.valueOf(System.getProperty("host-memory-multiplier", "1.0"));
+	private final double coreRatio = Double.valueOf(System.getProperty("cores-ratio", "1.0"));
 	private boolean bucketSimulation = false;
 	private int bucketSize = 10800;
 	private long timeToLog = 60 * 60 * 24;// 1 day
@@ -28,5 +30,17 @@ public class ProductionSimbaConsts implements SimbaConsts
 	public long timeToLog()
 	{
 		return timeToLog;
+	}
+
+	@Override
+	public double jobCoresRatio()
+	{
+		return coreRatio;
+	}
+
+	@Override
+	public double hostMemoryRatio()
+	{
+		return memoryRatio;
 	}
 }

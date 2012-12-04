@@ -4,7 +4,7 @@ public class GlobalUtils
 {
 	public static boolean equals(double d1, double d2)
 	{
-		return Math.abs(d1 - d2) < 0.00000001d;
+		return Double.compare(d1, d2) == 0;
 	}
 
 	public static boolean equals(Object obj1, Object obj2)
@@ -18,10 +18,6 @@ public class GlobalUtils
 
 	public static boolean greater(double d1, double d2)
 	{
-		if (equals(d1, d2))
-		{
-			return false;
-		}
 		return d1 > d2;
 	}
 
