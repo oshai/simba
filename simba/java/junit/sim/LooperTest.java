@@ -28,8 +28,7 @@ public class LooperTest
 	public void testEmpty()
 	{
 		Clock clock = new Clock();
-		Looper looper = new Looper(clock, new EventQueue(clock), new LinkedListWaitingQueue(), mock(SimpleScheduler.class), mock(IntervalCollector.class),
-				mock(JobFinisher.class));
+		Looper looper = createLooper(clock, new EventQueue(clock), new LinkedListWaitingQueue(), mock(SimpleScheduler.class));
 		looper.execute();
 	}
 
@@ -40,9 +39,7 @@ public class LooperTest
 		EventQueue eventQueue = new EventQueue(clock);
 		eventQueue.add(new NoOp(1));
 		SimpleScheduler scheduler = mock(SimpleScheduler.class);
-		Looper looper = new Looper(clock, eventQueue, new LinkedListWaitingQueue(), scheduler, mock(IntervalCollector.class), mock(JobFinisher.class));
-		looper.setTimeToLog(1);
-		looper.setTimeToSchedule(1);
+		Looper looper = createLooper(clock, eventQueue, new LinkedListWaitingQueue(), scheduler);
 		looper.execute();
 		verify(scheduler).schedule(1);
 		assertEquals(2, clock.time());
@@ -57,8 +54,7 @@ public class LooperTest
 		AbstractWaitingQueue waitingQueue = new LinkedListWaitingQueue();
 		waitingQueue.add(Job.create(5).build());
 		Scheduler scheduler = new ByTraceScheduler(waitingQueue, new Cluster(), new JobDispatcher(eventQueue));
-		Looper looper = new Looper(clock, eventQueue, waitingQueue, scheduler, mock(IntervalCollector.class), mock(JobFinisher.class));
-		looper.setTimeToLog(1);
+		Looper looper = createLooper(clock, eventQueue, waitingQueue, scheduler);
 		looper.execute();
 		assertEquals(7, clock.time());
 		assertTrue(eventQueue.isEmpty());
@@ -73,7 +69,7 @@ public class LooperTest
 		Job job = Job.create(1).priority(0).submitTime(1).cores(0).memory(0).build();
 		eventQueue.add(new Submit(job));
 		AbstractWaitingQueue waitingQueue = new LinkedListWaitingQueue();
-		Looper looper = new Looper(clock, eventQueue, waitingQueue, mock(SimpleScheduler.class), mock(IntervalCollector.class), mock(JobFinisher.class));
+		Looper looper = createLooper(clock, eventQueue, waitingQueue, mock(SimpleScheduler.class));
 		looper.tick();
 		assertEquals(1, clock.time());
 		assertTrue(eventQueue.isEmpty());
@@ -92,7 +88,7 @@ public class LooperTest
 		eventQueue.add(new Finish(1, job, host));
 		AbstractWaitingQueue waitingQueue = new LinkedListWaitingQueue();
 		JobFinisher jobFinisher = mock(JobFinisher.class);
-		Looper looper = new Looper(clock, eventQueue, waitingQueue, mock(SimpleScheduler.class), mock(IntervalCollector.class), jobFinisher);
+		Looper looper = createLooper(clock, eventQueue, waitingQueue, mock(SimpleScheduler.class), jobFinisher, new ProductionSimbaConsts());
 		looper.tick();
 		assertEquals(1, clock.time());
 		assertTrue(eventQueue.isEmpty());
@@ -108,8 +104,7 @@ public class LooperTest
 		eventQueue.add(new Submit(job));
 		AbstractWaitingQueue waitingQueue = new LinkedListWaitingQueue();
 		Scheduler scheduler = mock(SimpleScheduler.class);
-		Looper looper = new Looper(clock, eventQueue, waitingQueue, scheduler, mock(IntervalCollector.class), mock(JobFinisher.class));
-		looper.setTimeToSchedule(1);
+		Looper looper = createLooper(clock, eventQueue, waitingQueue, scheduler);
 		assertTrue(looper.tick());
 		verify(scheduler).schedule(1);
 		assertTrue(looper.tick());
@@ -125,8 +120,7 @@ public class LooperTest
 		AbstractWaitingQueue waitingQueue = new LinkedListWaitingQueue();
 		waitingQueue.add(job);
 		Scheduler scheduler = mock(SimpleScheduler.class);
-		Looper looper = new Looper(clock, eventQueue, waitingQueue, scheduler, mock(IntervalCollector.class), mock(JobFinisher.class));
-		looper.setTimeToSchedule(1);
+		Looper looper = createLooper(clock, eventQueue, waitingQueue, scheduler);
 		assertTrue(looper.tick());
 		verify(scheduler).schedule(1);
 	}
@@ -140,36 +134,97 @@ public class LooperTest
 		eventQueue.add(new Submit(job));
 		AbstractWaitingQueue waitingQueue = new LinkedListWaitingQueue();
 		SimpleScheduler scheduler = mock(SimpleScheduler.class);
-		Looper looper = new Looper(clock, eventQueue, waitingQueue, scheduler, mock(IntervalCollector.class), mock(JobFinisher.class));
-		looper.setTimeToSchedule(1);
+		Looper looper = createLooper(clock, eventQueue, waitingQueue, scheduler);
 		assertTrue(looper.tick());
 		verify(scheduler).schedule(1);
+	}
+
+	private Looper createLooper(Clock clock, EventQueue eventQueue, AbstractWaitingQueue waitingQueue, Scheduler scheduler)
+	{
+		return createLooper(clock, eventQueue, waitingQueue, scheduler, mock(JobFinisher.class), createConsts());
+	}
+
+	private Looper createLooper(Clock clock, EventQueue eventQueue, AbstractWaitingQueue waitingQueue, Scheduler scheduler, JobFinisher jobFinisher,
+			SimbaConsts consts)
+	{
+		return new Looper(clock, eventQueue, waitingQueue, scheduler, mock(IntervalCollector.class), jobFinisher, consts);
 	}
 
 	@Test
 	public void testBucketSimulation()
 	{
-		SimbaConsts.bucketSimulation = true;
-		int original = SimbaConsts.BUCKET_SIZE;
-		SimbaConsts.BUCKET_SIZE = 1;
-		try
+		Clock clock = new Clock();
+		EventQueue eventQueue = new EventQueue(clock);
+		Job job = Job.create(1).priority(0).submitTime(0).cores(0).memory(0).build();
+		AbstractWaitingQueue waitingQueue = new LinkedListWaitingQueue();
+		eventQueue.add(new Finish(5, job, null));
+		SimpleScheduler scheduler = mock(SimpleScheduler.class);
+		SimbaConsts consts = createBucketConsts();
+		Looper looper = createLooper(clock, eventQueue, waitingQueue, scheduler, mock(JobFinisher.class), consts);
+		assertTrue(looper.tick());
+		assertTrue(eventQueue.isEmpty());
+	}
+
+	private SimbaConsts createConsts()
+	{
+		SimbaConsts consts = new SimbaConsts()
 		{
-			Clock clock = new Clock();
-			EventQueue eventQueue = new EventQueue(clock);
-			Job job = Job.create(1).priority(0).submitTime(0).cores(0).memory(0).build();
-			AbstractWaitingQueue waitingQueue = new LinkedListWaitingQueue();
-			eventQueue.add(new Finish(5, job, null));
-			SimpleScheduler scheduler = mock(SimpleScheduler.class);
-			Looper looper = new Looper(clock, eventQueue, waitingQueue, scheduler, mock(IntervalCollector.class), mock(JobFinisher.class));
-			looper.setTimeToSchedule(1);
-			assertTrue(looper.tick());
-			assertTrue(eventQueue.isEmpty());
-		}
-		finally
+			@Override
+			public boolean isBucketSimulation()
+			{
+				return false;
+			}
+
+			@Override
+			public long bucketSize()
+			{
+				return 1;
+			}
+
+			@Override
+			public long timeToSchedule()
+			{
+				return 1;
+			}
+
+			@Override
+			public long timeToLog()
+			{
+				return 1;
+			}
+		};
+		return consts;
+	}
+
+	private SimbaConsts createBucketConsts()
+	{
+		SimbaConsts consts = new SimbaConsts()
 		{
-			SimbaConsts.bucketSimulation = false;
-			SimbaConsts.BUCKET_SIZE = original;
-		}
+			@Override
+			public boolean isBucketSimulation()
+			{
+				return true;
+			}
+
+			@Override
+			public long bucketSize()
+			{
+				return 1;
+			}
+
+			@Override
+			public long timeToSchedule()
+			{
+				return 1;
+			}
+
+			@Override
+			public long timeToLog()
+			{
+				return 1;
+			}
+		};
+		return consts;
 	}
 
 }

@@ -4,6 +4,8 @@ import static utils.assertions.Asserter.*;
 
 import java.util.Iterator;
 
+import javax.inject.Inject;
+
 import org.apache.log4j.Logger;
 
 import sim.collectors.IntervalCollector;
@@ -17,11 +19,11 @@ import sim.scheduling.AbstractWaitingQueue;
 import sim.scheduling.Scheduler;
 import sim.scheduling.reserving.ReservingScheduler;
 
+import com.google.inject.assistedinject.Assisted;
+
 public class Looper
 {
 	private static final Logger log = Logger.getLogger(Looper.class);
-	private long timeToLog = 60 * 60 * 24;// 1 day
-	private int timeToSchedule = 10;
 	private long timeToLogPassed;
 	private final Clock clock;
 	private final EventQueue eventQueue;
@@ -31,9 +33,11 @@ public class Looper
 	private final JobFinisher jobFinisher;
 	private boolean firstCycle = true;
 	private boolean hasEventsNotScheduleYet = true;
+	private final SimbaConsts simbaConsts;
 
-	public Looper(Clock clock, EventQueue eventQueue, AbstractWaitingQueue waitingQueue, Scheduler scheduler, IntervalCollector hostCollector,
-			JobFinisher jobFinisher)
+	@Inject
+	public Looper(@Assisted Clock clock, @Assisted EventQueue eventQueue, @Assisted AbstractWaitingQueue waitingQueue, @Assisted Scheduler scheduler,
+			@Assisted IntervalCollector hostCollector, @Assisted JobFinisher jobFinisher, SimbaConsts simbaConsts)
 	{
 		this.scheduler = scheduler;
 		this.waitingQueue = waitingQueue;
@@ -41,6 +45,7 @@ public class Looper
 		this.clock = clock;
 		this.hostCollector = hostCollector;
 		this.jobFinisher = jobFinisher;
+		this.simbaConsts = simbaConsts;
 	}
 
 	public void execute()
@@ -64,24 +69,24 @@ public class Looper
 	boolean tick()
 	{
 		long time = clock.tick();
-		if (SimbaConsts.isBucketSimulation() && time % SimbaConsts.BUCKET_SIZE == 0)
+		if (simbaConsts.isBucketSimulation() && time % simbaConsts.bucketSize() == 0)
 		{
 			removeAllRunningJobs();
 		}
 		boolean handeledEvents = handleEvents(time);
 		int scheduledJobs = 0;
 		hasEventsNotScheduleYet = hasEventsNotScheduleYet || handeledEvents;
-		if (time % timeToSchedule == 0 && hasEventsNotScheduleYet || time % timeToSchedule == 1 && firstCycle)
+		if (time % simbaConsts.timeToSchedule() == 0 && hasEventsNotScheduleYet || time % simbaConsts.timeToSchedule() == 1 && firstCycle)
 		{
 			scheduledJobs = scheduler.schedule(time);
 			hasEventsNotScheduleYet = false;
 		}
-		if (time % SimbaConsts.BUCKET_SIZE == 0)
+		if (time % simbaConsts.bucketSize() == 0)
 		{
 			log.info("schduled jobs " + scheduledJobs);
 		}
 		hostCollector.collect(time);// TODO , handeledEvents, scheduledJobs);
-		if (time % timeToLog == 0 || firstCycle)
+		if (time % simbaConsts.timeToLog() == 0 || firstCycle)
 		{
 			timeToLogPassed++;
 			log.info("tick() - time passed " + timeToLogPassed + " days events left " + eventQueue.size() + " waiting jobs " + waitingQueue.size());
@@ -137,15 +142,5 @@ public class Looper
 			}
 		}
 		return $;
-	}
-
-	public void setTimeToLog(long time)
-	{
-		timeToLog = time;
-	}
-
-	public void setTimeToSchedule(int time)
-	{
-		timeToSchedule = time;
 	}
 }

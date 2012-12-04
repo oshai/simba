@@ -15,14 +15,14 @@ import utils.TextFileUtils;
 public class WhoWins
 {
 
-	private static String[] args;
+	private static String[] cmdArgs;
 
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args)
 	{
-		WhoWins.args = args;
+		WhoWins.cmdArgs = args;
 		runOnCol(Integer.valueOf(args[1]));
 	}
 
@@ -43,7 +43,7 @@ public class WhoWins
 
 	private static void calc(Map<String, Pair<Integer, String>> whoWinsMemory, String test, int col)
 	{
-		String file = "/tmp/simba/iil_1_aug_traces_reservation_" + args[0] + "xMemory_submit_buckets/" + test + "/machines_utilization";
+		String file = "/tmp/simba/iil_1_aug_traces_reservation_" + cmdArgs[0] + "xMemory_submit_buckets/" + test + "/machines_utilization";
 		String lines = TextFileUtils.getContents(new File(file));
 		for (String line : lines.split("\n"))
 		{
