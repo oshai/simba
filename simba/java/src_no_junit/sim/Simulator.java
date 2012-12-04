@@ -155,7 +155,9 @@ public class Simulator
 		log.info("createLooper() - scheduler is " + scheduler.getClass().getSimpleName());
 		JobCollector jobCollector = new JobCollector();
 		JobFinisher jobFinisher = new JobFinisher(jobCollector);
-		IntervalCollector hostCollector = new IntervalCollector(cluster, 300, waitingQueueStatistics, jobFinisher);
+		SimbaConsts conf = injector.getInstance(SimbaConsts.class);
+		int collectTime = conf.isBucketSimulation() ? (int) conf.bucketSize() : 300;
+		IntervalCollector hostCollector = new IntervalCollector(cluster, collectTime, waitingQueueStatistics, jobFinisher);
 		Looper looper = injector.getInstance(LooperFactory.class).create(clock, eventQueue, waitingQueue, scheduler, hostCollector, jobFinisher);
 
 		// Looper looper = injector.getI;// new Looper(clock, eventQueue,

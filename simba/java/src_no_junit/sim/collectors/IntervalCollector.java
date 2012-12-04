@@ -5,7 +5,7 @@ import org.apache.log4j.Logger;
 import sim.JobFinisher;
 import sim.model.Cluster;
 
-public class IntervalCollector extends Collector<Long>
+public class IntervalCollector extends Collector
 {
 	private static final Logger log = Logger.getLogger(IntervalCollector.class);
 	private static final String MACHINES_UTILIZATION_FILE = "machines_utilization";
@@ -23,8 +23,7 @@ public class IntervalCollector extends Collector<Long>
 		this.jobFinisher = jobFinisher;
 	}
 
-	@Override
-	protected String collectLine(Long time)
+	private String collectLine(long time, boolean handeledEvents, int scheduledJobs)
 	{
 		HostStatistics hostStatistics = new HostStatistics(cluster);
 		waitingQueueStatistics.updateStatistics();
@@ -33,7 +32,8 @@ public class IntervalCollector extends Collector<Long>
 				+ waitingQueueStatistics.waitingJobs() + SEPERATOR + hostStatistics.mixAverage() + SEPERATOR + hostStatistics.mixVariance() + SEPERATOR
 				+ hostStatistics.reverseMixAverage() + SEPERATOR + hostStatistics.reverseMixVariance() + SEPERATOR + waitingQueueStatistics.avgMemoryFront()
 				+ SEPERATOR + waitingQueueStatistics.avgWaitTimeFront() + SEPERATOR + jobFinisher.collectFinishedJobs() + SEPERATOR
-				+ waitingQueueStatistics.dispatchedJobs() + SEPERATOR + waitingQueueStatistics.submittedJobs();
+				+ waitingQueueStatistics.dispatchedJobs() + SEPERATOR + waitingQueueStatistics.submittedJobs() + SEPERATOR + scheduledJobs + SEPERATOR
+				+ waitingQueueStatistics.waitingJobs();
 		if (log.isDebugEnabled())
 		{
 			log.debug("collectLine() - " + line.replace(' ', ','));
@@ -47,7 +47,7 @@ public class IntervalCollector extends Collector<Long>
 		String line = "#time" + SEPERATOR + "cores" + SEPERATOR + "usedCores" + SEPERATOR + "memory" + SEPERATOR + "usedMemory" + SEPERATOR + "memoryAverage"
 				+ SEPERATOR + "memoryVariance" + SEPERATOR + "waitQueueSize" + SEPERATOR + "mixAverage" + SEPERATOR + "mixVariance" + SEPERATOR
 				+ "reverseMixAverage" + SEPERATOR + "reverseMixVariance" + SEPERATOR + "avgMemoryFront" + SEPERATOR + "avgWaitTimeFront" + SEPERATOR
-				+ "finishedJobs" + SEPERATOR + "dispatchedJobs" + SEPERATOR + "submittedJobs";
+				+ "finishedJobs" + SEPERATOR + "dispatchedJobs" + SEPERATOR + "submittedJobs" + SEPERATOR + "scheduledJobs" + SEPERATOR + "waitingJobs";
 		return line;
 	}
 
@@ -57,9 +57,17 @@ public class IntervalCollector extends Collector<Long>
 		return MACHINES_UTILIZATION_FILE;
 	}
 
-	@Override
-	protected boolean shouldAppend(Long t)
+	public void collect(long time, boolean handeledEvents, int scheduledJobs)
 	{
-		return t % modulo == 0;
+		if (shouldCollect(time))
+		{
+			appendLine(collectLine(time, handeledEvents, scheduledJobs));
+		}
+
+	}
+
+	private boolean shouldCollect(long time)
+	{
+		return time % modulo == 0;
 	}
 }

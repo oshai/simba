@@ -8,7 +8,7 @@ import utils.ExceptionUtils;
 import utils.FileUtils;
 import utils.TextFileUtils;
 
-public abstract class Collector<T>
+public abstract class Collector
 {
 	protected static final String SEPERATOR = " ";
 	private Writer writer;
@@ -21,22 +21,7 @@ public abstract class Collector<T>
 	
 	protected abstract String collectHeader();
 	
-	protected abstract String collectLine(T time);
-	
-	public void collect(T t)
-	{
-		if (shouldAppend(t))
-		{
-			appendLine(collectLine(t));
-		}
-	}
-	
-	protected boolean shouldAppend(T t)
-	{
-		return true;
-	}
-	
-	private void appendLine(String line)
+	protected void appendLine(String line)
 	{
 		try
 		{

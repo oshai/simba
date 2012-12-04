@@ -3,7 +3,6 @@ package sim;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
-import org.apache.commons.math3.util.Pair;
 import org.junit.Test;
 
 import sim.collectors.JobCollector;
@@ -22,7 +21,7 @@ public class JobFinisherTest
 		Job job = mock(Job.class);
 		Host host = mock(Host.class);
 		jobFinisher.finish(new Finish(5, job, host));
-		verify(c).collect(new Pair<Job, Host>(job, host));
+		verify(c).collect(host, job);
 		verify(host).finishJob(job);
 		assertEquals(1, jobFinisher.collectFinishedJobs());
 		assertEquals(0, jobFinisher.collectFinishedJobs());
