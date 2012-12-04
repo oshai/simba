@@ -5,6 +5,7 @@ import static sim.parsers.MySplitter.*;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.inject.Provider;
 
 import org.apache.log4j.Logger;
@@ -41,6 +42,8 @@ public class JobParser
 	private static final int index_startttime = 5;// iil-new?
 	private static final int index_wtime = 9;// iil-new also
 	private static boolean DEBUG = false;
+	@Inject
+	private SimbaConsts simbaConsts;
 
 	public EventQueue parse(Provider<Clock> clockProvider, final Cluster cluster)
 	{
@@ -52,6 +55,7 @@ public class JobParser
 		final EventQueue $ = new EventQueue(clockProvider);
 		Predicate<String> predicate = new Predicate<String>()
 		{
+
 			@Override
 			public boolean apply(String line)
 			{
@@ -61,7 +65,7 @@ public class JobParser
 					List<String> cols = splitComma(line);
 					double cores = getMapValue("cores", cols.get(index_actualclassreservation));
 					double memory = getMapValue("memory", cols.get(index_actualclassreservation));
-					long length = SimbaConsts.isBucketSimulation() ? 1 : d2l(cols.get(index_wtime));
+					long length = simbaConsts.isBucketSimulation() ? 1 : d2l(cols.get(index_wtime));
 					if (length < 1)
 					{
 						length = 1;
@@ -75,9 +79,9 @@ public class JobParser
 					updateRunTimeBuckets(length);
 					updateMemoryBuckets(memory);
 					long submitTime = l(cols.get(index_iterationsubmittime));
-					if (SimbaConsts.isBucketSimulation())
+					if (simbaConsts.isBucketSimulation())
 					{
-						submitTime = submitTime / SimbaConsts.BUCKET_SIZE * SimbaConsts.BUCKET_SIZE;
+						submitTime = submitTime / simbaConsts.bucketSize() * simbaConsts.bucketSize();
 					}
 					Job job = Job.create(length).id(cols.get(index_jobid)).priority(submitTime).submitTime(submitTime).cores(cores).memory(memory)
 							.startTime(l(cols.get(index_startttime))).build();

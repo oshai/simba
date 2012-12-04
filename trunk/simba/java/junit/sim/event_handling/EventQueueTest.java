@@ -46,4 +46,9 @@ public class EventQueueTest
 		assertEquals(event, eventQueue.iterator().next());
 	}
 
+	@Test
+	public void testToString() throws Exception
+	{
+		assertFalse(new EventQueue(mock(Clock.class)).toString().contains("@"));
+	}
 }

@@ -62,4 +62,11 @@ public class EventQueue
 	{
 		return queue.iterator();
 	}
+
+	@Override
+	public String toString()
+	{
+		return "EventQueue [queue=" + queue + ", clockProvider=" + clockProvider.get().time() + "]";
+	}
+
 }

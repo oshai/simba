@@ -1,12 +1,12 @@
 package sim;
 
-public class SimbaConsts
+public interface SimbaConsts
 {
-	static boolean bucketSimulation = false;
-	public static int BUCKET_SIZE = 10800;
+	public boolean isBucketSimulation();
 
-	public static boolean isBucketSimulation()
-	{
-		return bucketSimulation;
-	}
+	public long bucketSize();
+
+	public long timeToSchedule();
+
+	public long timeToLog();
 }

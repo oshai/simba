@@ -1,17 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project default="create_run_jar" name="Create Runnable Jar for Project simba">
 	<target name="create_run_jar">
-	<delete file="/nfs/iil/disks/home20/oshai/work/simba.jar"/>
-        <jar destfile="/nfs/iil/disks/home20/oshai/work/simba.jar" filesetmanifest="mergewithoutmain">
-            <manifest>
-                <attribute name="Main-Class" value="sim.Simulator"/>
-                <attribute name="Class-Path" value="."/>
-            </manifest>
-            <fileset dir="/workarea/oshai/eclipse/workspace/simba/compiled_classes"/>
-            <zipfileset excludes="META-INF/*.SF" src="/workarea/oshai/eclipse/workspace/simba/libs/log4j-1.2.17.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="/workarea/oshai/eclipse/workspace/simba/libs/guava-13.0.1.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="/workarea/oshai/eclipse/workspace/simba/libs/javax.inject.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="/workarea/oshai/eclipse/workspace/simba/libs/commons-math3-3.0.jar"/>
-        </jar>
+		<delete file="/nfs/iil/disks/home20/oshai/work/simba.jar"/>
+		<ant antfile="build.xml"></ant>
+		<copyfile dest="/nfs/iil/disks/home20/oshai/work/simba.jar" src="simba.jar"/>
     </target>
 </project>

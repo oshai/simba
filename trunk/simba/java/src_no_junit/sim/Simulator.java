@@ -10,6 +10,7 @@ import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
+import sim.SimbaModule.LooperFactory;
 import sim.collectors.IntervalCollector;
 import sim.collectors.JobCollector;
 import sim.collectors.WaitingQueueStatistics;
@@ -34,19 +35,22 @@ import sim.scheduling.graders.RandomGrader;
 import sim.scheduling.graders.ThrowingExceptionGrader;
 import sim.scheduling.matchers.GradeMatcher;
 import sim.scheduling.matchers.GradeMatcherProvider;
-import sim.scheduling.reserving.LoadedMachinesFirstScheduler;
 import sim.scheduling.reserving.ReservingScheduler;
 
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.Maps;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 
 public class Simulator
 {
 
 	private final Logger log = Logger.getLogger(Simulator.class);
+	private final Injector injector;
 
 	public Simulator()
 	{
+		injector = Guice.createInjector(new SimbaModule(new ProductionSimbaConsts()));
 	}
 
 	public static void main(String[] args)
@@ -71,7 +75,7 @@ public class Simulator
 		Stopwatch stopwatch = new Stopwatch().start();
 		Cluster cluster = new HostParser().parse();
 		ClockProvider clockProvider = new ClockProvider();
-		EventQueue eventQueue = new JobParser().parse(clockProvider, cluster);
+		EventQueue eventQueue = injector.getInstance(JobParser.class).parse(clockProvider, cluster);
 		Event event = eventQueue.peek();
 		long time = 0;
 		if (null != event && !submitImmediately())
@@ -152,7 +156,11 @@ public class Simulator
 		JobCollector jobCollector = new JobCollector();
 		JobFinisher jobFinisher = new JobFinisher(jobCollector);
 		IntervalCollector hostCollector = new IntervalCollector(cluster, 300, waitingQueueStatistics, jobFinisher);
-		Looper looper = new Looper(clock, eventQueue, waitingQueue, scheduler, hostCollector, jobFinisher);
+		Looper looper = injector.getInstance(LooperFactory.class).create(clock, eventQueue, waitingQueue, scheduler, hostCollector, jobFinisher);
+
+		// Looper looper = injector.getI;// new Looper(clock, eventQueue,
+		// // waitingQueue, scheduler,
+		// hostCollector, jobFinisher);
 		return looper;
 	}
 

@@ -15,6 +15,9 @@
         <pathelement location="libs/javax.inject.jar"/>
         <pathelement location="libs/mockito-all-1.9.5.jar"/>
         <pathelement location="libs/commons-math3-3.0.jar"/>
+        <pathelement location="libs/guice-3.0.jar"/>
+        <pathelement location="libs/guice-assistedinject-3.0.jar"/>
+        <pathelement location="libs/aopalliance.jar"/>
         <path refid="JUnit4.libraryclasspath"/>
     </path>
     <target name="init">
@@ -65,6 +68,9 @@
     	            <zipfileset excludes="META-INF/*.SF" src="libs/guava-13.0.1.jar"/>
     	            <zipfileset excludes="META-INF/*.SF" src="libs/javax.inject.jar"/>
     	            <zipfileset excludes="META-INF/*.SF" src="libs/commons-math3-3.0.jar"/>
+    	            <zipfileset excludes="META-INF/*.SF" src="libs/guice-3.0.jar"/>
+    	            <zipfileset excludes="META-INF/*.SF" src="libs/guice-assistedinject-3.0.jar"/>
+    	            <zipfileset excludes="META-INF/*.SF" src="libs/aopalliance.jar"/>
     	        </jar>
 	</target>
 	<target depends="junit-testing" name="test" />
