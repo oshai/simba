@@ -167,50 +167,13 @@ public class LooperTest
 
 	private SimbaConfiguration createConsts()
 	{
-		SimbaConfiguration consts = new SimbaConfiguration()
-		{
-			@Override
-			public boolean isBucketSimulation()
-			{
-				return false;
-			}
-
-			@Override
-			public long bucketSize()
-			{
-				return 1;
-			}
-
-			@Override
-			public long timeToSchedule()
-			{
-				return 1;
-			}
-
-			@Override
-			public long timeToLog()
-			{
-				return 1;
-			}
-
-			@Override
-			public double jobCoresRatio()
-			{
-				return 1.0;
-			}
-
-			@Override
-			public double hostMemoryRatio()
-			{
-				return 1.0;
-			}
-		};
+		SimbaConfiguration consts = new ForTestingSimbaConfiguration();
 		return consts;
 	}
 
 	private SimbaConfiguration createBucketConsts()
 	{
-		SimbaConfiguration consts = new SimbaConfiguration()
+		ForTestingSimbaConfiguration consts = new ForTestingSimbaConfiguration()
 		{
 			@Override
 			public boolean isBucketSimulation()
@@ -218,35 +181,6 @@ public class LooperTest
 				return true;
 			}
 
-			@Override
-			public long bucketSize()
-			{
-				return 1;
-			}
-
-			@Override
-			public long timeToSchedule()
-			{
-				return 1;
-			}
-
-			@Override
-			public long timeToLog()
-			{
-				return 1;
-			}
-
-			@Override
-			public double jobCoresRatio()
-			{
-				return 1.0;
-			}
-
-			@Override
-			public double hostMemoryRatio()
-			{
-				return 1.0;
-			}
 		};
 		return consts;
 	}
