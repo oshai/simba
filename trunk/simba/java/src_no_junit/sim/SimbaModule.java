@@ -23,12 +23,12 @@ public class SimbaModule extends AbstractModule implements Module
 	protected void configure()
 	{
 		bind(SimbaConfiguration.class).toInstance(simbaConsts);
-		install(new FactoryModuleBuilder().implement(Looper.class, Looper.class).build(LooperFactory.class));
+		install(new FactoryModuleBuilder().implement(CentralizedLooper.class, CentralizedLooper.class).build(LooperFactory.class));
 	}
 
 	public interface LooperFactory
 	{
-		Looper create(Clock clock, EventQueue eventQueue, AbstractWaitingQueue waitingQueue, Scheduler scheduler, IntervalCollector hostCollector,
+		CentralizedLooper create(Clock clock, EventQueue eventQueue, AbstractWaitingQueue waitingQueue, Scheduler scheduler, IntervalCollector hostCollector,
 				JobFinisher jobFinisher);
 	}
 

@@ -56,7 +56,7 @@ public class SystemTest
 		Host host = Host.create().cores(1).memory(8).build();
 		Job job = Job.create(3).priority(0).submitTime(2).cores(1).memory(4).build();
 		ArrayList<Job> jobs = newArrayList(job);
-		Looper looper = init(host, jobs);
+		CentralizedLooper looper = init(host, jobs);
 		looper.tick();
 		assertEquals(newArrayList(), host.jobs());
 		looper.tick();
@@ -77,7 +77,7 @@ public class SystemTest
 		Job job1 = Job.create(3).priority(0).submitTime(2).cores(1).memory(4).build();
 		Job job2 = Job.create(4).priority(0).submitTime(2).cores(1).memory(4).build();
 		ArrayList<Job> jobs = newArrayList(job1, job2);
-		Looper looper = init(host, jobs);
+		CentralizedLooper looper = init(host, jobs);
 		looper.tick();
 		assertEquals(newArrayList(), host.jobs());
 		looper.tick();
@@ -100,12 +100,12 @@ public class SystemTest
 		Job job1 = Job.create(3).priority(0).submitTime(2).cores(1).memory(4).build();
 		Job job2 = Job.create(4).priority(0).submitTime(3).cores(1).memory(4).build();
 		ArrayList<Job> jobs = newArrayList(job1, job2);
-		Looper looper = init(host, jobs);
+		CentralizedLooper looper = init(host, jobs);
 		looper.execute();
 		assertTrue(eventQueue.isEmpty());
 	}
 
-	private Looper init(Host host, ArrayList<Job> arrayList)
+	private CentralizedLooper init(Host host, ArrayList<Job> arrayList)
 	{
 		Cluster cluster = new Cluster();
 		cluster.add(host);
@@ -121,7 +121,7 @@ public class SystemTest
 		JobCollector jobCollector = new JobCollector();
 		JobFinisher jobFinisher = new JobFinisher(jobCollector);
 		IntervalCollector statistics = new IntervalCollector(cluster, 1, waitingQueueStatistics, jobFinisher);
-		Looper looper = injector.getInstance(LooperFactory.class).create(clock, eventQueue, waitingQueue, scheduler, statistics, jobFinisher);
+		CentralizedLooper looper = injector.getInstance(LooperFactory.class).create(clock, eventQueue, waitingQueue, scheduler, statistics, jobFinisher);
 		return looper;
 	}
 }
