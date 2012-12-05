@@ -67,6 +67,6 @@ public class HostParser
 
 	private boolean shouldAdd(int hosts)
 	{
-		return hosts % 100 < (simbaConfiguration.jobCoresRatio() * 100);
+		return hosts % 100 < (simbaConfiguration.machineDropRatio() * 100);
 	}
 }

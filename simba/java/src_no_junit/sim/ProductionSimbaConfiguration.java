@@ -4,6 +4,7 @@ public class ProductionSimbaConfiguration implements SimbaConfiguration
 {
 	private final double memoryRatio = Double.valueOf(System.getProperty("host-memory-multiplier", "1.0"));
 	private final double coreRatio = Double.valueOf(System.getProperty("cores-ratio", "1.0"));
+	private final double machineDropRatio = Double.valueOf(System.getProperty("machine-drop-ratio", "1.0"));
 	private boolean bucketSimulation = false;
 	private int bucketSize = 10800;
 	private long timeToLog = 60 * 60 * 24;// 1 day
@@ -39,6 +40,12 @@ public class ProductionSimbaConfiguration implements SimbaConfiguration
 	}
 
 	@Override
+	public double machineDropRatio()
+	{
+		return machineDropRatio;
+	}
+
+	@Override
 	public double hostMemoryRatio()
 	{
 		return memoryRatio;
@@ -49,4 +56,13 @@ public class ProductionSimbaConfiguration implements SimbaConfiguration
 	{
 		return 1;
 	}
+
+	@Override
+	public String toString()
+	{
+		return "ProductionSimbaConfiguration [memoryRatio=" + memoryRatio + ", coreRatio=" + coreRatio + ", machineDropRatio=" + machineDropRatio
+				+ ", bucketSimulation=" + bucketSimulation + ", bucketSize=" + bucketSize + ", timeToLog=" + timeToLog + ", timeToSchedule=" + timeToSchedule
+				+ "]";
+	}
+
 }

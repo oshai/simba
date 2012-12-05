@@ -15,4 +15,6 @@ public interface SimbaConfiguration
 	double hostMemoryRatio();
 
 	public int reservationsLimit();
+
+	double machineDropRatio();
 }

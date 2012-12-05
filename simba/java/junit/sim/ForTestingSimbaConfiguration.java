@@ -43,4 +43,10 @@ public class ForTestingSimbaConfiguration implements SimbaConfiguration
 	{
 		return 1;
 	}
+
+	@Override
+	public double machineDropRatio()
+	{
+		return 1.0;
+	}
 }
