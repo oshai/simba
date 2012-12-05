@@ -41,6 +41,8 @@ public class JobParser
 	private static final int index_iterationsubmittime = 18;// iil-new4
 	private static final int index_startttime = 5;// iil-new?
 	private static final int index_wtime = 9;// iil-new also
+	private static final int index_utime = 10;// iil-new also
+	private static final int index_stime = 11;// iil-new also
 	private static boolean DEBUG = false;
 
 	private final SimbaConfiguration simbaConfiguration;
@@ -70,7 +72,7 @@ public class JobParser
 				try
 				{
 					List<String> cols = splitComma(line);
-					double cores = getMapValue("cores", cols.get(index_actualclassreservation)) * simbaConfiguration.jobCoresRatio();
+					double cores = getCores(cols) * simbaConfiguration.jobCoresRatio();
 					double memory = getMapValue("memory", cols.get(index_actualclassreservation));
 					long length = simbaConfiguration.isBucketSimulation() ? 1 : d2l(cols.get(index_wtime));
 					if (length < 1)
@@ -204,5 +206,14 @@ public class JobParser
 		{
 			memWideJobs++;
 		}
+	}
+
+	private double getCores(List<String> cols)
+	{
+		// TODO put it back
+		// return (Double.valueOf(cols.get(index_stime)) +
+		// Double.valueOf(cols.get(index_utime)) + 0.001) /
+		// (Double.valueOf(cols.get(index_wtime) + 0.001));
+		return getMapValue("cores", cols.get(index_actualclassreservation));
 	}
 }

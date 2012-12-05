@@ -21,12 +21,11 @@ if not found - make reservation: take the best host (more resources) and put res
 
 TODO:
 change configuraiton of each scheduler to be optimal for runtime (ff)
-maybe add guice
+
 make configuration more simple
 optimize run
-buckets const (SimbaConst) change
-100% coverage back
-add list of collectors (for bucket test)
+
+add real core utilization and check how many machines are in "error state"
  
 
 		

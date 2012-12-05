@@ -72,6 +72,7 @@ public class Simulator
 	private void execute()
 	{
 		log.info("execute() - starting at " + new Date());
+		log.info("configuration: " + getConfiguration());
 		Stopwatch stopwatch = new Stopwatch().start();
 		Cluster cluster = injector.getInstance(HostParser.class).parse();
 		ClockProvider clockProvider = new ClockProvider();
