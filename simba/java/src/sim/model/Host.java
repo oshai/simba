@@ -130,4 +130,9 @@ public class Host
 		return "Host [id=" + id + ", cores=" + cores + ", memory=" + memory + ", jobs=" + jobs + "]";
 	}
 
+	public boolean hasPotentialResourceFor(Job job)
+	{
+		return greaterOrEquals(cores(), job.cores()) && greaterOrEquals(memory(), job.memory());
+	}
+
 }

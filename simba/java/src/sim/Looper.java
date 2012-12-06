@@ -4,6 +4,8 @@ import static utils.assertions.Asserter.*;
 
 import java.util.Iterator;
 
+import javax.inject.Inject;
+
 import org.apache.log4j.Logger;
 
 import sim.collectors.IntervalCollector;
@@ -12,13 +14,16 @@ import sim.events.Event;
 import sim.events.Finish;
 import sim.events.NoOp;
 import sim.events.Submit;
+import sim.model.Job;
+import sim.scheduling.AbstractWaitingQueue;
+import sim.scheduling.Scheduler;
 
 import com.google.inject.assistedinject.Assisted;
 
-public abstract class Looper
+public class Looper
 {
 
-	private static final Logger log = Logger.getLogger(CentralizedLooper.class);
+	private static final Logger log = Logger.getLogger(Looper.class);
 	private long timeToLogPassed;
 	private final Clock clock;
 	private final EventQueue eventQueue;
@@ -27,10 +32,15 @@ public abstract class Looper
 	private boolean firstCycle = true;
 	private boolean hasEventsNotScheduleYet = true;
 	private final SimbaConfiguration simbaConsts;
+	private AbstractWaitingQueue waitingQueue;
+	private final Scheduler scheduler;
 
-	public Looper(@Assisted Clock clock, @Assisted EventQueue eventQueue, @Assisted IntervalCollector hostCollector, @Assisted JobFinisher jobFinisher,
-			SimbaConfiguration simbaConsts)
+	@Inject
+	public Looper(@Assisted Clock clock, @Assisted EventQueue eventQueue, @Assisted AbstractWaitingQueue waitingQueue, @Assisted Scheduler scheduler,
+			@Assisted IntervalCollector hostCollector, @Assisted JobFinisher jobFinisher, SimbaConfiguration simbaConsts)
 	{
+		this.waitingQueue = waitingQueue;
+		this.scheduler = scheduler;
 		this.eventQueue = eventQueue;
 		this.clock = clock;
 		this.hostCollector = hostCollector;
@@ -128,10 +138,29 @@ public abstract class Looper
 		return $;
 	}
 
-	protected abstract boolean submitJob(Event event);
+	private int schedule(long time)
+	{
+		int scheduledJobs;
+		scheduledJobs = scheduler.schedule(time);
+		return scheduledJobs;
+	}
 
-	protected abstract int schedule(long time);
+	private boolean submitJob(Event event)
+	{
+		boolean $ = false;
+		Submit submit = (Submit) event;
+		Job job = submit.job();
+		waitingQueue.add(job);
+		if (sizeOfWaitingQueue() > 0)
+		{
+			$ = true;
+		}
+		return $;
+	}
 
-	protected abstract int sizeOfWaitingQueue();
+	private int sizeOfWaitingQueue()
+	{
+		return waitingQueue.size();
+	}
 
 }

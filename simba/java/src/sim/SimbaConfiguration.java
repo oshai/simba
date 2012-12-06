@@ -17,4 +17,6 @@ public interface SimbaConfiguration
 	public int reservationsLimit();
 
 	double machineDropRatio();
+
+	public boolean isActualCoreUsageSimulation();
 }

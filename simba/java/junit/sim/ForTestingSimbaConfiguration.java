@@ -49,4 +49,10 @@ public class ForTestingSimbaConfiguration implements SimbaConfiguration
 	{
 		return 1.0;
 	}
+
+	@Override
+	public boolean isActualCoreUsageSimulation()
+	{
+		return false;
+	}
 }

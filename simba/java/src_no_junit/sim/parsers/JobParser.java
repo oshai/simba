@@ -106,7 +106,7 @@ public class JobParser
 				}
 				catch (Exception ex)
 				{
-					log.debug("apply() - error: " + ex.getMessage() + "; on line " + line);
+					log.debug("apply() - error: " + ex.getMessage() + "; on line " + line, ex);
 				}
 				if (JobParser.DEBUG && total > 1000000)
 				{
@@ -210,10 +210,13 @@ public class JobParser
 
 	private double getCores(List<String> cols)
 	{
-		// TODO put it back
-		// return (Double.valueOf(cols.get(index_stime)) +
-		// Double.valueOf(cols.get(index_utime)) + 0.001) /
-		// (Double.valueOf(cols.get(index_wtime) + 0.001));
+		if (simbaConfiguration.isActualCoreUsageSimulation())
+		{
+			Double stime = Double.valueOf(cols.get(index_stime));
+			Double utime = Double.valueOf(cols.get(index_utime));
+			Double wtime = Double.valueOf(cols.get(index_wtime));
+			return (stime + utime + 0.001) / (wtime + 0.001);
+		}
 		return getMapValue("cores", cols.get(index_actualclassreservation));
 	}
 }

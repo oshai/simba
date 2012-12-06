@@ -45,7 +45,7 @@ public class ReservingScheduler implements Scheduler
 		this.dispatcher = dispatcher;
 		this.simbaConfiguration = simbaConfiguration;
 		reservationsSupplier = new ReservationsHolderSupplier(this.simbaConfiguration.reservationsLimit());
-		DUMMY_JOB = Job.create(1).cores(this.simbaConfiguration.jobCoresRatio() * 1).memory(1).build();
+		DUMMY_JOB = Job.create(1).cores(this.simbaConfiguration.jobCoresRatio() * 0.5).memory(1).build();
 		// log.setLevel(Level.DEBUG);
 	}
 
