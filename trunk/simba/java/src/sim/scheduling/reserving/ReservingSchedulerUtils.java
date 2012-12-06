@@ -37,4 +37,18 @@ public class ReservingSchedulerUtils
 		Reservation r = getReservation(host);
 		return greaterOrEquals(host.availableCores(), r.cores() + job.cores()) && greaterOrEquals(host.availableMemory(), r.memory() + job.memory());
 	}
+
+	private double availableCores(Host host)
+	{
+		return host.availableCores() - getReservation(host).cores();
+	}
+
+	public double updateMaxAvailableCores(Host host, double maxAvailableCores)
+	{
+		if (availableCores(host) > maxAvailableCores)
+		{
+			return host.availableCores();
+		}
+		return maxAvailableCores;
+	}
 }
