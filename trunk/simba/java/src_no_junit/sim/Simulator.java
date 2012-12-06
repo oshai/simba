@@ -90,7 +90,7 @@ public class Simulator
 		log.info("execute() - cluster size is " + cluster.hosts().size());
 		log.info("execute() - # of jobs " + eventQueue.size());
 		log.info("execute() - grader is " + grader.toString());
-		CentralizedLooper looper = createLooper(cluster, eventQueue, clock, grader);
+		Looper looper = createLooper(cluster, eventQueue, clock, grader);
 		looper.execute();
 		log.info("execute() - finished at " + new Date());
 		log.info("execute() - took " + stopwatch.elapsedTime(TimeUnit.SECONDS));
@@ -138,7 +138,7 @@ public class Simulator
 		return System.getProperty("waitQueue");
 	}
 
-	protected CentralizedLooper createLooper(Cluster cluster, EventQueue eventQueue, Clock clock, Grader grader)
+	protected Looper createLooper(Cluster cluster, EventQueue eventQueue, Clock clock, Grader grader)
 	{
 		JobDispatcher dispatcher = new JobDispatcher(eventQueue);
 		AbstractWaitingQueue waitingQueue = new LinkedListWaitingQueue();
@@ -158,7 +158,7 @@ public class Simulator
 		JobFinisher jobFinisher = new JobFinisher(jobCollector);
 		int collectTime = getConfiguration().isBucketSimulation() ? (int) getConfiguration().bucketSize() : 300;
 		IntervalCollector hostCollector = new IntervalCollector(cluster, collectTime, waitingQueueStatistics, jobFinisher);
-		CentralizedLooper looper = injector.getInstance(LooperFactory.class).create(clock, eventQueue, waitingQueue, scheduler, hostCollector, jobFinisher);
+		Looper looper = injector.getInstance(LooperFactory.class).create(clock, eventQueue, waitingQueue, scheduler, hostCollector, jobFinisher);
 
 		// Looper looper = injector.getI;// new Looper(clock, eventQueue,
 		// // waitingQueue, scheduler,

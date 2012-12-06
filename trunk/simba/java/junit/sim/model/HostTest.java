@@ -88,6 +88,22 @@ public class HostTest
 	}
 
 	@Test
+	public void testCanRun()
+	{
+		Host host = Host.create().cores(2).memory(1).build();
+		Job job = Job.create(1).cores(2).memory(1).build();
+		assertTrue(host.hasPotentialResourceFor(job));
+	}
+
+	@Test
+	public void testCannotRun()
+	{
+		Host host = Host.create().cores(2).memory(1).build();
+		Job job = Job.create(1).cores(3).memory(1).build();
+		assertFalse(host.hasPotentialResourceFor(job));
+	}
+
+	@Test
 	public void testToString()
 	{
 		Host host = Host.create().cores(0.1).memory(1.1).id("id").build();

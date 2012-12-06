@@ -58,6 +58,12 @@ public class ProductionSimbaConfiguration implements SimbaConfiguration
 	}
 
 	@Override
+	public boolean isActualCoreUsageSimulation()
+	{
+		return false;
+	}
+
+	@Override
 	public String toString()
 	{
 		return "ProductionSimbaConfiguration [memoryRatio=" + memoryRatio + ", coreRatio=" + coreRatio + ", machineDropRatio=" + machineDropRatio

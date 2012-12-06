@@ -28,7 +28,7 @@ public class LooperTest
 	public void testEmpty()
 	{
 		Clock clock = new Clock();
-		CentralizedLooper looper = createLooper(clock, new EventQueue(clock), new LinkedListWaitingQueue(), mock(SimpleScheduler.class));
+		Looper looper = createLooper(clock, new EventQueue(clock), new LinkedListWaitingQueue(), mock(SimpleScheduler.class));
 		looper.execute();
 	}
 
@@ -39,7 +39,7 @@ public class LooperTest
 		EventQueue eventQueue = new EventQueue(clock);
 		eventQueue.add(new NoOp(1));
 		SimpleScheduler scheduler = mock(SimpleScheduler.class);
-		CentralizedLooper looper = createLooper(clock, eventQueue, new LinkedListWaitingQueue(), scheduler);
+		Looper looper = createLooper(clock, eventQueue, new LinkedListWaitingQueue(), scheduler);
 		looper.execute();
 		verify(scheduler).schedule(1);
 		assertEquals(2, clock.time());
@@ -54,7 +54,7 @@ public class LooperTest
 		AbstractWaitingQueue waitingQueue = new LinkedListWaitingQueue();
 		waitingQueue.add(Job.create(5).build());
 		Scheduler scheduler = new ByTraceScheduler(waitingQueue, new Cluster(), new JobDispatcher(eventQueue));
-		CentralizedLooper looper = createLooper(clock, eventQueue, waitingQueue, scheduler);
+		Looper looper = createLooper(clock, eventQueue, waitingQueue, scheduler);
 		looper.execute();
 		assertEquals(7, clock.time());
 		assertTrue(eventQueue.isEmpty());
@@ -69,7 +69,7 @@ public class LooperTest
 		Job job = Job.create(1).priority(0).submitTime(1).cores(0).memory(0).build();
 		eventQueue.add(new Submit(job));
 		AbstractWaitingQueue waitingQueue = new LinkedListWaitingQueue();
-		CentralizedLooper looper = createLooper(clock, eventQueue, waitingQueue, mock(SimpleScheduler.class));
+		Looper looper = createLooper(clock, eventQueue, waitingQueue, mock(SimpleScheduler.class));
 		looper.tick();
 		assertEquals(1, clock.time());
 		assertTrue(eventQueue.isEmpty());
@@ -88,7 +88,7 @@ public class LooperTest
 		eventQueue.add(new Finish(1, job, host));
 		AbstractWaitingQueue waitingQueue = new LinkedListWaitingQueue();
 		JobFinisher jobFinisher = mock(JobFinisher.class);
-		CentralizedLooper looper = createLooper(clock, eventQueue, waitingQueue, mock(SimpleScheduler.class), jobFinisher, new ProductionSimbaConfiguration());
+		Looper looper = createLooper(clock, eventQueue, waitingQueue, mock(SimpleScheduler.class), jobFinisher, new ProductionSimbaConfiguration());
 		looper.tick();
 		assertEquals(1, clock.time());
 		assertTrue(eventQueue.isEmpty());
@@ -104,7 +104,7 @@ public class LooperTest
 		eventQueue.add(new Submit(job));
 		AbstractWaitingQueue waitingQueue = new LinkedListWaitingQueue();
 		Scheduler scheduler = mock(SimpleScheduler.class);
-		CentralizedLooper looper = createLooper(clock, eventQueue, waitingQueue, scheduler);
+		Looper looper = createLooper(clock, eventQueue, waitingQueue, scheduler);
 		assertTrue(looper.tick());
 		verify(scheduler).schedule(1);
 		assertTrue(looper.tick());
@@ -120,7 +120,7 @@ public class LooperTest
 		AbstractWaitingQueue waitingQueue = new LinkedListWaitingQueue();
 		waitingQueue.add(job);
 		Scheduler scheduler = mock(SimpleScheduler.class);
-		CentralizedLooper looper = createLooper(clock, eventQueue, waitingQueue, scheduler);
+		Looper looper = createLooper(clock, eventQueue, waitingQueue, scheduler);
 		assertTrue(looper.tick());
 		verify(scheduler).schedule(1);
 	}
@@ -134,20 +134,20 @@ public class LooperTest
 		eventQueue.add(new Submit(job));
 		AbstractWaitingQueue waitingQueue = new LinkedListWaitingQueue();
 		SimpleScheduler scheduler = mock(SimpleScheduler.class);
-		CentralizedLooper looper = createLooper(clock, eventQueue, waitingQueue, scheduler);
+		Looper looper = createLooper(clock, eventQueue, waitingQueue, scheduler);
 		assertTrue(looper.tick());
 		verify(scheduler).schedule(1);
 	}
 
-	private CentralizedLooper createLooper(Clock clock, EventQueue eventQueue, AbstractWaitingQueue waitingQueue, Scheduler scheduler)
+	private Looper createLooper(Clock clock, EventQueue eventQueue, AbstractWaitingQueue waitingQueue, Scheduler scheduler)
 	{
 		return createLooper(clock, eventQueue, waitingQueue, scheduler, mock(JobFinisher.class), createConsts());
 	}
 
-	private CentralizedLooper createLooper(Clock clock, EventQueue eventQueue, AbstractWaitingQueue waitingQueue, Scheduler scheduler, JobFinisher jobFinisher,
+	private Looper createLooper(Clock clock, EventQueue eventQueue, AbstractWaitingQueue waitingQueue, Scheduler scheduler, JobFinisher jobFinisher,
 			SimbaConfiguration consts)
 	{
-		return new CentralizedLooper(clock, eventQueue, waitingQueue, scheduler, mock(IntervalCollector.class), jobFinisher, consts);
+		return new Looper(clock, eventQueue, waitingQueue, scheduler, mock(IntervalCollector.class), jobFinisher, consts);
 	}
 
 	@Test
@@ -160,7 +160,7 @@ public class LooperTest
 		eventQueue.add(new Finish(5, job, null));
 		SimpleScheduler scheduler = mock(SimpleScheduler.class);
 		SimbaConfiguration consts = createBucketConsts();
-		CentralizedLooper looper = createLooper(clock, eventQueue, waitingQueue, scheduler, mock(JobFinisher.class), consts);
+		Looper looper = createLooper(clock, eventQueue, waitingQueue, scheduler, mock(JobFinisher.class), consts);
 		assertTrue(looper.tick());
 		assertTrue(eventQueue.isEmpty());
 	}
