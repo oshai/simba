@@ -9,7 +9,7 @@ public class ProductionSimbaConfiguration implements SimbaConfiguration
 	private int bucketSize = 10800;
 	private long timeToLog = 60 * 60 * 24;// 1 day
 	private int timeToSchedule = 10;
-	private final int reservationsLimit = Integer.valueOf(System.getProperty("reservations"));
+	private final int reservationsLimit = Integer.valueOf(System.getProperty("reservations", "1"));
 
 	public boolean isBucketSimulation()
 	{

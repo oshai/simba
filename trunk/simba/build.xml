@@ -35,6 +35,7 @@
         <copy includeemptydirs="false" todir="compiled_classes">
             <fileset dir="java/junit">
                 <exclude name="**/*.java"/>
+            	<exclude name="log4j.xml"/>
             </fileset>
         </copy>
     </target>
