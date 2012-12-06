@@ -17,7 +17,7 @@ public class ByTraceSchedulerTest
 	public void testJobDispatched()
 	{
 		AbstractWaitingQueue waitingQueue = new LinkedListWaitingQueue();
-		Job job = Job.create(1).startTime(1).build();
+		Job job = Job.builder(1).startTime(1).build();
 		waitingQueue.add(job);
 		JobDispatcher dispatcher = mock(JobDispatcher.class);
 		Scheduler tested = new ByTraceScheduler(waitingQueue, new Cluster(), dispatcher);
@@ -31,8 +31,8 @@ public class ByTraceSchedulerTest
 	public void testHost()
 	{
 		Cluster cluster = new Cluster();
-		cluster.add(Host.create().cores(1.0).memory(2.0).build());
-		cluster.add(Host.create().cores(0.5).memory(0.5).build());
+		cluster.add(Host.builder().cores(1.0).memory(2.0).build());
+		cluster.add(Host.builder().cores(0.5).memory(0.5).build());
 		new ByTraceScheduler(null, cluster, null);
 		assertEquals(1, cluster.hosts().size());
 		assertEquals(1.5, cluster.hosts().get(0).cores(), 0.1);
@@ -43,7 +43,7 @@ public class ByTraceSchedulerTest
 	public void testJobNotDispatched()
 	{
 		AbstractWaitingQueue waitingQueue = new LinkedListWaitingQueue();
-		Job job = Job.create(1).startTime(1).build();
+		Job job = Job.builder(1).startTime(1).build();
 		waitingQueue.add(job);
 		JobDispatcher dispatcher = mock(JobDispatcher.class);
 		Scheduler tested = new ByTraceScheduler(waitingQueue, new Cluster(), dispatcher);

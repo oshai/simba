@@ -17,22 +17,22 @@ public class ActualBestFitTest
 	@Test
 	public void testNoAccpetingHostNotFit()
 	{
-		List<Host> hosts = newArrayList(Host.create().build());
-		assertNull(new ActualBestFit().match(Job.create(1).cores(1).build(), hosts));
+		List<Host> hosts = newArrayList(Host.builder().build());
+		assertNull(new ActualBestFit().match(Job.builder(1).cores(1).build(), hosts));
 	}
 
 	@Test
 	public void testAccpetingHostFit()
 	{
-		Host host = Host.create().cores(1).build();
+		Host host = Host.builder().cores(1).build();
 		List<Host> hosts = newArrayList(host);
-		assertEquals(host, new ActualBestFit().match(Job.create(1).cores(1).build(), hosts));
+		assertEquals(host, new ActualBestFit().match(Job.builder(1).cores(1).build(), hosts));
 	}
 
 	@Test
 	public void testAccpetingHostWithLessAvailableMemory()
 	{
-		Job job = Job.create(1).cores(0).memory(1).build();
+		Job job = Job.builder(1).cores(0).memory(1).build();
 		Host host1 = Mockito.mock(Host.class);
 		when(host1.availableMemory()).thenReturn(4.0);
 		when(host1.memory()).thenReturn(8.0);
@@ -48,7 +48,7 @@ public class ActualBestFitTest
 	@Test
 	public void testAccpetingHostWithLessMemory()
 	{
-		Job job = Job.create(1).cores(0).memory(1).build();
+		Job job = Job.builder(1).cores(0).memory(1).build();
 		Host host1 = Mockito.mock(Host.class);
 		when(host1.availableMemory()).thenReturn(2.0);
 		when(host1.memory()).thenReturn(8.0);

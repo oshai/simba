@@ -15,26 +15,26 @@ public class WorseFitTest
 	@Test
 	public void testNoAccpetingHostNotFit()
 	{
-		List<Host> hosts = newArrayList(Host.create().build());
-		assertNull(new WorseFit().match(Job.create(1).cores(1).build(), hosts));
+		List<Host> hosts = newArrayList(Host.builder().build());
+		assertNull(new WorseFit().match(Job.builder(1).cores(1).build(), hosts));
 	}
 
 	@Test
 	public void testAccpetingHostFit()
 	{
-		Host host = Host.create().cores(1).build();
+		Host host = Host.builder().cores(1).build();
 		List<Host> hosts = newArrayList(host);
-		assertEquals(host, new WorseFit().match(Job.create(1).cores(1).build(), hosts));
+		assertEquals(host, new WorseFit().match(Job.builder(1).cores(1).build(), hosts));
 	}
 
 	@Test
 	public void testAccpetingBestHost()
 	{
-		Host host1 = Host.create().cores(2).memory(16).build();
-		Host host2 = Host.create().cores(2).memory(15).build();
-		Host host3 = Host.create().cores(2).memory(8).build();
+		Host host1 = Host.builder().cores(2).memory(16).build();
+		Host host2 = Host.builder().cores(2).memory(15).build();
+		Host host3 = Host.builder().cores(2).memory(8).build();
 		List<Host> hosts = newArrayList(host3, host2, host1);
-		assertEquals(host1, new WorseFit().match(Job.create(1).cores(1).memory(4).build(), hosts));
+		assertEquals(host1, new WorseFit().match(Job.builder(1).cores(1).memory(4).build(), hosts));
 	}
 
 }

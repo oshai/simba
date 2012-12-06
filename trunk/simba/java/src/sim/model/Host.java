@@ -65,7 +65,7 @@ public class Host
 		return Collections.unmodifiableList(jobs);
 	}
 
-	public static Builder create()
+	public static Builder builder()
 	{
 		return new Builder();
 	}
@@ -133,6 +133,16 @@ public class Host
 	public boolean hasPotentialResourceFor(Job job)
 	{
 		return greaterOrEquals(cores(), job.cores()) && greaterOrEquals(memory(), job.memory());
+	}
+
+	public double usedCost()
+	{
+		double $ = 0;
+		for (Job job : jobs)
+		{
+			$ += job.cost();
+		}
+		return $;
 	}
 
 }

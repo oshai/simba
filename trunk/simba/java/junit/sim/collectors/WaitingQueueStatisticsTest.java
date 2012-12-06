@@ -27,8 +27,8 @@ public class WaitingQueueStatisticsTest
 	public void testAvgMemory()
 	{
 		AbstractWaitingQueue w = new LinkedListWaitingQueue();
-		w.add(Job.create(1).memory(2).build());
-		w.add(Job.create(1).memory(4).build());
+		w.add(Job.builder(1).memory(2).build());
+		w.add(Job.builder(1).memory(4).build());
 		Clock clock = new Clock();
 		WaitingQueueStatistics tested = new WaitingQueueStatistics(w, 2, clock);
 		tested.updateStatistics();
@@ -39,8 +39,8 @@ public class WaitingQueueStatisticsTest
 	public void testAvgMemoryFront()
 	{
 		AbstractWaitingQueue w = new LinkedListWaitingQueue();
-		w.add(Job.create(1).memory(2).build());
-		w.add(Job.create(1).memory(4).build());
+		w.add(Job.builder(1).memory(2).build());
+		w.add(Job.builder(1).memory(4).build());
 		Clock clock = new Clock();
 		WaitingQueueStatistics tested = new WaitingQueueStatistics(w, 1, clock);
 		tested.updateStatistics();
@@ -51,8 +51,8 @@ public class WaitingQueueStatisticsTest
 	public void testAvgWaitTime()
 	{
 		AbstractWaitingQueue w = new LinkedListWaitingQueue();
-		w.add(Job.create(1).submitTime(0).build());
-		w.add(Job.create(1).submitTime(1).build());
+		w.add(Job.builder(1).submitTime(0).build());
+		w.add(Job.builder(1).submitTime(1).build());
 		Clock clock = new Clock(1);
 		WaitingQueueStatistics tested = new WaitingQueueStatistics(w, 2, clock);
 		tested.updateStatistics();
@@ -65,8 +65,8 @@ public class WaitingQueueStatisticsTest
 		AbstractWaitingQueue w = new LinkedListWaitingQueue();
 		Clock clock = new Clock();
 		WaitingQueueStatistics tested = new WaitingQueueStatistics(w, 2, clock);
-		w.add(Job.create(1).build());
-		w.add(Job.create(1).build());
+		w.add(Job.builder(1).build());
+		w.add(Job.builder(1).build());
 		w.remove();
 		tested.updateStatistics();
 		assertEquals(2, tested.submittedJobs());

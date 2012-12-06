@@ -34,15 +34,16 @@ public class JobParser
 	private int memNarrowJobs;// less than 4 GB
 	private int memMediumJobs;// less than 8 GB
 	private int memWideJobs;// more than 8 GB
-	private int errorLength;// more than 8 GB
-	private int errorMemory;// more than 8 GB
-	private static final int index_actualclassreservation = 21;// iil-new20
-	private static final int index_jobid = 0;// iil-new also
-	private static final int index_iterationsubmittime = 18;// iil-new4
-	private static final int index_startttime = 5;// iil-new?
-	private static final int index_wtime = 9;// iil-new also
-	private static final int index_utime = 10;// iil-new also
-	private static final int index_stime = 11;// iil-new also
+	private int errorLength;// less than 1 sec
+	private int errorMemory;// less than 1 GB
+	private static final int index_actualclassreservation = 21;
+	private static final int index_jobid = 0;
+	private static final int index_iterationsubmittime = 18;
+	private static final int index_startttime = 5;
+	private static final int index_wtime = 9;
+	private static final int index_utime = 10;
+	private static final int index_stime = 11;
+	private static final int index_cost = 20;
 	private static boolean DEBUG = false;
 
 	private final SimbaConfiguration simbaConfiguration;
@@ -92,8 +93,8 @@ public class JobParser
 					{
 						submitTime = submitTime / simbaConfiguration.bucketSize() * simbaConfiguration.bucketSize();
 					}
-					Job job = Job.create(length).id(cols.get(index_jobid)).priority(submitTime).submitTime(submitTime).cores(cores).memory(memory)
-							.startTime(l(cols.get(index_startttime))).build();
+					Job job = Job.builder(length).id(cols.get(index_jobid)).cost(d(cols.get(index_cost))).priority(submitTime).submitTime(submitTime)
+							.cores(cores).memory(memory).startTime(l(cols.get(index_startttime))).build();
 					if (canRun(job, cluster))
 					{
 						$.add(new Submit(job));
@@ -126,8 +127,8 @@ public class JobParser
 		log.info("narrow memory jobs " + getPrecentString(memNarrowJobs));
 		log.info("medium memory jobs " + getPrecentString(memMediumJobs));
 		log.info("wide memory jobs " + getPrecentString(memWideJobs));
-		log.info("length error " + getPrecentString(errorLength));
-		log.info("memory error " + getPrecentString(errorMemory));
+		log.info("length error (less than 1 sec)" + getPrecentString(errorLength));
+		log.info("memory error (less than 1GB)" + getPrecentString(errorMemory));
 		return $;
 	}
 
@@ -169,6 +170,11 @@ public class JobParser
 	private long l(String value)
 	{
 		return Long.valueOf(value);
+	}
+
+	private double d(String value)
+	{
+		return Double.valueOf(value);
 	}
 
 	private void updateRunTimeBuckets(long length)

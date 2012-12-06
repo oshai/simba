@@ -11,8 +11,9 @@ public class Job
 	private double cores;
 	private double memory;
 	private long startTime;
+	private double cost;
 
-	private Job(String id, long priority, long submitTime, long length, double cores, double memory, long startTime)
+	private Job(String id, long priority, long submitTime, long length, double cores, double memory, long startTime, double cost)
 	{
 		super();
 		this.id = id;
@@ -22,6 +23,7 @@ public class Job
 		this.cores = cores;
 		this.memory = memory;
 		this.startTime = startTime;
+		this.cost = cost;
 		validate();
 	}
 
@@ -45,6 +47,7 @@ public class Job
 		private long submitTime;
 		private long length;
 		private double cores;
+		private double cost;
 		private double memory;
 		private long startTime;
 
@@ -91,7 +94,13 @@ public class Job
 
 		public Job build()
 		{
-			return new Job(id, priority, submitTime, length, cores, memory, startTime);
+			return new Job(id, priority, submitTime, length, cores, memory, startTime, cost);
+		}
+
+		public Builder cost(double cost)
+		{
+			this.cost = cost;
+			return this;
 		}
 	}
 
@@ -100,7 +109,7 @@ public class Job
 		return submitTime;
 	}
 
-	public static Builder create(long length)
+	public static Builder builder(long length)
 	{
 		return new Builder(length);
 	}
@@ -145,11 +154,16 @@ public class Job
 		return startTime;
 	}
 
+	public double cost()
+	{
+		return cost;
+	}
+
 	@Override
 	public String toString()
 	{
 		return "Job [id=" + id + ", priority=" + priority + ", submitTime=" + submitTime + ", length=" + length + ", cores=" + cores + ", memory=" + memory
-				+ ", startTime=" + startTime + "]";
+				+ ", startTime=" + startTime + ", cost=" + cost + "]";
 	}
 
 }

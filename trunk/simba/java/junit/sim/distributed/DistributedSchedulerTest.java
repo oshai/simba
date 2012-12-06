@@ -21,7 +21,7 @@ public class DistributedSchedulerTest
 	public void testOneJob() throws Exception
 	{
 		LinkedListWaitingQueue waitingQueue = new LinkedListWaitingQueue();
-		Job job = Job.create(100).build();
+		Job job = Job.builder(100).build();
 		waitingQueue.add(job);
 		List<HostScheduler> hostSchedulers = newArrayList();
 		HostScheduler hostScheduler = mock(HostScheduler.class);
@@ -43,7 +43,7 @@ public class DistributedSchedulerTest
 	public void testOneJobNoHosts() throws Exception
 	{
 		LinkedListWaitingQueue waitingQueue = new LinkedListWaitingQueue();
-		Job job = Job.create(100).build();
+		Job job = Job.builder(100).build();
 		waitingQueue.add(job);
 		List<HostScheduler> hostSchedulers = newArrayList();
 		HostSelector hostSelector = mock(HostSelector.class);

@@ -28,11 +28,10 @@ public class IntervalCollector extends Collector
 		HostStatistics hostStatistics = new HostStatistics(cluster);
 		waitingQueueStatistics.updateStatistics();
 		String line = time + SEPERATOR + hostStatistics.cores() + SEPERATOR + hostStatistics.usedCores() + SEPERATOR + hostStatistics.memory() + SEPERATOR
-				+ hostStatistics.usedMemory() + SEPERATOR + hostStatistics.usedMemoryAverage() + SEPERATOR + hostStatistics.usedMemoryVariance() + SEPERATOR
-				+ waitingQueueStatistics.waitingJobs() + SEPERATOR + hostStatistics.mixAverage() + SEPERATOR + hostStatistics.mixVariance() + SEPERATOR
-				+ hostStatistics.reverseMixAverage() + SEPERATOR + hostStatistics.reverseMixVariance() + SEPERATOR + waitingQueueStatistics.avgMemoryFront()
-				+ SEPERATOR + waitingQueueStatistics.avgWaitTimeFront() + SEPERATOR + jobFinisher.collectFinishedJobs() + SEPERATOR
-				+ waitingQueueStatistics.dispatchedJobs() + SEPERATOR + waitingQueueStatistics.submittedJobs() + SEPERATOR + scheduledJobs + SEPERATOR;
+				+ hostStatistics.usedMemory() + SEPERATOR + waitingQueueStatistics.waitingJobs() + SEPERATOR + hostStatistics.usedCost() + SEPERATOR
+				+ waitingQueueStatistics.avgMemoryFront() + SEPERATOR + waitingQueueStatistics.avgWaitTimeFront() + SEPERATOR
+				+ jobFinisher.collectFinishedJobs() + SEPERATOR + waitingQueueStatistics.dispatchedJobs() + SEPERATOR + waitingQueueStatistics.submittedJobs()
+				+ SEPERATOR + scheduledJobs;
 		if (log.isDebugEnabled())
 		{
 			log.debug("collectLine() - " + line.replace(' ', ','));
@@ -43,10 +42,9 @@ public class IntervalCollector extends Collector
 	@Override
 	protected String collectHeader()
 	{
-		String line = "#time" + SEPERATOR + "cores" + SEPERATOR + "usedCores" + SEPERATOR + "memory" + SEPERATOR + "usedMemory" + SEPERATOR + "memoryAverage"
-				+ SEPERATOR + "memoryVariance" + SEPERATOR + "waitingJobs" + SEPERATOR + "mixAverage" + SEPERATOR + "mixVariance" + SEPERATOR
-				+ "reverseMixAverage" + SEPERATOR + "reverseMixVariance" + SEPERATOR + "avgMemoryFront" + SEPERATOR + "avgWaitTimeFront" + SEPERATOR
-				+ "finishedJobs" + SEPERATOR + "dispatchedJobs" + SEPERATOR + "submittedJobs" + SEPERATOR + "scheduledJobs";
+		String line = "#time" + SEPERATOR + "cores" + SEPERATOR + "usedCores" + SEPERATOR + "memory" + SEPERATOR + "usedMemory" + SEPERATOR + "waitingJobs"
+				+ SEPERATOR + "usedCost" + SEPERATOR + "avgMemoryWaitingJobs" + SEPERATOR + "avgWaitTimeWaitingJobs" + SEPERATOR + "finishedJobs" + SEPERATOR
+				+ "dispatchedJobs" + SEPERATOR + "submittedJobs" + SEPERATOR + "scheduledJobs";
 		return line;
 	}
 
