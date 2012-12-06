@@ -54,10 +54,10 @@ public class ReservingSchedulerTest
 	public void testJobMatchNothing()
 	{
 		AbstractWaitingQueue waitingQueue = new LinkedListWaitingQueue();
-		Job job = Job.create(1).cores(2).priority(1).build();
+		Job job = Job.builder(1).cores(2).priority(1).build();
 		waitingQueue.add(job);
 		Cluster cluster = new Cluster();
-		Host host = Host.create().id("1").cores(1).build();
+		Host host = Host.builder().id("1").cores(1).build();
 		cluster.add(host);
 		Grader grader = mock(Grader.class);
 		JobDispatcher dispatcher = mock(JobDispatcher.class);
@@ -71,14 +71,14 @@ public class ReservingSchedulerTest
 	public void testJob2IsReserving()
 	{
 		AbstractWaitingQueue waitingQueue = new LinkedListWaitingQueue();
-		Job job0 = Job.create(1).cores(1).memory(1).priority(0).build();
-		Job job1 = Job.create(1).cores(1).memory(2).priority(1).build();
-		Job job2 = Job.create(1).cores(1).memory(1).priority(2).build();
+		Job job0 = Job.builder(1).cores(1).memory(1).priority(0).build();
+		Job job1 = Job.builder(1).cores(1).memory(2).priority(1).build();
+		Job job2 = Job.builder(1).cores(1).memory(1).priority(2).build();
 		waitingQueue.add(job0);
 		waitingQueue.add(job1);
 		waitingQueue.add(job2);
 		Cluster cluster = new Cluster();
-		Host host = Host.create().id("1").cores(3).memory(2).build();
+		Host host = Host.builder().id("1").cores(3).memory(2).build();
 		cluster.add(host);
 		Grader grader = mock(Grader.class);
 		JobDispatcher dispatcher = new JobDispatcher(mock(EventQueue.class));
@@ -94,14 +94,14 @@ public class ReservingSchedulerTest
 	public void testJob2NotReserving()
 	{
 		AbstractWaitingQueue waitingQueue = new LinkedListWaitingQueue();
-		Job job0 = Job.create(1).cores(1).memory(1).priority(0).build();
-		Job job1 = Job.create(1).cores(1).memory(3).priority(1).build();
-		Job job2 = Job.create(1).cores(1).memory(1).priority(2).build();
+		Job job0 = Job.builder(1).cores(1).memory(1).priority(0).build();
+		Job job1 = Job.builder(1).cores(1).memory(3).priority(1).build();
+		Job job2 = Job.builder(1).cores(1).memory(1).priority(2).build();
 		waitingQueue.add(job0);
 		waitingQueue.add(job1);
 		waitingQueue.add(job2);
 		Cluster cluster = new Cluster();
-		Host host = Host.create().id("1").cores(3).memory(2).build();
+		Host host = Host.builder().id("1").cores(3).memory(2).build();
 		cluster.add(host);
 		Grader grader = mock(Grader.class);
 		JobDispatcher dispatcher = new JobDispatcher(mock(EventQueue.class));
@@ -117,16 +117,16 @@ public class ReservingSchedulerTest
 	public void test2ReservingSameHost()
 	{
 		AbstractWaitingQueue waitingQueue = new LinkedListWaitingQueue();
-		Job job0 = Job.create(1).cores(1).memory(1).priority(0).build();
-		Job job1 = Job.create(1).cores(1).memory(2).priority(1).build();
-		Job job2 = Job.create(1).cores(1).memory(1).priority(2).build();
-		Job job3 = Job.create(1).cores(1).memory(1).priority(3).build();
+		Job job0 = Job.builder(1).cores(1).memory(1).priority(0).build();
+		Job job1 = Job.builder(1).cores(1).memory(2).priority(1).build();
+		Job job2 = Job.builder(1).cores(1).memory(1).priority(2).build();
+		Job job3 = Job.builder(1).cores(1).memory(1).priority(3).build();
 		waitingQueue.add(job0);
 		waitingQueue.add(job1);
 		waitingQueue.add(job2);
 		waitingQueue.add(job3);
 		Cluster cluster = new Cluster();
-		Host host = Host.create().id("1").cores(3).memory(2).build();
+		Host host = Host.builder().id("1").cores(3).memory(2).build();
 		cluster.add(host);
 		Grader grader = mock(Grader.class);
 		JobDispatcher dispatcher = new JobDispatcher(mock(EventQueue.class));
@@ -178,17 +178,17 @@ public class ReservingSchedulerTest
 	public void testReservationIsOnHighestMemoryHost()
 	{
 		AbstractWaitingQueue waitingQueue = new LinkedListWaitingQueue();
-		Job job0 = Job.create(1).priority(0).memory(2).build();
-		Job job1 = Job.create(1).priority(1).memory(4).build();
-		Job job2 = Job.create(1).priority(2).memory(3).build();
-		Job job3 = Job.create(1).priority(3).memory(1).build();
+		Job job0 = Job.builder(1).priority(0).memory(2).build();
+		Job job1 = Job.builder(1).priority(1).memory(4).build();
+		Job job2 = Job.builder(1).priority(2).memory(3).build();
+		Job job3 = Job.builder(1).priority(3).memory(1).build();
 		waitingQueue.add(job0);
 		waitingQueue.add(job1);
 		waitingQueue.add(job2);
 		waitingQueue.add(job3);
 		Cluster cluster = new Cluster();
-		Host host1 = Host.create().id("1").cores(1).memory(3).build();
-		Host host2 = Host.create().id("2").cores(1).memory(6).build();
+		Host host1 = Host.builder().id("1").cores(1).memory(3).build();
+		Host host2 = Host.builder().id("2").cores(1).memory(6).build();
 		cluster.add(host1);
 		cluster.add(host2);
 		Grader grader = mock(Grader.class);

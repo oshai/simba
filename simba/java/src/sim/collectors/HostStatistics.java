@@ -20,6 +20,7 @@ public class HostStatistics
 	private Variance mixVariance = new Variance();
 	private double reverseMixSum;
 	private Variance reverseMixVariance = new Variance();
+	private double usedCost;
 
 	public HostStatistics(Cluster cluster)
 	{
@@ -80,6 +81,7 @@ public class HostStatistics
 			usedCores += host.usedCores();
 			memory += host.memory();
 			usedMemory += host.usedMemory();
+			usedCost += host.usedCost();
 			double usedMemoryPrecent = (host.usedMemory() + CONST) / (host.memory() + CONST);
 			usedMemoryPrecentComul += usedMemoryPrecent;
 			usedMemoryVariance.increment(usedMemoryPrecent);
@@ -109,5 +111,10 @@ public class HostStatistics
 	public double reverseMixVariance()
 	{
 		return reverseMixVariance.getResult();
+	}
+
+	public double usedCost()
+	{
+		return usedCost;
 	}
 }

@@ -13,8 +13,8 @@ public class SimpleMixFitTest
 	@Test
 	public void testNarrowJob()
 	{
-		Host host = Host.create().cores(1).memory(8).build();
-		Job job = Job.create(1).cores(1).memory(1).build();
+		Host host = Host.builder().cores(1).memory(8).build();
+		Job job = Job.builder(1).cores(1).memory(1).build();
 		Grader grader = createGrader();
 		assertEquals(-8.0, grader.getGrade(host, job), 0.1);
 	}
@@ -22,8 +22,8 @@ public class SimpleMixFitTest
 	@Test
 	public void testWideJob()
 	{
-		Host host = Host.create().cores(1).memory(8).build();
-		Job job = Job.create(1).cores(1).memory(8).build();
+		Host host = Host.builder().cores(1).memory(8).build();
+		Job job = Job.builder(1).cores(1).memory(8).build();
 		Grader grader = createGrader();
 		assertEquals(8.0, grader.getGrade(host, job), 0.1);
 	}

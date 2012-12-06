@@ -57,7 +57,7 @@ public class Looper
 		}
 		log.info("execute() - loop finished, calling finish()");
 		finish();
-		asserter().throwsError().assertTrue(sizeOfWaitingQueue() == 0, "waitingQueue not empty, size: " + sizeOfWaitingQueue());
+		asserter().throwsError().assertTrue(waitingQueue.isEmpty(), "waitingQueue not empty, size: " + sizeOfWaitingQueue());
 	}
 
 	private void finish()
@@ -66,7 +66,7 @@ public class Looper
 		jobFinisher.finishExecution();
 	}
 
-	protected boolean tick()
+	boolean tick()
 	{
 		long time = clock.tick();
 		if (simbaConsts.isBucketSimulation() && time % simbaConsts.bucketSize() == 0)

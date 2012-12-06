@@ -23,7 +23,7 @@ public class SimpleSchedulerTest
 		Job job = mock(Job.class);
 		waitingQueue.add(job);
 		Cluster cluster = new Cluster();
-		Host host = Host.create().cores(0).memory(0).build();
+		Host host = Host.builder().cores(0).memory(0).build();
 		cluster.add(host);
 		Matcher matcher = mock(Matcher.class);
 		when(matcher.match(job, cluster.hosts())).thenReturn(host);
@@ -42,7 +42,7 @@ public class SimpleSchedulerTest
 		Job job = mock(Job.class);
 		waitingQueue.add(job);
 		Cluster cluster = new Cluster();
-		Host host = Host.create().cores(0).memory(0).build();
+		Host host = Host.builder().cores(0).memory(0).build();
 		cluster.add(host);
 		Matcher matcher = mock(Matcher.class);
 		JobDispatcher dispatcher = mock(JobDispatcher.class);

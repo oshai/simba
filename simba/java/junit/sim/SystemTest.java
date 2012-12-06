@@ -24,7 +24,6 @@ import sim.scheduling.Scheduler;
 import sim.scheduling.SimpleScheduler;
 import sim.scheduling.matchers.FirstFit;
 import sim.scheduling.matchers.Matcher;
-import sim.scheduling.reserving.ReservingScheduler;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -53,8 +52,8 @@ public class SystemTest
 	@Test
 	public void testOneJobOneHost()
 	{
-		Host host = Host.create().cores(1).memory(8).build();
-		Job job = Job.create(3).priority(0).submitTime(2).cores(1).memory(4).build();
+		Host host = Host.builder().cores(1).memory(8).build();
+		Job job = Job.builder(3).priority(0).submitTime(2).cores(1).memory(4).build();
 		ArrayList<Job> jobs = newArrayList(job);
 		Looper looper = init(host, jobs);
 		looper.tick();
@@ -73,9 +72,9 @@ public class SystemTest
 	@Test
 	public void test2Jobs1Host()
 	{
-		Host host = Host.create().cores(2).memory(8).build();
-		Job job1 = Job.create(3).priority(0).submitTime(2).cores(1).memory(4).build();
-		Job job2 = Job.create(4).priority(0).submitTime(2).cores(1).memory(4).build();
+		Host host = Host.builder().cores(2).memory(8).build();
+		Job job1 = Job.builder(3).priority(0).submitTime(2).cores(1).memory(4).build();
+		Job job2 = Job.builder(4).priority(0).submitTime(2).cores(1).memory(4).build();
 		ArrayList<Job> jobs = newArrayList(job1, job2);
 		Looper looper = init(host, jobs);
 		looper.tick();
@@ -96,9 +95,9 @@ public class SystemTest
 	@Test
 	public void test2Jobs1HostWithWaiting()
 	{
-		Host host = Host.create().cores(1).memory(8).build();
-		Job job1 = Job.create(3).priority(0).submitTime(2).cores(1).memory(4).build();
-		Job job2 = Job.create(4).priority(0).submitTime(3).cores(1).memory(4).build();
+		Host host = Host.builder().cores(1).memory(8).build();
+		Job job1 = Job.builder(3).priority(0).submitTime(2).cores(1).memory(4).build();
+		Job job2 = Job.builder(4).priority(0).submitTime(3).cores(1).memory(4).build();
 		ArrayList<Job> jobs = newArrayList(job1, job2);
 		Looper looper = init(host, jobs);
 		looper.execute();
@@ -114,7 +113,7 @@ public class SystemTest
 			eventQueue.add(new Submit(job));
 		}
 		AbstractWaitingQueue waitingQueue = new LinkedListWaitingQueue();
-		WaitingQueueStatistics waitingQueueStatistics = new WaitingQueueStatistics(waitingQueue, ReservingScheduler.JOBS_CHECKED_BY_SCHEDULER, clock);
+		WaitingQueueStatistics waitingQueueStatistics = new WaitingQueueStatistics(waitingQueue, Integer.MAX_VALUE, clock);
 		JobDispatcher dispatcher = new JobDispatcher(eventQueue);
 		Matcher matcher = new FirstFit();
 		Scheduler scheduler = new SimpleScheduler(waitingQueue, cluster, matcher, dispatcher);

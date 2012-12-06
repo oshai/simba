@@ -147,7 +147,7 @@ public class Simulator
 			waitingQueue = new SortedWaitingQueue();
 		}
 		log.info("wait queue is " + waitingQueue.getClass().getSimpleName());
-		WaitingQueueStatistics waitingQueueStatistics = new WaitingQueueStatistics(waitingQueue, ReservingScheduler.JOBS_CHECKED_BY_SCHEDULER, clock);
+		WaitingQueueStatistics waitingQueueStatistics = new WaitingQueueStatistics(waitingQueue, Integer.MAX_VALUE, clock);
 		if (submitImmediately())
 		{
 			moveJobsToWaitQueue(eventQueue, waitingQueue);
@@ -213,7 +213,7 @@ public class Simulator
 		while (eventQueue.size() > 0)
 		{
 			Job job = ((Submit) eventQueue.removeFirst()).job();
-			Job jobUpdated = Job.create(job.length()).cores(job.cores()).submitTime(0L).memory(job.memory()).id(job.id()).priority(job.priority()).build();
+			Job jobUpdated = Job.builder(job.length()).cores(job.cores()).submitTime(0L).memory(job.memory()).id(job.id()).priority(job.priority()).build();
 			waitingQueue.add(jobUpdated);
 		}
 	}

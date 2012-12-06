@@ -13,8 +13,8 @@ public class MixNormilizedDegreeFromTopLeftViewDeltaGraderTest
 	@Test
 	public void testMaxCores()
 	{
-		Host host = Host.create().cores(1).memory(1).build();
-		Job job = Job.create(1).cores(1).memory(0).build();
+		Host host = Host.builder().cores(1).memory(1).build();
+		Job job = Job.builder(1).cores(1).memory(0).build();
 		Grader grader = createGrader();
 		assertTrue(0 < grader.getGrade(host, job));
 	}
@@ -22,8 +22,8 @@ public class MixNormilizedDegreeFromTopLeftViewDeltaGraderTest
 	@Test
 	public void testMaxMemory()
 	{
-		Host host = Host.create().cores(1).memory(1).build();
-		Job job = Job.create(1).cores(0).memory(1).build();
+		Host host = Host.builder().cores(1).memory(1).build();
+		Job job = Job.builder(1).cores(0).memory(1).build();
 		Grader grader = createGrader();
 		assertTrue(0 < grader.getGrade(host, job));
 	}

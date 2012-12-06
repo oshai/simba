@@ -29,7 +29,7 @@ public class ByTraceScheduler implements Scheduler
 			cores += host1.cores();
 		}
 		cluster.hosts().clear();
-		host = Host.create().cores(cores).memory(memory).build();
+		host = Host.builder().cores(cores).memory(memory).build();
 		cluster.add(host);
 	}
 

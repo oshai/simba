@@ -21,7 +21,7 @@ public class HostStatisticsTest
 	public void testEmpty2()
 	{
 		Cluster c = new Cluster();
-		c.add(Host.create().build());
+		c.add(Host.builder().build());
 		HostStatistics tested = create(c);
 		assertEquals(0, tested.cores());
 		assertEquals(0, tested.memory());
@@ -39,8 +39,8 @@ public class HostStatisticsTest
 	public void testSimple()
 	{
 		Cluster c = new Cluster();
-		Host host = Host.create().cores(2).memory(2).build();
-		host.dispatchJob(Job.create(1).cores(1).memory(1).build());
+		Host host = Host.builder().cores(2).memory(2).build();
+		host.dispatchJob(Job.builder(1).cores(1).memory(1).build());
 		c.add(host);
 		HostStatistics tested = create(c);
 		assertEquals(2, tested.cores());

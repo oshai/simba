@@ -24,7 +24,7 @@ public class ReservingScheduler implements Scheduler
 	private static final Logger log = Logger.getLogger(ReservingScheduler.class);
 	public static final int JOBS_CHECKED_BY_SCHEDULER = Integer.MAX_VALUE;
 	private final Job DUMMY_JOB;
-	private static final Host DUMMY_HOST = Host.create().id("dummy").cores(0).memory(0).build();
+	private static final Host DUMMY_HOST = Host.builder().id("dummy").cores(0).memory(0).build();
 	private final AbstractWaitingQueue waitingQueue;
 	private final Cluster cluster;
 	private final Grader grader;
@@ -45,7 +45,7 @@ public class ReservingScheduler implements Scheduler
 		this.dispatcher = dispatcher;
 		this.simbaConfiguration = simbaConfiguration;
 		reservationsSupplier = new ReservationsHolderSupplier(this.simbaConfiguration.reservationsLimit());
-		DUMMY_JOB = Job.create(1).cores(this.simbaConfiguration.jobCoresRatio() * 0.5).memory(1).build();
+		DUMMY_JOB = Job.builder(1).cores(this.simbaConfiguration.jobCoresRatio() * 0.5).memory(1).build();
 		// log.setLevel(Level.DEBUG);
 	}
 

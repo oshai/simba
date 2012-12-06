@@ -47,7 +47,7 @@ public class HostParser
 				double memory = Math.round(simbaConfiguration.hostMemoryRatio() * Double.valueOf(cols[index_memory]) / HOST_MEMORY_UNIT_NORMILIZER);
 				if (shouldAdd(hosts))
 				{
-					cluster.add(Host.create().id(cols[index_hostid]).cores(Double.valueOf(cols[index_cores])).memory(memory).build());
+					cluster.add(Host.builder().id(cols[index_hostid]).cores(Double.valueOf(cols[index_cores])).memory(memory).build());
 				}
 				else
 				{
