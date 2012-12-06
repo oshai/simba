@@ -19,4 +19,6 @@ public interface SimbaConfiguration
 	double machineDropRatio();
 
 	public boolean isActualCoreUsageSimulation();
+
+	public int jobsCheckedBySchduler();
 }

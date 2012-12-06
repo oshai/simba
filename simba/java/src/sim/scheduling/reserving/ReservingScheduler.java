@@ -22,7 +22,6 @@ import sim.scheduling.graders.Grader;
 public class ReservingScheduler implements Scheduler
 {
 	private static final Logger log = Logger.getLogger(ReservingScheduler.class);
-	public static final int JOBS_CHECKED_BY_SCHEDULER = Integer.MAX_VALUE;
 	private final Job DUMMY_JOB;
 	private static final Host DUMMY_HOST = Host.builder().id("dummy").cores(0).memory(0).build();
 	private final AbstractWaitingQueue waitingQueue;
@@ -60,7 +59,7 @@ public class ReservingScheduler implements Scheduler
 		Iterator<Job> iterator = waitingQueue.iterator();
 		int startingHostsCount = currentCycleHosts.size();
 		int startingJobsCount = waitingQueue.size();
-		while (iterator.hasNext() && processedJobsCount < ReservingScheduler.JOBS_CHECKED_BY_SCHEDULER && !currentCycleHosts.isEmpty())
+		while (iterator.hasNext() && processedJobsCount < simbaConfiguration.jobsCheckedBySchduler() && !currentCycleHosts.isEmpty())
 		{
 			processedJobsCount++;
 			Job job = iterator.next();

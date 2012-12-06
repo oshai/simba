@@ -58,6 +58,7 @@ public class Simulator
 		BasicConfigurator.configure();
 		Level level = Boolean.getBoolean("ebug") ? Level.DEBUG : Level.INFO;
 		Logger.getRootLogger().setLevel(level);
+		Logger.getLogger("sim").setLevel(level);
 		try
 		{
 			new Simulator().execute();
