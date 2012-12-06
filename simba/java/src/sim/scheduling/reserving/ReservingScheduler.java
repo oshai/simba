@@ -31,6 +31,7 @@ public class ReservingScheduler implements Scheduler
 	private ReservationsHolderSupplier reservationsSupplier;
 	private List<Host> currentCycleHosts;
 	private double maxAvailableMemory;
+	private double maxAvailableCores;
 	private Reservations reservations;
 	private ReservingSchedulerUtils reservingSchedulerUtils;
 	private final SimbaConfiguration simbaConfiguration;
@@ -122,12 +123,14 @@ public class ReservingScheduler implements Scheduler
 	{
 		List<Host> $ = newArrayList();
 		maxAvailableMemory = 0;
+		maxAvailableCores = 0;
 		for (Host host : hosts)
 		{
 			if (!isFull(host))
 			{
 				$.add(host);
 				maxAvailableMemory = reservingSchedulerUtils.updateMaxAvailableMemory(host, maxAvailableMemory);
+				maxAvailableCores = reservingSchedulerUtils.updateMaxAvailableCores(host, maxAvailableCores);
 			}
 		}
 		return $;
@@ -165,7 +168,7 @@ public class ReservingScheduler implements Scheduler
 
 	private Host getBestHost(Job job, boolean shouldReserve)
 	{
-		if (!shouldReserve && job.memory() > maxAvailableMemory)
+		if (!shouldReserve && (job.memory() > maxAvailableMemory || job.cores() > maxAvailableCores))
 		{
 			return DUMMY_HOST;
 		}
