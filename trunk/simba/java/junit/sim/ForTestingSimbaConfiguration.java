@@ -55,4 +55,10 @@ public class ForTestingSimbaConfiguration implements SimbaConfiguration
 	{
 		return false;
 	}
+
+	@Override
+	public int jobsCheckedBySchduler()
+	{
+		return Integer.MAX_VALUE;
+	}
 }

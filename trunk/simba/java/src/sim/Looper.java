@@ -31,7 +31,7 @@ public class Looper
 	private final JobFinisher jobFinisher;
 	private boolean firstCycle = true;
 	private boolean hasEventsNotScheduleYet = true;
-	private final SimbaConfiguration simbaConsts;
+	private final SimbaConfiguration simbaConfiguration;
 	private AbstractWaitingQueue waitingQueue;
 	private final Scheduler scheduler;
 
@@ -45,7 +45,7 @@ public class Looper
 		this.clock = clock;
 		this.hostCollector = hostCollector;
 		this.jobFinisher = jobFinisher;
-		this.simbaConsts = simbaConsts;
+		this.simbaConfiguration = simbaConsts;
 	}
 
 	public void execute()
@@ -69,24 +69,27 @@ public class Looper
 	boolean tick()
 	{
 		long time = clock.tick();
-		if (simbaConsts.isBucketSimulation() && time % simbaConsts.bucketSize() == 0)
+		if (simbaConfiguration.isBucketSimulation() && time % simbaConfiguration.bucketSize() == 0)
 		{
 			removeAllRunningJobs();
 		}
 		boolean handeledEvents = handleEvents(time);
 		int scheduledJobs = 0;
 		hasEventsNotScheduleYet = hasEventsNotScheduleYet || handeledEvents;
-		if (time % simbaConsts.timeToSchedule() == 0 && hasEventsNotScheduleYet || time % simbaConsts.timeToSchedule() == 1 && firstCycle)
+		if ((time % simbaConfiguration.timeToSchedule() == 0 && hasEventsNotScheduleYet) || (time % simbaConfiguration.timeToSchedule() == 1 && firstCycle))
 		{
 			scheduledJobs = schedule(time);
-			hasEventsNotScheduleYet = false;
+			if (scheduledJobs == 0)
+			{
+				hasEventsNotScheduleYet = false;
+			}
 		}
-		if (time % simbaConsts.bucketSize() == 0)
+		if (time % simbaConfiguration.bucketSize() == 0)
 		{
 			log.info("schduled jobs " + scheduledJobs);
 		}
 		hostCollector.collect(time, handeledEvents, scheduledJobs);
-		if (time % simbaConsts.timeToLog() == 0 || firstCycle)
+		if (time % simbaConfiguration.timeToLog() == 0 || firstCycle)
 		{
 			timeToLogPassed++;
 			log.info("tick() - time passed " + timeToLogPassed + " days events left " + eventQueue.size() + " waiting jobs " + sizeOfWaitingQueue());
@@ -151,7 +154,7 @@ public class Looper
 		Submit submit = (Submit) event;
 		Job job = submit.job();
 		waitingQueue.add(job);
-		if (sizeOfWaitingQueue() > 0)
+		if (sizeOfWaitingQueue() < simbaConfiguration.jobsCheckedBySchduler())
 		{
 			$ = true;
 		}

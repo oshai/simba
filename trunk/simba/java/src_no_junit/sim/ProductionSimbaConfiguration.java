@@ -10,6 +10,7 @@ public class ProductionSimbaConfiguration implements SimbaConfiguration
 	private long timeToLog = 60 * 60 * 24;// 1 day
 	private int timeToSchedule = 10;
 	private final int reservationsLimit = Integer.valueOf(System.getProperty("reservations", "1"));
+	private int jobsCheckedBySchduler = 5000;
 
 	public boolean isBucketSimulation()
 	{
@@ -65,11 +66,17 @@ public class ProductionSimbaConfiguration implements SimbaConfiguration
 	}
 
 	@Override
+	public int jobsCheckedBySchduler()
+	{
+		return jobsCheckedBySchduler;
+	}
+
+	@Override
 	public String toString()
 	{
 		return "ProductionSimbaConfiguration [memoryRatio=" + memoryRatio + ", coreRatio=" + coreRatio + ", machineDropRatio=" + machineDropRatio
 				+ ", bucketSimulation=" + bucketSimulation + ", bucketSize=" + bucketSize + ", timeToLog=" + timeToLog + ", timeToSchedule=" + timeToSchedule
-				+ ", reservationsLimit=" + reservationsLimit + "]";
+				+ ", reservationsLimit=" + reservationsLimit + ", jobsCheckedBySchduler=" + jobsCheckedBySchduler + "]";
 	}
 
 }
