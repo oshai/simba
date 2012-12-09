@@ -10,30 +10,30 @@ public class ReservationsHolderSupplier implements Supplier<Reservations>
 	public ReservationsHolderSupplier(int maxReservations)
 	{
 		super();
-		if (maxReservations <= 1)
+		// if (maxReservations <= 1)
+		// {
+		// reservations = new Supplier<Reservations>()
+		// {
+		//
+		// @Override
+		// public Reservations get()
+		// {
+		// return new SingleReservationHolder();
+		// }
+		// };
+		// }
+		// else
+		// {
+		reservations = new Supplier<Reservations>()
 		{
-			reservations = new Supplier<Reservations>()
-			{
 
-				@Override
-				public Reservations get()
-				{
-					return new SingleReservationHolder();
-				}
-			};
-		}
-		else
-		{
-			reservations = new Supplier<Reservations>()
+			@Override
+			public Reservations get()
 			{
-
-				@Override
-				public Reservations get()
-				{
-					return new ReservationsHolder();
-				}
-			};
-		}
+				return new ReservationsHolder();
+			}
+		};
+		// }
 	}
 
 	@Override
