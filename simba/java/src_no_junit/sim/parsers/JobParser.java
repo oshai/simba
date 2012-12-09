@@ -36,6 +36,7 @@ public class JobParser
 	private int memWideJobs;// more than 8 GB
 	private int errorLength;// less than 1 sec
 	private int errorMemory;// less than 1 GB
+	private int parallel;
 	private static final int index_actualclassreservation = 21;
 	private static final int index_jobid = 0;
 	private static final int index_iterationsubmittime = 18;
@@ -69,6 +70,7 @@ public class JobParser
 			@Override
 			public boolean apply(String line)
 			{
+				boolean drop = false;
 				total++;
 				try
 				{
@@ -93,16 +95,22 @@ public class JobParser
 					{
 						submitTime = submitTime / simbaConfiguration.bucketSize() * simbaConfiguration.bucketSize();
 					}
-					Job job = Job.builder(length).id(cols.get(index_jobid)).cost(d(cols.get(index_cost))).priority(submitTime).submitTime(submitTime)
-							.cores(cores).memory(memory).startTime(l(cols.get(index_startttime))).build();
-					if (canRun(job, cluster))
+					String id = cols.get(index_jobid);
+					if (id.contains(":"))
+					{
+						parallel++;
+						drop = true;
+					}
+					Job job = Job.builder(length).id(id).cost(d(cols.get(index_cost))).priority(submitTime).submitTime(submitTime).cores(cores).memory(memory)
+							.startTime(l(cols.get(index_startttime))).build();
+					if (canRun(job, cluster) && !drop)
 					{
 						$.add(new Submit(job));
 						left++;
 					}
 					else
 					{
-						log.info("apply() - job cannot run " + job.cores() + " " + job.memory());
+						log.debug("apply() - job cannot run " + job.cores() + " " + job.memory());
 					}
 				}
 				catch (Exception ex)
@@ -127,8 +135,9 @@ public class JobParser
 		log.info("narrow memory jobs " + getPrecentString(memNarrowJobs));
 		log.info("medium memory jobs " + getPrecentString(memMediumJobs));
 		log.info("wide memory jobs " + getPrecentString(memWideJobs));
-		log.info("length error (less than 1 sec)" + getPrecentString(errorLength));
-		log.info("memory error (less than 1GB)" + getPrecentString(errorMemory));
+		log.info("length error (less than 1 sec) " + getPrecentString(errorLength));
+		log.info("memory error (less than 1GB) " + getPrecentString(errorMemory));
+		log.info("parallel slaves " + getPrecentString(parallel));
 		return $;
 	}
 
