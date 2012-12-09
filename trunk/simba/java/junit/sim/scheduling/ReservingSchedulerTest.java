@@ -44,6 +44,7 @@ public class ReservingSchedulerTest
 	private Host createHost(Job job)
 	{
 		Host host = mock(Host.class);
+		when(host.id()).thenReturn("id");
 		when(host.availableMemory()).thenReturn(1.0);
 		when(host.availableCores()).thenReturn(1.0);
 		when(host.hasAvailableResourcesFor(job)).thenReturn(true);

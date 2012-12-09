@@ -23,6 +23,10 @@ public class SingleReservationHolder implements Reservations
 	@Override
 	public void put(String id1, Reservation r)
 	{
+		if (!NOT_EXIST_HOST.equals(id))
+		{
+			throw new RuntimeException("cannot put more than 1 reservation");
+		}
 		id = id1;
 		reservation = r;
 	}

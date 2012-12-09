@@ -1,10 +1,12 @@
 package sim.scheduling.reserving;
 
 import static com.google.common.collect.Lists.*;
+import static com.google.common.collect.Maps.*;
 import static utils.assertions.Asserter.*;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -57,6 +59,7 @@ public class ReservingScheduler implements Scheduler
 		int processedJobsCount = 0;
 		int scheduledJobs = 0;
 		int skippedJobs = 0;
+		Map<Job, Host> dispatchedJobs = newHashMap();
 		Iterator<Job> iterator = waitingQueue.iterator();
 		int startingHostsCount = currentCycleHosts.size();
 		int startingJobsCount = waitingQueue.size();
@@ -65,23 +68,32 @@ public class ReservingScheduler implements Scheduler
 			processedJobsCount++;
 			Job job = iterator.next();
 			Host host = getBestHost(job, shouldReserve(processedJobsCount));
+			boolean dispatched = false;
 			if (reservingSchedulerUtils.isAvailable(host, job))
 			{
-				dispatcher.dispatch(job, host, time);
-				iterator.remove();
+				dispatchedJobs.put(job, host);
 				scheduledJobs++;
+				dispatched = true;
 			}
-			else
+			if (shouldReserve(processedJobsCount) || dispatched)
 			{
-				if (shouldReserve(processedJobsCount))
-				{
-					reserve(host, job);
-				}
+				reserve(host, job);
 			}
 			updateCurrentCycleHosts(host);
 			if (DUMMY_HOST.equals(host))
 			{
 				skippedJobs++;
+			}
+		}
+		Iterator<Job> iterator2 = waitingQueue.iterator();
+		while (iterator2.hasNext() && processedJobsCount < simbaConfiguration.jobsCheckedBySchduler())
+		{
+			Job job = iterator2.next();
+			Host host = dispatchedJobs.get(job);
+			if (null != host && !DUMMY_HOST.equals(host))
+			{
+				dispatcher.dispatch(job, host, time);
+				iterator2.remove();
 			}
 		}
 		if (time % 10800 == 0)
