@@ -29,10 +29,6 @@ public class WaitingQueueStatistics
 
 	public void updateStatistics()
 	{
-		if (waitingQueue.isEmpty())
-		{
-			return;
-		}
 		Iterator<Job> iterator = waitingQueue.iterator();
 		int i = 0;
 		double sumMemory = 0;
@@ -44,8 +40,8 @@ public class WaitingQueueStatistics
 			sumWaitTime += clock.time() - job.submitTime();
 			i++;
 		}
-		avgMemoryFront = sumMemory / i;
-		avgWaitTimeFront = sumWaitTime / i;
+		avgMemoryFront = i == 0 ? 0 : sumMemory / i;
+		avgWaitTimeFront = i == 0 ? 0 : sumWaitTime / i;
 		dispatchedJobs = waitingQueue.collectRemove();
 		submittedJobs = waitingQueue.collectAdd();
 		if (log.isDebugEnabled())

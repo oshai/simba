@@ -21,6 +21,7 @@ public class WaitingQueueStatisticsTest
 		tested.updateStatistics();
 		assertEquals(0, tested.waitingJobs());
 		assertEquals(0, tested.avgMemoryFront(), 0.1);
+		assertEquals(0, tested.avgWaitTimeFront(), 0.1);
 	}
 
 	@Test
