@@ -92,7 +92,7 @@ public class Looper
 		if (time % simbaConfiguration.timeToLog() == 0 || firstCycle)
 		{
 			timeToLogPassed++;
-			log.info("tick() - time passed " + timeToLogPassed + " days events left " + eventQueue.size() + " waiting jobs " + sizeOfWaitingQueue());
+			log.info("===>>> " + timeToLogPassed + " days, events left " + eventQueue.size() + ", waiting jobs " + sizeOfWaitingQueue());
 		}
 		boolean shouldContinue = firstCycle || handeledEvents || !(eventQueue.isEmpty());
 		firstCycle = false;
