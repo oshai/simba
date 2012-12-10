@@ -10,6 +10,8 @@ public class HostScheduler
 	private final Host host;
 	private final AbstractWaitingQueue waitingJobs;
 	private final JobDispatcher dispatcher;
+	private int added;
+	private int removed;
 
 	public HostScheduler(Host host, JobDispatcher dispatcher)
 	{
@@ -22,6 +24,7 @@ public class HostScheduler
 	public void addJob(Job job)
 	{
 		waitingJobs.add(job);
+		added++;
 	}
 
 	public int schedule(long time)
@@ -36,6 +39,7 @@ public class HostScheduler
 			{
 				dispatcher.dispatch(job, host, time);
 				iterator.remove();
+				removed++;
 				$++;
 			}
 		}
@@ -50,5 +54,19 @@ public class HostScheduler
 	public int waitingJobs()
 	{
 		return waitingJobs.size();
+	}
+
+	public int collectAdd()
+	{
+		int $ = added;
+		added = 0;
+		return $;
+	}
+
+	public int collectRemove()
+	{
+		int $ = removed;
+		removed = 0;
+		return $;
 	}
 }

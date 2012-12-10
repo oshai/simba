@@ -49,6 +49,8 @@ public class HostSchedulerTest
 		Job job = Job.builder(1).cores(2.0).build();
 		tested.addJob(job);
 		assertEquals(0, tested.schedule(1));
+		assertEquals(1, tested.collectAdd());
+		assertEquals(0, tested.collectAdd());
 		Job job1 = Job.builder(1).memory(1.0).build();
 		tested.addJob(job1);
 		assertEquals(0, tested.schedule(1));
@@ -64,9 +66,12 @@ public class HostSchedulerTest
 		HostScheduler tested = new HostScheduler(host, new JobDispatcher(mock(EventQueue.class)));
 		Job job = Job.builder(1).cores(2.0).build();
 		tested.addJob(job);
+		assertEquals(0, tested.collectRemove());
 		assertEquals(0, tested.schedule(1));
 		host.finishJob(jobOnHost);
 		assertEquals(1, tested.schedule(1));
+		assertEquals(1, tested.collectRemove());
+		assertEquals(0, tested.collectRemove());
 		host.finishJob(job);
 		assertEquals(0, tested.schedule(1));
 	}
