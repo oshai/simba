@@ -62,7 +62,7 @@ public class ProductionSimbaConfiguration implements SimbaConfiguration
 	@Override
 	public boolean isActualCoreUsageSimulation()
 	{
-		return false;
+		return true;
 	}
 
 	@Override
@@ -74,9 +74,10 @@ public class ProductionSimbaConfiguration implements SimbaConfiguration
 	@Override
 	public String toString()
 	{
-		return "ProductionSimbaConfiguration [memoryRatio=" + memoryRatio + ", coreRatio=" + coreRatio + ", machineDropRatio=" + machineDropRatio
-				+ ", bucketSimulation=" + bucketSimulation + ", bucketSize=" + bucketSize + ", timeToLog=" + timeToLog + ", timeToSchedule=" + timeToSchedule
-				+ ", reservationsLimit=" + reservationsLimit + ", jobsCheckedBySchduler=" + jobsCheckedBySchduler + "]";
+		return "ProductionSimbaConfiguration [isBucketSimulation()=" + isBucketSimulation() + ", bucketSize()=" + bucketSize() + ", timeToSchedule()="
+				+ timeToSchedule() + ", timeToLog()=" + timeToLog() + ", jobCoresRatio()=" + jobCoresRatio() + ", machineDropRatio()=" + machineDropRatio()
+				+ ", hostMemoryRatio()=" + hostMemoryRatio() + ", reservationsLimit()=" + reservationsLimit() + ", isActualCoreUsageSimulation()="
+				+ isActualCoreUsageSimulation() + ", jobsCheckedBySchduler()=" + jobsCheckedBySchduler() + "]";
 	}
 
 }

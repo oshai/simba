@@ -36,9 +36,68 @@ public class ReservingSchedulerTest
 		verify(dispatcher).dispatch(job, host, time);
 	}
 
+	@Test
+	public void testJobMatchHost_BugNoDispatch()
+	{
+		AbstractWaitingQueue waitingQueue = new LinkedListWaitingQueue();
+		Job job = mock(Job.class);
+		waitingQueue.add(job);
+		Cluster cluster = new Cluster();
+		Host host = createHost(job);
+		cluster.add(host);
+		Grader grader = mock(Grader.class);
+		JobDispatcher dispatcher = mock(JobDispatcher.class);
+		ForTestingSimbaConfiguration simbaConfiguration = new ForTestingSimbaConfiguration()
+		{
+			@Override
+			public int jobsCheckedBySchduler()
+			{
+				return 1;
+			}
+		};
+		Scheduler scheduler = createScheduler(waitingQueue, cluster, grader, dispatcher, simbaConfiguration);
+		long time = 1;
+		scheduler.schedule(time);
+		assertTrue(waitingQueue.isEmpty());
+		verify(dispatcher).dispatch(job, host, time);
+	}
+
+	@Test
+	public void testJobMatchHostButShouldNotBeCheckedByScheduler()
+	{
+		AbstractWaitingQueue waitingQueue = new LinkedListWaitingQueue();
+		Job job = mock(Job.class);
+		waitingQueue.add(job);
+		Cluster cluster = new Cluster();
+		Host host = createHost(job);
+		cluster.add(host);
+		Grader grader = mock(Grader.class);
+		JobDispatcher dispatcher = mock(JobDispatcher.class);
+		ForTestingSimbaConfiguration simbaConfiguration = new ForTestingSimbaConfiguration()
+		{
+			@Override
+			public int jobsCheckedBySchduler()
+			{
+				return 0;
+			}
+		};
+		Scheduler scheduler = createScheduler(waitingQueue, cluster, grader, dispatcher, simbaConfiguration);
+		long time = 1;
+		scheduler.schedule(time);
+		assertFalse(waitingQueue.isEmpty());
+		verify(dispatcher, never()).dispatch(job, host, time);
+	}
+
 	private ReservingScheduler createScheduler(AbstractWaitingQueue waitingQueue, Cluster cluster, Grader grader, JobDispatcher dispatcher)
 	{
-		return new ReservingScheduler(waitingQueue, cluster, grader, dispatcher, new ForTestingSimbaConfiguration());
+		ForTestingSimbaConfiguration simbaConfiguration = new ForTestingSimbaConfiguration();
+		return createScheduler(waitingQueue, cluster, grader, dispatcher, simbaConfiguration);
+	}
+
+	private ReservingScheduler createScheduler(AbstractWaitingQueue waitingQueue, Cluster cluster, Grader grader, JobDispatcher dispatcher,
+			ForTestingSimbaConfiguration simbaConfiguration)
+	{
+		return new ReservingScheduler(waitingQueue, cluster, grader, dispatcher, simbaConfiguration);
 	}
 
 	private Host createHost(Job job)

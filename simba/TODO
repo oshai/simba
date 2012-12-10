@@ -20,12 +20,15 @@ if not found - make reservation: take the best host (more resources) and put res
 
 
 TODO:
-change configuraiton of each scheduler to be optimal for runtime (ff)
+change configuration of each scheduler to be optimal for runtime (ff)
 make configuration more simple
 optimize run
 to machine_utilization: add how many machines are core/memory full, how many reservations are there.
 add real core utilization and check how many machines are in "error state"
- 
+allow only "full cores" packing 
+change machines memory to hetro and see the effect:
+* large jobs should prefer large machines and vice versa
+* think about changing scheduling order (sjf/ljf...)
 
 		
 more comments (old bugs)		

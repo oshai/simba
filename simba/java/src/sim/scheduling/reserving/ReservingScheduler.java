@@ -68,11 +68,15 @@ public class ReservingScheduler implements Scheduler
 			processedJobsCount++;
 			Job job = iterator.next();
 			Host host = getBestHost(job, shouldReserve(processedJobsCount));
+			if (DUMMY_HOST.equals(host))
+			{
+				skippedJobs++;
+				continue;
+			}
 			boolean dispatched = false;
 			if (reservingSchedulerUtils.isAvailable(host, job))
 			{
 				dispatchedJobs.put(job, host);
-				scheduledJobs++;
 				dispatched = true;
 			}
 			if (shouldReserve(processedJobsCount) || dispatched)
@@ -80,18 +84,17 @@ public class ReservingScheduler implements Scheduler
 				reserve(host, job);
 			}
 			updateCurrentCycleHosts(host);
-			if (DUMMY_HOST.equals(host))
-			{
-				skippedJobs++;
-			}
 		}
 		Iterator<Job> iterator2 = waitingQueue.iterator();
-		while (iterator2.hasNext() && processedJobsCount < simbaConfiguration.jobsCheckedBySchduler())
+		int processedJobsCount2 = 0;
+		while (iterator2.hasNext() && processedJobsCount2 < simbaConfiguration.jobsCheckedBySchduler())
 		{
+			processedJobsCount2++;
 			Job job = iterator2.next();
 			Host host = dispatchedJobs.get(job);
 			if (null != host && !DUMMY_HOST.equals(host))
 			{
+				scheduledJobs++;
 				dispatcher.dispatch(job, host, time);
 				iterator2.remove();
 			}
