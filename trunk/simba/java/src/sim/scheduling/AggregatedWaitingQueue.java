@@ -26,22 +26,34 @@ public class AggregatedWaitingQueue implements IWaitingQueue
 	@Override
 	public int collectRemove()
 	{
-		// TODO Auto-generated method stub
-		return 0;
+		int $ = 0;
+		for (HostScheduler h : hostSchedulers)
+		{
+			$ += h.collectRemove();
+		}
+		return $;
 	}
 
 	@Override
 	public int collectAdd()
 	{
-		// TODO Auto-generated method stub
-		return 0;
+		int $ = 0;
+		for (HostScheduler h : hostSchedulers)
+		{
+			$ += h.collectAdd();
+		}
+		return $;
 	}
 
 	@Override
 	public int size()
 	{
-		// TODO Auto-generated method stub
-		return 0;
+		int $ = 0;
+		for (HostScheduler h : hostSchedulers)
+		{
+			$ += h.waitingJobs();
+		}
+		return $;
 	}
 
 }

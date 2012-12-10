@@ -1,6 +1,7 @@
 package sim.scheduling;
 
 import static junit.framework.Assert.*;
+import static org.mockito.Mockito.*;
 
 import org.junit.Test;
 
@@ -15,6 +16,20 @@ public class AggregatedWaitingQueueTest
 		assertEquals(0, tested.collectAdd());
 		assertEquals(0, tested.collectRemove());
 		assertEquals(0, tested.size());
+		assertNotNull(tested.iterator());
+	}
+
+	@Test
+	public void testNotEmpty() throws Exception
+	{
+		HostScheduler hs = mock(HostScheduler.class);
+		when(hs.collectAdd()).thenReturn(1);
+		when(hs.collectRemove()).thenReturn(2);
+		when(hs.waitingJobs()).thenReturn(3);
+		AggregatedWaitingQueue tested = new AggregatedWaitingQueue(Lists.<HostScheduler> newArrayList(hs, hs));
+		assertEquals(2, tested.collectAdd());
+		assertEquals(4, tested.collectRemove());
+		assertEquals(6, tested.size());
 		assertNotNull(tested.iterator());
 	}
 }
