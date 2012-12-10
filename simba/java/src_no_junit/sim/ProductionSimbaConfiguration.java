@@ -1,6 +1,15 @@
 package sim;
 
-public class ProductionSimbaConfiguration implements SimbaConfiguration
+import sim.collectors.IntervalCollector;
+import sim.event_handling.EventQueue;
+import sim.scheduling.AbstractWaitingQueue;
+import sim.scheduling.Scheduler;
+
+import com.google.inject.AbstractModule;
+import com.google.inject.Module;
+import com.google.inject.assistedinject.FactoryModuleBuilder;
+
+public class ProductionSimbaConfiguration extends AbstractModule implements Module, SimbaConfiguration
 {
 	private final double memoryRatio = Double.valueOf(System.getProperty("host-memory-multiplier", "1.0"));
 	private final double coreRatio = Double.valueOf(System.getProperty("cores-ratio", "1.0"));
@@ -12,6 +21,19 @@ public class ProductionSimbaConfiguration implements SimbaConfiguration
 	private final int reservationsLimit = Integer.valueOf(System.getProperty("reservations", "1"));
 	private int jobsCheckedBySchduler = 10000;
 	private boolean actualCoreUsageSimulation = Boolean.valueOf(System.getProperty("real-core", "false"));
+
+	@Override
+	protected void configure()
+	{
+		bind(SimbaConfiguration.class).toInstance(this);
+		install(new FactoryModuleBuilder().implement(Looper.class, Looper.class).build(LooperFactory.class));
+	}
+
+	public interface LooperFactory
+	{
+		Looper create(Clock clock, EventQueue eventQueue, AbstractWaitingQueue waitingQueue, Scheduler scheduler, IntervalCollector hostCollector,
+				JobFinisher jobFinisher);
+	}
 
 	public boolean isBucketSimulation()
 	{

@@ -13,7 +13,7 @@ import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
-import sim.SimbaModule.LooperFactory;
+import sim.ProductionSimbaConfiguration.LooperFactory;
 import sim.collectors.IntervalCollector;
 import sim.collectors.JobCollector;
 import sim.collectors.WaitingQueueStatistics;
@@ -61,7 +61,7 @@ public class Simulator
 
 	public Simulator()
 	{
-		injector = Guice.createInjector(new SimbaModule(new ProductionSimbaConfiguration()));
+		injector = Guice.createInjector(new ProductionSimbaConfiguration());
 	}
 
 	public static void main(String[] args)
