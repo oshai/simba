@@ -11,6 +11,7 @@ public class ProductionSimbaConfiguration implements SimbaConfiguration
 	private int timeToSchedule = 10;
 	private final int reservationsLimit = Integer.valueOf(System.getProperty("reservations", "1"));
 	private int jobsCheckedBySchduler = 10000;
+	private boolean actualCoreUsageSimulation = Boolean.valueOf(System.getProperty("real-core", "false"));
 
 	public boolean isBucketSimulation()
 	{
@@ -62,7 +63,7 @@ public class ProductionSimbaConfiguration implements SimbaConfiguration
 	@Override
 	public boolean isActualCoreUsageSimulation()
 	{
-		return true;
+		return actualCoreUsageSimulation;
 	}
 
 	@Override

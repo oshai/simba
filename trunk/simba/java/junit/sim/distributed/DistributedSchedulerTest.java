@@ -56,4 +56,22 @@ public class DistributedSchedulerTest
 		verify(hostSelector).select(job);
 	}
 
+	@Test
+	public void testTime0() throws Exception
+	{
+		LinkedListWaitingQueue waitingQueue = new LinkedListWaitingQueue();
+		Job job = Job.builder(100).build();
+		waitingQueue.add(job);
+		HostScheduler h = mock(HostScheduler.class);
+		List<HostScheduler> hostSchedulers = newArrayList(h);
+		HostSelector hostSelector = mock(HostSelector.class);
+		DistributedScheduler tested = new DistributedScheduler(waitingQueue, hostSchedulers, hostSelector);
+		when(hostSelector.select(job)).thenReturn(null);
+		int scheduledSessions = 0;
+		int time = 0;
+		assertEquals(scheduledSessions, tested.schedule(time));
+		assertEquals(1, waitingQueue.size());
+		verify(hostSelector).select(job);
+	}
+
 }
