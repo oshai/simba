@@ -9,6 +9,7 @@ public class Clock
 	{
 		this(0);
 	}
+
 	public Clock(long time)
 	{
 		this.time = time;
@@ -24,5 +25,10 @@ public class Clock
 	{
 		return time;
 	}
-	
+
+	public void time(long newtime)
+	{
+		this.time = newtime;
+	}
+
 }

@@ -7,7 +7,7 @@ import sim.model.Job;
 
 import com.google.common.collect.Lists;
 
-public class AggregatedWaitingQueue implements IWaitingQueue
+public class AggregatedWaitingQueue implements WaitingQueueForStatistics
 {
 
 	private final ArrayList<HostScheduler> hostSchedulers;

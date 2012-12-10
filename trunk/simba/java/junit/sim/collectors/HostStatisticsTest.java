@@ -33,6 +33,7 @@ public class HostStatisticsTest
 		assertEquals(0, tested.reverseMixVariance(), 0.1);
 		assertEquals(0, tested.usedCores());
 		assertEquals(0, tested.usedMemory());
+		assertEquals(0, tested.usedCost(), 0.1);
 	}
 
 	@Test
@@ -40,7 +41,7 @@ public class HostStatisticsTest
 	{
 		Cluster c = new Cluster();
 		Host host = Host.builder().cores(2).memory(2).build();
-		host.dispatchJob(Job.builder(1).cores(1).memory(1).build());
+		host.dispatchJob(Job.builder(1).cores(1).memory(1).cost(3).build());
 		c.add(host);
 		HostStatistics tested = create(c);
 		assertEquals(2, tested.cores());
@@ -53,6 +54,7 @@ public class HostStatisticsTest
 		assertEquals(0, tested.reverseMixVariance(), 0.1);
 		assertEquals(1, tested.usedCores());
 		assertEquals(1, tested.usedMemory());
+		assertEquals(3, tested.usedCost(), 0.1);
 	}
 
 	public HostStatistics create(Cluster c)

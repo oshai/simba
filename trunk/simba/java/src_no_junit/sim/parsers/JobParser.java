@@ -6,11 +6,9 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.inject.Inject;
-import javax.inject.Provider;
 
 import org.apache.log4j.Logger;
 
-import sim.Clock;
 import sim.SimbaConfiguration;
 import sim.event_handling.EventQueue;
 import sim.events.Submit;
@@ -48,22 +46,25 @@ public class JobParser
 	private static boolean DEBUG = false;
 
 	private final SimbaConfiguration simbaConfiguration;
+	private final Cluster cluster;
+	private final EventQueue eventQueue;
 
 	@Inject
-	public JobParser(SimbaConfiguration simbaConfiguration)
+	public JobParser(SimbaConfiguration simbaConfiguration, Cluster cluster, EventQueue eventQueue)
 	{
 		super();
 		this.simbaConfiguration = simbaConfiguration;
+		this.cluster = cluster;
+		this.eventQueue = eventQueue;
 	}
 
-	public EventQueue parse(Provider<Clock> clockProvider, final Cluster cluster)
+	public void parse()
 	{
 		log.info("parse() - starting with file " + JOBS_FILE);
 		if (DEBUG)
 		{
 			log.info("parse() - DEBUG MODE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 		}
-		final EventQueue $ = new EventQueue(clockProvider);
 		Predicate<String> predicate = new Predicate<String>()
 		{
 
@@ -103,9 +104,9 @@ public class JobParser
 					}
 					Job job = Job.builder(length).id(id).cost(d(cols.get(index_cost))).priority(submitTime).submitTime(submitTime).cores(cores).memory(memory)
 							.startTime(l(cols.get(index_startttime))).build();
-					if (canRun(job, cluster) && !drop)
+					if (canRun(job) && !drop)
 					{
-						$.add(new Submit(job));
+						eventQueue.add(new Submit(job));
 						left++;
 					}
 					else
@@ -138,7 +139,6 @@ public class JobParser
 		log.info("length error (less than 1 sec) " + getPrecentString(errorLength));
 		log.info("memory error (less than 1GB) " + getPrecentString(errorMemory));
 		log.info("parallel slaves " + getPrecentString(parallel));
-		return $;
 	}
 
 	protected long d2l(String value)
@@ -151,7 +151,7 @@ public class JobParser
 		return jobs + " jobs which is: " + (int) ((double) jobs * 100 / total) + "%";
 	}
 
-	private boolean canRun(Job job, Cluster cluster)
+	private boolean canRun(Job job)
 	{
 		for (Host host : cluster.hosts())
 		{
