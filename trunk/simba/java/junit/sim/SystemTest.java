@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import org.junit.Before;
 import org.junit.Test;
 
-import sim.SimbaModule.LooperFactory;
+import sim.ProductionSimbaConfiguration.LooperFactory;
 import sim.collectors.IntervalCollector;
 import sim.collectors.JobCollector;
 import sim.collectors.WaitingQueueStatistics;
@@ -39,7 +39,7 @@ public class SystemTest
 	{
 		clock = new Clock();
 		eventQueue = new EventQueue(clock);
-		injector = Guice.createInjector(new SimbaModule(new SemiProductionSimbaConfiguration()));
+		injector = Guice.createInjector(new SemiProductionSimbaConfiguration());
 	}
 
 	@Test
