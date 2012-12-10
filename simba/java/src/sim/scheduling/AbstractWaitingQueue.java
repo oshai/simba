@@ -7,7 +7,7 @@ import sim.model.Job;
 
 import com.google.common.collect.ForwardingIterator;
 
-public abstract class AbstractWaitingQueue implements IWaitingQueue
+public abstract class AbstractWaitingQueue implements WaitingQueueForStatistics
 {
 
 	private int added;

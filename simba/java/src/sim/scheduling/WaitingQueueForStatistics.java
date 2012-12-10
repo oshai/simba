@@ -4,7 +4,7 @@ import java.util.Iterator;
 
 import sim.model.Job;
 
-public interface IWaitingQueue
+public interface WaitingQueueForStatistics
 {
 
 	Iterator<Job> iterator();

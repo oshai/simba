@@ -7,8 +7,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
-import javax.inject.Provider;
-
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -16,6 +14,7 @@ import org.apache.log4j.Logger;
 import sim.collectors.IntervalCollector;
 import sim.collectors.JobCollector;
 import sim.collectors.WaitingQueueStatistics;
+import sim.configuration.DistributedSimulationConfiguration;
 import sim.configuration.ProductionSimbaConfiguration;
 import sim.configuration.ProductionSimbaConfiguration.LooperFactory;
 import sim.event_handling.EventQueue;
@@ -32,12 +31,12 @@ import sim.scheduling.ByTraceScheduler;
 import sim.scheduling.DistributedScheduler;
 import sim.scheduling.HostScheduler;
 import sim.scheduling.HostSelector;
-import sim.scheduling.IWaitingQueue;
 import sim.scheduling.JobDispatcher;
 import sim.scheduling.LinkedListWaitingQueue;
 import sim.scheduling.Scheduler;
 import sim.scheduling.SimpleScheduler;
 import sim.scheduling.SortedWaitingQueue;
+import sim.scheduling.WaitingQueueForStatistics;
 import sim.scheduling.graders.AvailableMemoryGrader;
 import sim.scheduling.graders.Constant;
 import sim.scheduling.graders.Grader;
@@ -62,7 +61,16 @@ public class Simulator
 
 	public Simulator()
 	{
-		injector = Guice.createInjector(new ProductionSimbaConfiguration());
+		injector = Guice.createInjector(createConfiguration());
+	}
+
+	private ProductionSimbaConfiguration createConfiguration()
+	{
+		if ("distributed".equals(System.getProperty("simulation")))
+		{
+			return new DistributedSimulationConfiguration();
+		}
+		return new ProductionSimbaConfiguration();
 	}
 
 	public static void main(String[] args)
@@ -87,9 +95,22 @@ public class Simulator
 		log.info("execute() - starting at " + new Date());
 		log.info("configuration: " + getConfiguration());
 		Stopwatch stopwatch = new Stopwatch().start();
-		Cluster cluster = injector.getInstance(HostParser.class).parse();
-		ClockProvider clockProvider = new ClockProvider();
-		EventQueue eventQueue = injector.getInstance(JobParser.class).parse(clockProvider, cluster);
+		Cluster cluster = parseCluster();
+		parseJobs();
+		EventQueue eventQueue = createEventQueue();
+		Grader grader = createGrader();
+		log.info("execute() - cluster size is " + cluster.hosts().size());
+		log.info("execute() - # of jobs " + eventQueue.size());
+		log.info("execute() - grader is " + grader.toString());
+		Looper looper = createLooper(cluster, eventQueue, injector.getInstance(Clock.class), grader);
+		looper.execute();
+		log.info("execute() - finished at " + new Date());
+		log.info("execute() - took " + stopwatch.elapsedTime(TimeUnit.SECONDS));
+	}
+
+	private EventQueue createEventQueue()
+	{
+		EventQueue eventQueue = injector.getInstance(EventQueue.class);
 		Event event = eventQueue.peek();
 		long time = 0;
 		if (null != event && !submitImmediately())
@@ -97,16 +118,18 @@ public class Simulator
 			time = event.time() - 1;
 		}
 		log.info("execute() - simulation starting clock (epoc): " + time);
-		Clock clock = new Clock(time);
-		clockProvider.setClock(clock);
-		Grader grader = createGrader();
-		log.info("execute() - cluster size is " + cluster.hosts().size());
-		log.info("execute() - # of jobs " + eventQueue.size());
-		log.info("execute() - grader is " + grader.toString());
-		Looper looper = createLooper(cluster, eventQueue, clock, grader);
-		looper.execute();
-		log.info("execute() - finished at " + new Date());
-		log.info("execute() - took " + stopwatch.elapsedTime(TimeUnit.SECONDS));
+		injector.getInstance(Clock.class).time(time);
+		return eventQueue;
+	}
+
+	private void parseJobs()
+	{
+		injector.getInstance(JobParser.class).parse();
+	}
+
+	private Cluster parseCluster()
+	{
+		return injector.getInstance(HostParser.class).parse();
 	}
 
 	private Grader createGrader()
@@ -161,7 +184,7 @@ public class Simulator
 			waitingQueue = new SortedWaitingQueue();
 		}
 		ArrayList<HostScheduler> hostSchedulers = createHostSchedulers(cluster, dispatcher);
-		IWaitingQueue waitingQueueForStatistics = isDistributed() ? createAggregatedWaitingQueue(hostSchedulers) : waitingQueue;
+		WaitingQueueForStatistics waitingQueueForStatistics = isDistributed() ? createAggregatedWaitingQueue(hostSchedulers) : waitingQueue;
 		log.info("wait queue is " + waitingQueueForStatistics.getClass().getSimpleName());
 		WaitingQueueStatistics waitingQueueStatistics = new WaitingQueueStatistics(waitingQueueForStatistics, Integer.MAX_VALUE, clock);
 		if (submitImmediately())
@@ -182,7 +205,7 @@ public class Simulator
 		return looper;
 	}
 
-	private IWaitingQueue createAggregatedWaitingQueue(ArrayList<HostScheduler> hostSchedulers)
+	private WaitingQueueForStatistics createAggregatedWaitingQueue(ArrayList<HostScheduler> hostSchedulers)
 	{
 		return new AggregatedWaitingQueue(hostSchedulers);
 	}
@@ -261,27 +284,6 @@ public class Simulator
 			Job job = ((Submit) eventQueue.removeFirst()).job();
 			Job jobUpdated = Job.builder(job.length()).cores(job.cores()).submitTime(0L).memory(job.memory()).id(job.id()).priority(job.priority()).build();
 			waitingQueue.add(jobUpdated);
-		}
-	}
-
-	private final class ClockProvider implements Provider<Clock>
-	{
-		private Clock clock;
-
-		@Override
-		public Clock get()
-		{
-			return getClock();
-		}
-
-		public Clock getClock()
-		{
-			return clock;
-		}
-
-		public void setClock(Clock clock)
-		{
-			this.clock = clock;
 		}
 	}
 }

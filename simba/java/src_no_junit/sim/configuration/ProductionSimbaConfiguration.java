@@ -6,11 +6,14 @@ import sim.Looper;
 import sim.SimbaConfiguration;
 import sim.collectors.IntervalCollector;
 import sim.event_handling.EventQueue;
+import sim.parsers.HostParser;
+import sim.parsers.JobParser;
 import sim.scheduling.AbstractWaitingQueue;
 import sim.scheduling.Scheduler;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Module;
+import com.google.inject.Scopes;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
 
 public class ProductionSimbaConfiguration extends AbstractModule implements Module, SimbaConfiguration
@@ -29,6 +32,10 @@ public class ProductionSimbaConfiguration extends AbstractModule implements Modu
 	protected void configure()
 	{
 		bind(SimbaConfiguration.class).toInstance(this);
+		bind(HostParser.class).in(Scopes.SINGLETON);
+		bind(Clock.class).in(Scopes.SINGLETON);
+		bind(JobParser.class).in(Scopes.SINGLETON);
+		bind(EventQueue.class).in(Scopes.SINGLETON);
 		install(new FactoryModuleBuilder().implement(Looper.class, Looper.class).build(LooperFactory.class));
 	}
 
