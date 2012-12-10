@@ -8,10 +8,10 @@ import java.util.ArrayList;
 import org.junit.Before;
 import org.junit.Test;
 
-import sim.ProductionSimbaConfiguration.LooperFactory;
 import sim.collectors.IntervalCollector;
 import sim.collectors.JobCollector;
 import sim.collectors.WaitingQueueStatistics;
+import sim.configuration.ProductionSimbaConfiguration.LooperFactory;
 import sim.event_handling.EventQueue;
 import sim.events.Submit;
 import sim.model.Cluster;

@@ -7,6 +7,7 @@ import static org.mockito.Mockito.*;
 import org.junit.Test;
 
 import sim.collectors.IntervalCollector;
+import sim.configuration.ProductionSimbaConfiguration;
 import sim.event_handling.EventQueue;
 import sim.events.Finish;
 import sim.events.NoOp;
