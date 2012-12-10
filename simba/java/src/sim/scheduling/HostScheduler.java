@@ -46,4 +46,9 @@ public class HostScheduler
 	{
 		return host.hasPotentialResourceFor(job);
 	}
+
+	public int waitingJobs()
+	{
+		return waitingJobs.size();
+	}
 }

@@ -52,6 +52,7 @@ public class HostSchedulerTest
 		Job job1 = Job.builder(1).memory(1.0).build();
 		tested.addJob(job1);
 		assertEquals(0, tested.schedule(1));
+		assertEquals(2, tested.waitingJobs());
 	}
 
 	@Test

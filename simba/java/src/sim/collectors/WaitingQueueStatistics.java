@@ -6,13 +6,13 @@ import org.apache.log4j.Logger;
 
 import sim.Clock;
 import sim.model.Job;
-import sim.scheduling.AbstractWaitingQueue;
+import sim.scheduling.IWaitingQueue;
 
 public class WaitingQueueStatistics
 {
 
 	private static final Logger log = Logger.getLogger(WaitingQueueStatistics.class);
-	private final AbstractWaitingQueue waitingQueue;
+	private final IWaitingQueue waitingQueue;
 	private double avgMemoryFront;
 	private double avgWaitTimeFront;
 	private final int front;
@@ -20,7 +20,7 @@ public class WaitingQueueStatistics
 	private int dispatchedJobs;
 	private int submittedJobs;
 
-	public WaitingQueueStatistics(AbstractWaitingQueue waitingQueue, int front, Clock clock)
+	public WaitingQueueStatistics(IWaitingQueue waitingQueue, int front, Clock clock)
 	{
 		this.front = front;
 		this.waitingQueue = waitingQueue;
