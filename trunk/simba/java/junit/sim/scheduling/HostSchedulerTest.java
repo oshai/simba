@@ -70,10 +70,4 @@ public class HostSchedulerTest
 		assertEquals(0, tested.schedule(1));
 	}
 
-	@Test
-	public void testAddJob()
-	 throws Exception {
-	
-	}
-
 }
