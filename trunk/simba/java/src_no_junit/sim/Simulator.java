@@ -13,10 +13,11 @@ import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
-import sim.ProductionSimbaConfiguration.LooperFactory;
 import sim.collectors.IntervalCollector;
 import sim.collectors.JobCollector;
 import sim.collectors.WaitingQueueStatistics;
+import sim.configuration.ProductionSimbaConfiguration;
+import sim.configuration.ProductionSimbaConfiguration.LooperFactory;
 import sim.event_handling.EventQueue;
 import sim.events.Event;
 import sim.events.Submit;

@@ -1,5 +1,9 @@
-package sim;
+package sim.configuration;
 
+import sim.Clock;
+import sim.JobFinisher;
+import sim.Looper;
+import sim.SimbaConfiguration;
 import sim.collectors.IntervalCollector;
 import sim.event_handling.EventQueue;
 import sim.scheduling.AbstractWaitingQueue;
@@ -14,7 +18,6 @@ public class ProductionSimbaConfiguration extends AbstractModule implements Modu
 	private final double memoryRatio = Double.valueOf(System.getProperty("host-memory-multiplier", "1.0"));
 	private final double coreRatio = Double.valueOf(System.getProperty("cores-ratio", "1.0"));
 	private final double machineDropRatio = Double.valueOf(System.getProperty("machine-drop-ratio", "1.0"));
-	private boolean bucketSimulation = false;
 	private int bucketSize = 10800;
 	private long timeToLog = 60 * 60 * 24;// 1 day
 	private int timeToSchedule = 10;
@@ -37,7 +40,7 @@ public class ProductionSimbaConfiguration extends AbstractModule implements Modu
 
 	public boolean isBucketSimulation()
 	{
-		return bucketSimulation;
+		return false;
 	}
 
 	@Override

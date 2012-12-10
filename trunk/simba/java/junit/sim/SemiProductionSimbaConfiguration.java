@@ -1,5 +1,7 @@
 package sim;
 
+import sim.configuration.ProductionSimbaConfiguration;
+
 public class SemiProductionSimbaConfiguration extends ProductionSimbaConfiguration
 {
 	@Override
