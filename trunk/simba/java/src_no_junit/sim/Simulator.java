@@ -70,7 +70,11 @@ public class Simulator
 		{
 			return new DistributedSimulationConfiguration();
 		}
-		return new ProductionSimbaConfiguration();
+		if ("central".equals(System.getProperty("simulation")))
+		{
+			return new ProductionSimbaConfiguration();
+		}
+		throw new RuntimeException("please set -Dsimulation");
 	}
 
 	public static void main(String[] args)
@@ -95,10 +99,11 @@ public class Simulator
 		log.info("execute() - starting at " + new Date());
 		log.info("configuration: " + getConfiguration());
 		Stopwatch stopwatch = new Stopwatch().start();
-		Cluster cluster = parseCluster();
+		parseCluster();
 		parseJobs();
 		EventQueue eventQueue = createEventQueue();
 		Grader grader = createGrader();
+		Cluster cluster = injector.getInstance(Cluster.class);
 		log.info("execute() - cluster size is " + cluster.hosts().size());
 		log.info("execute() - # of jobs " + eventQueue.size());
 		log.info("execute() - grader is " + grader.toString());
@@ -127,9 +132,9 @@ public class Simulator
 		injector.getInstance(JobParser.class).parse();
 	}
 
-	private Cluster parseCluster()
+	private void parseCluster()
 	{
-		return injector.getInstance(HostParser.class).parse();
+		injector.getInstance(HostParser.class).parse();
 	}
 
 	private Grader createGrader()

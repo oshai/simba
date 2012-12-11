@@ -22,21 +22,22 @@ public class HostParser
 	private static final int index_memory = 2;
 
 	private final SimbaConfiguration simbaConfiguration;
+	private final Cluster cluster;
 
 	@Inject
-	public HostParser(SimbaConfiguration simbaConfiguration)
+	public HostParser(SimbaConfiguration simbaConfiguration, Cluster cluster)
 	{
 		super();
 		this.simbaConfiguration = simbaConfiguration;
+		this.cluster = cluster;
 	}
 
-	public Cluster parse()
+	public void parse()
 	{
 		log.info("parse() - starting with file " + HOST_FILE);
 		log.info("parse() - memory multiplier is " + simbaConfiguration.hostMemoryRatio());
 		int dropped = 0;
 		int hosts = 0;
-		Cluster cluster = new Cluster();
 		String contents = TextFileUtils.getContents(new File(HOST_FILE));
 		String[] lines = contents.split("\n");
 		for (String line : lines)
@@ -62,7 +63,6 @@ public class HostParser
 			}
 		}
 		log.info("parse() - dropped " + dropped + " which is: " + (int) ((double) dropped * 100 / (cluster.hosts().size() + dropped)) + "%");
-		return cluster;
 	}
 
 	private boolean shouldAdd(int hosts)
