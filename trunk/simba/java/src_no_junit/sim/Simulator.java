@@ -5,6 +5,7 @@ import static com.google.common.collect.Lists.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.BasicConfigurator;
@@ -44,6 +45,7 @@ import sim.scheduling.graders.RandomGrader;
 import sim.scheduling.graders.ThrowingExceptionGrader;
 import sim.scheduling.matchers.GradeMatcher;
 import sim.scheduling.matchers.GradeMatcherProvider;
+import sim.scheduling.reserving.MaxCostScheduler;
 import sim.scheduling.reserving.ReservingScheduler;
 
 import com.google.common.base.Function;
@@ -139,6 +141,12 @@ public class Simulator
 
 	private Grader createGrader()
 	{
+		String graderName = getGraderProperty().toUpperCase();
+		return getGraderForName(graderName);
+	}
+
+	protected Grader getGraderForName(String graderName)
+	{
 		HashMap<String, Grader> graders = Maps.newHashMap();
 		graders.put("MF", GradeMatcherProvider.createGraderMf1());
 		// graders.put("MF2", GradeMatcherProvider.createGraderMf2());
@@ -157,7 +165,7 @@ public class Simulator
 		graders.put("BT", new ThrowingExceptionGrader());
 		graders.put("DISTRIBUTED", new ThrowingExceptionGrader());
 
-		Grader $ = graders.get(getGraderProperty().toUpperCase());
+		Grader $ = graders.get(graderName);
 		if (null == $)
 		{
 			throw new RuntimeException("no matcher for " + getGraderProperty() + " from: " + graders.keySet());
@@ -256,6 +264,15 @@ public class Simulator
 		if ("by-trace".equals(getSchedulerProperty()))
 		{
 			return new ByTraceScheduler(waitingQueue, cluster, dispatcher);
+		}
+		if ("max-cost".equals(getSchedulerProperty()))
+		{
+			List<ReservingScheduler> l = newArrayList(
+					new ReservingScheduler(waitingQueue, cluster, getGraderForName("BF"), dispatcher, getConfiguration()),
+					new ReservingScheduler(waitingQueue, cluster, getGraderForName("WF"), dispatcher, getConfiguration()),
+					new ReservingScheduler(waitingQueue, cluster, getGraderForName("MF"), dispatcher, getConfiguration())
+					);
+			return new MaxCostScheduler(waitingQueue, cluster, grader, dispatcher, getConfiguration(), l);
 		}
 		if (isDistributed())
 		{
