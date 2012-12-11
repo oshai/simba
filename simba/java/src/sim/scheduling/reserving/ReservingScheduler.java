@@ -58,9 +58,14 @@ public class ReservingScheduler implements Scheduler
 	}
 
 	@Override
-	public int schedule(long time)
+	public final int schedule(long time)
 	{
-		Map<Job, Host> dispatchedJobs = scheduleWithoutDispatch();
+		Map<Job, Host> dispatchedJobs = scheduleWithoutDispatch(time);
+		return dispatchAndReport(dispatchedJobs, time);
+	}
+
+	private int dispatchAndReport(Map<Job, Host> dispatchedJobs, long time)
+	{
 		dispatch(dispatchedJobs, time);
 		if (shouldReport(time))
 		{
@@ -69,10 +74,10 @@ public class ReservingScheduler implements Scheduler
 		return scheduledJobs;
 	}
 
-	public Map<Job, Host> scheduleWithoutDispatch()
+	protected Map<Job, Host> scheduleWithoutDispatch(long time)
 	{
 		init();
-		Map<Job, Host> dispatchedJobs = selectJobsToDispatch();
+		Map<Job, Host> dispatchedJobs = selectJobsToDispatch(time);
 		return dispatchedJobs;
 	}
 
@@ -94,7 +99,7 @@ public class ReservingScheduler implements Scheduler
 		}
 	}
 
-	private Map<Job, Host> selectJobsToDispatch()
+	protected Map<Job, Host> selectJobsToDispatch(long time)
 	{
 		Map<Job, Host> dispatchedJobs = newHashMap();
 		Iterator<Job> iterator = waitingQueue.iterator();
@@ -125,7 +130,7 @@ public class ReservingScheduler implements Scheduler
 		return dispatchedJobs;
 	}
 
-	private boolean shouldReport(long time)
+	protected final boolean shouldReport(long time)
 	{
 		return time % 10800 == 0;
 	}
