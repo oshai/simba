@@ -6,6 +6,7 @@ import sim.Looper;
 import sim.SimbaConfiguration;
 import sim.collectors.IntervalCollector;
 import sim.event_handling.EventQueue;
+import sim.model.Cluster;
 import sim.parsers.HostParser;
 import sim.parsers.JobParser;
 import sim.scheduling.AbstractWaitingQueue;
@@ -36,6 +37,7 @@ public class ProductionSimbaConfiguration extends AbstractModule implements Modu
 		bind(Clock.class).in(Scopes.SINGLETON);
 		bind(JobParser.class).in(Scopes.SINGLETON);
 		bind(EventQueue.class).in(Scopes.SINGLETON);
+		bind(Cluster.class).in(Scopes.SINGLETON);
 		install(new FactoryModuleBuilder().implement(Looper.class, Looper.class).build(LooperFactory.class));
 	}
 
@@ -107,7 +109,7 @@ public class ProductionSimbaConfiguration extends AbstractModule implements Modu
 	@Override
 	public String toString()
 	{
-		return "ProductionSimbaConfiguration [isBucketSimulation()=" + isBucketSimulation() + ", bucketSize()=" + bucketSize() + ", timeToSchedule()="
+		return getClass().getSimpleName() + " [isBucketSimulation()=" + isBucketSimulation() + ", bucketSize()=" + bucketSize() + ", timeToSchedule()="
 				+ timeToSchedule() + ", timeToLog()=" + timeToLog() + ", jobCoresRatio()=" + jobCoresRatio() + ", machineDropRatio()=" + machineDropRatio()
 				+ ", hostMemoryRatio()=" + hostMemoryRatio() + ", reservationsLimit()=" + reservationsLimit() + ", isActualCoreUsageSimulation()="
 				+ isActualCoreUsageSimulation() + ", jobsCheckedBySchduler()=" + jobsCheckedBySchduler() + "]";
