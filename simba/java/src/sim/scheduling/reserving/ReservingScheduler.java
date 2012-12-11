@@ -37,6 +37,12 @@ public class ReservingScheduler implements Scheduler
 	private Reservations reservations;
 	private ReservingSchedulerUtils reservingSchedulerUtils;
 	private final SimbaConfiguration simbaConfiguration;
+	private long started;
+	private int processedJobsCount;
+	private int scheduledJobs;
+	private int skippedJobs;
+	private int startingHostsCount;
+	private int startingJobsCount;
 
 	@Inject
 	public ReservingScheduler(AbstractWaitingQueue waitingQueue, Cluster cluster, Grader grader, JobDispatcher dispatcher, SimbaConfiguration simbaConfiguration)
@@ -54,20 +60,50 @@ public class ReservingScheduler implements Scheduler
 	@Override
 	public int schedule(long time)
 	{
+		Map<Job, Host> dispatchedJobs = scheduleWithoutDispatch();
+		dispatch(dispatchedJobs, time);
+		if (shouldReport(time))
+		{
+			logScheduler(time);
+		}
+		return scheduledJobs;
+	}
+
+	public Map<Job, Host> scheduleWithoutDispatch()
+	{
 		init();
-		long started = System.currentTimeMillis();
-		int processedJobsCount = 0;
-		int scheduledJobs = 0;
-		int skippedJobs = 0;
+		Map<Job, Host> dispatchedJobs = selectJobsToDispatch();
+		return dispatchedJobs;
+	}
+
+	private void dispatch(Map<Job, Host> dispatchedJobs, long time)
+	{
+		Iterator<Job> iterator = waitingQueue.iterator();
+		int processedJobsCount2 = 0;
+		while (iterator.hasNext() && processedJobsCount2 < simbaConfiguration.jobsCheckedBySchduler())
+		{
+			processedJobsCount2++;
+			Job job = iterator.next();
+			Host host = dispatchedJobs.get(job);
+			if (null != host && !DUMMY_HOST.equals(host))
+			{
+				scheduledJobs++;
+				dispatcher.dispatch(job, host, time);
+				iterator.remove();
+			}
+		}
+	}
+
+	private Map<Job, Host> selectJobsToDispatch()
+	{
 		Map<Job, Host> dispatchedJobs = newHashMap();
 		Iterator<Job> iterator = waitingQueue.iterator();
-		int startingHostsCount = currentCycleHosts.size();
-		int startingJobsCount = waitingQueue.size();
-		while (iterator.hasNext() && processedJobsCount < simbaConfiguration.jobsCheckedBySchduler() && !currentCycleHosts.isEmpty())
+		int processedJobsCount2 = 0;
+		while (iterator.hasNext() && processedJobsCount2 < simbaConfiguration.jobsCheckedBySchduler() && !currentCycleHosts.isEmpty())
 		{
-			processedJobsCount++;
+			processedJobsCount2++;
 			Job job = iterator.next();
-			Host host = getBestHost(job, shouldReserve(processedJobsCount));
+			Host host = getBestHost(job, shouldReserve(processedJobsCount2));
 			if (DUMMY_HOST.equals(host))
 			{
 				skippedJobs++;
@@ -79,34 +115,22 @@ public class ReservingScheduler implements Scheduler
 				dispatchedJobs.put(job, host);
 				dispatched = true;
 			}
-			if (shouldReserve(processedJobsCount) || dispatched)
+			if (shouldReserve(processedJobsCount2) || dispatched)
 			{
 				reserve(host, job);
 			}
 			updateCurrentCycleHosts(host);
 		}
-		Iterator<Job> iterator2 = waitingQueue.iterator();
-		int processedJobsCount2 = 0;
-		while (iterator2.hasNext() && processedJobsCount2 < simbaConfiguration.jobsCheckedBySchduler())
-		{
-			processedJobsCount2++;
-			Job job = iterator2.next();
-			Host host = dispatchedJobs.get(job);
-			if (null != host && !DUMMY_HOST.equals(host))
-			{
-				scheduledJobs++;
-				dispatcher.dispatch(job, host, time);
-				iterator2.remove();
-			}
-		}
-		if (time % 10800 == 0)
-		{
-			logScheduler(time, scheduledJobs, processedJobsCount, startingHostsCount, skippedJobs, started, startingJobsCount);
-		}
-		return scheduledJobs;
+		processedJobsCount = processedJobsCount2;
+		return dispatchedJobs;
 	}
 
-	private void logScheduler(long time, int scheduledJobs, int processedJobsCount, int startingHostsCount, int skippedJobs, long started, int startingJobsCount)
+	private boolean shouldReport(long time)
+	{
+		return time % 10800 == 0;
+	}
+
+	private void logScheduler(long time)
 	{
 		log.info("=============================================");
 		log.info("schedule took " + (System.currentTimeMillis() - started));
@@ -158,9 +182,15 @@ public class ReservingScheduler implements Scheduler
 
 	private void init()
 	{
+		started = System.currentTimeMillis();
 		reservations = reservationsSupplier.get();
 		reservingSchedulerUtils = new ReservingSchedulerUtils(reservations);
 		currentCycleHosts = removeHostsThatAreFull(cluster.hosts());
+		processedJobsCount = 0;
+		scheduledJobs = 0;
+		skippedJobs = 0;
+		startingHostsCount = currentCycleHosts.size();
+		startingJobsCount = waitingQueue.size();
 	}
 
 	private void reserve(Host host, Job job)
