@@ -54,7 +54,7 @@ public class MaxCostScheduler extends ReservingScheduler implements Scheduler
 		}
 		if (shouldReport(time))
 		{
-			log.info("cost is " + maxCost + "for scheduler " + maxScheduler);
+			log.info("cost is " + maxCost + " for scheduler " + maxScheduler);
 		}
 		return $;
 	}
