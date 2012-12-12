@@ -227,4 +227,9 @@ public class ReservingScheduler implements Scheduler
 		maxAvailableMemory = hostPicker.maxAvailableMemory();
 		return bestHost;
 	}
+
+	public Grader grader()
+	{
+		return grader;
+	}
 }

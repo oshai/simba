@@ -17,7 +17,6 @@ import sim.scheduling.JobDispatcher;
 import sim.scheduling.Scheduler;
 import sim.scheduling.graders.Grader;
 
-
 public class MaxCostScheduler extends ReservingScheduler implements Scheduler
 {
 	private static final Logger log = Logger.getLogger(MaxCostScheduler.class);
@@ -55,7 +54,7 @@ public class MaxCostScheduler extends ReservingScheduler implements Scheduler
 		}
 		if (shouldReport(time))
 		{
-			log.info("selectJobsToDispatch() - cost is " + maxCost + "for scheduler " + maxScheduler);
+			log.info("cost is " + maxCost + "for scheduler " + maxScheduler);
 		}
 		return $;
 	}

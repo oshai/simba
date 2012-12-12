@@ -19,8 +19,8 @@ public class CalculateScheduleFunction implements Function<ReservingScheduler, P
 	}
 
 	@Override
-	public Pair<String, Map<Job, Host>> apply(ReservingScheduler arg0)
+	public Pair<String, Map<Job, Host>> apply(ReservingScheduler sched)
 	{
-		return new Pair<String, Map<Job, Host>>(arg0.getClass().getSimpleName(), arg0.scheduleWithoutDispatch(time));
+		return new Pair<String, Map<Job, Host>>(sched.grader().toString(), sched.scheduleWithoutDispatch(time));
 	}
 }
