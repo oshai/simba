@@ -7,10 +7,17 @@ public class InvertGrader implements Grader
 {
 
 	private final Grader grader;
+	private final String name;
 
 	public InvertGrader(Grader grader)
 	{
+		this(grader, "invert(" + grader.getClass().getSimpleName() + ")");
+	}
+
+	public InvertGrader(Grader grader, String name)
+	{
 		this.grader = grader;
+		this.name = name;
 	}
 
 	@Override
@@ -22,7 +29,7 @@ public class InvertGrader implements Grader
 	@Override
 	public String toString()
 	{
-		return "InvertGrader [grader=" + grader.getClass().getSimpleName() + "]";
+		return name;
 	}
 
 }

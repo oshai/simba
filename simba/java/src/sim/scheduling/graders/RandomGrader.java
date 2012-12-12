@@ -21,4 +21,10 @@ public class RandomGrader implements Grader
 		return random.nextInt(limit);
 	}
 
+	@Override
+	public String toString()
+	{
+		return "random";
+	}
+
 }

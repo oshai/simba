@@ -7,7 +7,7 @@ import org.junit.Test;
 import sim.model.Host;
 import sim.model.Job;
 
-public class SimpleMixFitTest
+public class SimpleMixGraderTest
 {
 
 	@Test
@@ -26,6 +26,12 @@ public class SimpleMixFitTest
 		Job job = Job.builder(1).cores(1).memory(8).build();
 		Grader grader = createGrader();
 		assertEquals(8.0, grader.getGrade(host, job), 0.1);
+	}
+	
+	@Test
+	public void testToString()
+	{
+		assertEquals("simple-mix-fit", createGrader().toString());
 	}
 
 	private Grader createGrader()

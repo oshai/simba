@@ -10,11 +10,18 @@ public class CompositeGrader implements Grader
 
 	private final List<Grader> graders;
 	private final int maxValue;
+	private final String name;
 
 	public CompositeGrader(List<Grader> graders, int maxValue)
 	{
+		this(graders, maxValue, "Composite(" + graders + ")");
+	}
+
+	public CompositeGrader(List<Grader> graders, int maxValue, String name)
+	{
 		this.graders = graders;
 		this.maxValue = maxValue;
+		this.name = name;
 	}
 
 	@Override
@@ -32,7 +39,7 @@ public class CompositeGrader implements Grader
 	@Override
 	public String toString()
 	{
-		return "Composite [graders=" + graders + "]";
+		return name;
 	}
 
 }

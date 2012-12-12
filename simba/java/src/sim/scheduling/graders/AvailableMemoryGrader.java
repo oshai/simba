@@ -12,4 +12,9 @@ public class AvailableMemoryGrader implements Grader
 		return host.availableMemory();
 	}
 
+	@Override
+	public String toString()
+	{
+		return "worse-fit";
+	}
 }

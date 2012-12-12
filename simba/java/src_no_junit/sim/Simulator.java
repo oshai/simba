@@ -276,9 +276,17 @@ public class Simulator
 		}
 		if ("max-cost".equals(getSchedulerProperty()))
 		{
-			List<ReservingScheduler> l = newArrayList(new ReservingScheduler(waitingQueue, cluster, getGraderForName("BF"), dispatcher, getConfiguration()),
-					new ReservingScheduler(waitingQueue, cluster, getGraderForName("WF"), dispatcher, getConfiguration()), new ReservingScheduler(waitingQueue,
-							cluster, getGraderForName("MF"), dispatcher, getConfiguration()));
+			List<ReservingScheduler> l = newArrayList(
+					new ReservingScheduler(waitingQueue, cluster, getGraderForName("BF"), dispatcher, getConfiguration()),
+					new ReservingScheduler(waitingQueue, cluster, getGraderForName("WF"), dispatcher, getConfiguration()),
+					new ReservingScheduler(waitingQueue, cluster, getGraderForName("MF"), dispatcher, getConfiguration()),
+					new ReservingScheduler(waitingQueue, cluster, getGraderForName("FF"), dispatcher, getConfiguration()),
+					new ReservingScheduler(waitingQueue, cluster, getGraderForName("NF"), dispatcher, getConfiguration()),
+					new ReservingScheduler(waitingQueue, cluster, getGraderForName("MF3"), dispatcher, getConfiguration()),
+					new ReservingScheduler(waitingQueue, cluster, getGraderForName("MF4"), dispatcher, getConfiguration()),
+					new ReservingScheduler(waitingQueue, cluster, getGraderForName("MF6"), dispatcher, getConfiguration()),
+					new ReservingScheduler(waitingQueue, cluster, getGraderForName("SMF"), dispatcher, getConfiguration()),
+					new ReservingScheduler(waitingQueue, cluster, getGraderForName("RF"), dispatcher, getConfiguration()));
 			return new MaxCostScheduler(waitingQueue, cluster, grader, dispatcher, getConfiguration(), l, new ParallelScheduleCalculator());
 		}
 		if (isDistributed())

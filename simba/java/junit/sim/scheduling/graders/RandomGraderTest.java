@@ -13,4 +13,9 @@ public class RandomGraderTest
 		assertTrue(new RandomGrader(10).getGrade(null, null) < 10);
 	}
 
+	@Test
+	public void testToString()
+	{
+		assertEquals("random", new RandomGrader(0).toString());
+	}
 }
