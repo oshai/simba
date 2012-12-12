@@ -5,6 +5,7 @@ import static com.google.common.collect.Lists.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -18,6 +19,8 @@ import sim.collectors.WaitingQueueStatistics;
 import sim.configuration.DistributedSimulationConfiguration;
 import sim.configuration.ProductionSimbaConfiguration;
 import sim.configuration.ProductionSimbaConfiguration.LooperFactory;
+import sim.distributed.DistributedJobDispatcher;
+import sim.distributed.DistributedScheduler;
 import sim.event_handling.EventQueue;
 import sim.events.Event;
 import sim.events.Submit;
@@ -29,7 +32,6 @@ import sim.parsers.JobParser;
 import sim.scheduling.AbstractWaitingQueue;
 import sim.scheduling.AggregatedWaitingQueue;
 import sim.scheduling.ByTraceScheduler;
-import sim.scheduling.DistributedScheduler;
 import sim.scheduling.HostScheduler;
 import sim.scheduling.HostSelector;
 import sim.scheduling.JobDispatcher;
@@ -52,6 +54,7 @@ import com.google.common.base.Function;
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
@@ -190,13 +193,19 @@ public class Simulator
 
 	protected Looper createLooper(Cluster cluster, EventQueue eventQueue, Clock clock, Grader grader)
 	{
-		final JobDispatcher dispatcher = new JobDispatcher(eventQueue);
+		JobDispatcher dispatcher = new JobDispatcher(eventQueue);
 		AbstractWaitingQueue waitingQueue = new LinkedListWaitingQueue();
 		if (isSortedWaitingQueue())
 		{
 			waitingQueue = new SortedWaitingQueue();
 		}
-		ArrayList<HostScheduler> hostSchedulers = createHostSchedulers(cluster, dispatcher);
+		ArrayList<HostScheduler> hostSchedulers = null;
+		HashSet<Job> distributedWaitingJobs = Sets.<Job> newHashSet();
+		if (isDistributed())
+		{
+			dispatcher = new DistributedJobDispatcher(eventQueue, distributedWaitingJobs);
+			hostSchedulers = createHostSchedulers(cluster, dispatcher);
+		}
 		WaitingQueueForStatistics waitingQueueForStatistics = isDistributed() ? createAggregatedWaitingQueue(hostSchedulers) : waitingQueue;
 		log.info("wait queue is " + waitingQueueForStatistics.getClass().getSimpleName());
 		WaitingQueueStatistics waitingQueueStatistics = new WaitingQueueStatistics(waitingQueueForStatistics, Integer.MAX_VALUE, clock);
@@ -204,7 +213,7 @@ public class Simulator
 		{
 			moveJobsToWaitQueue(eventQueue, waitingQueue);
 		}
-		Scheduler scheduler = createSchduler(cluster, grader, dispatcher, waitingQueue, hostSchedulers);
+		Scheduler scheduler = createSchduler(cluster, grader, dispatcher, waitingQueue, hostSchedulers, distributedWaitingJobs);
 		log.info("createLooper() - scheduler is " + scheduler.getClass().getSimpleName());
 		JobCollector jobCollector = new JobCollector();
 		JobFinisher jobFinisher = new JobFinisher(jobCollector);
@@ -247,7 +256,7 @@ public class Simulator
 	}
 
 	private Scheduler createSchduler(Cluster cluster, Grader grader, final JobDispatcher dispatcher, AbstractWaitingQueue waitingQueue,
-			ArrayList<HostScheduler> hostSchedulers)
+			ArrayList<HostScheduler> hostSchedulers, HashSet<Job> distributedWaitingJobs)
 	{
 		if (isSortedWaitingQueue())
 		{
@@ -276,7 +285,7 @@ public class Simulator
 		{
 			ArrayList<HostScheduler> hostsSched = hostSchedulers;
 			HostSelector hostSelector1 = new HostSelector(hostsSched);
-			return new DistributedScheduler(waitingQueue, hostsSched, hostSelector1);
+			return new DistributedScheduler(waitingQueue, hostsSched, hostSelector1, distributedWaitingJobs);
 		}
 		throw new RuntimeException("no scheduler " + getSchedulerProperty());
 	}

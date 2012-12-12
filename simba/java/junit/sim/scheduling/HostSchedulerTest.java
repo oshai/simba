@@ -20,13 +20,25 @@ public class HostSchedulerTest
 	}
 
 	@Test
-	public void testHasPotentialResourceFor()
+	public void testIsAllowedToAddJobBecauseOfResources()
 	{
 		Host host = mock(Host.class);
 		Job job = Job.builder(1).build();
+		when(host.hasPotentialResourceFor(job)).thenReturn(true);
 		HostScheduler tested = new HostScheduler(host, null, new LinkedListWaitingQueue());
-		tested.hasPotentialResourceFor(job);
-		verify(host).hasPotentialResourceFor(job);
+		assertTrue(tested.isAllowedToAddJob(job));
+	}
+
+	@Test
+	public void testIsAllowedToAddJobBecauseOfWaitingJobs()
+	{
+		Host host = mock(Host.class);
+		Job job = Job.builder(1).build();
+		when(host.hasPotentialResourceFor(job)).thenReturn(true);
+		LinkedListWaitingQueue waitingQueue = new LinkedListWaitingQueue();
+		waitingQueue.add(job);
+		HostScheduler tested = new HostScheduler(host, null, waitingQueue);
+		assertFalse(tested.isAllowedToAddJob(job));
 	}
 
 	@Test

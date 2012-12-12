@@ -28,7 +28,7 @@ public class HostSelectorTest
 		Job j = mock(Job.class);
 		HostScheduler hs = mock(HostScheduler.class);
 		List<HostScheduler> s = newArrayList(hs);
-		when(hs.hasPotentialResourceFor(j)).thenReturn(true);
+		when(hs.isAllowedToAddJob(j)).thenReturn(true);
 		HostSelector tested = new HostSelector(s);
 		assertEquals(hs, tested.select(j));
 		assertEquals(hs, tested.select(j));
@@ -40,7 +40,7 @@ public class HostSelectorTest
 		HostScheduler hs = mock(HostScheduler.class);
 		HostScheduler hs1 = mock(HostScheduler.class);
 		Job j = mock(Job.class);
-		when(hs1.hasPotentialResourceFor(j)).thenReturn(true);
+		when(hs1.isAllowedToAddJob(j)).thenReturn(true);
 		List<HostScheduler> s = newArrayList(hs, hs1);
 
 		HostSelector tested = new HostSelector(s);
