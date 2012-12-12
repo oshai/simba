@@ -15,7 +15,7 @@ public class HostSchedulerTest
 	@Test
 	public void testEmpty()
 	{
-		HostScheduler tested = new HostScheduler(null, mock(JobDispatcher.class));
+		HostScheduler tested = new HostScheduler(null, mock(JobDispatcher.class), new LinkedListWaitingQueue());
 		assertEquals(0, tested.schedule(1));
 	}
 
@@ -24,7 +24,7 @@ public class HostSchedulerTest
 	{
 		Host host = mock(Host.class);
 		Job job = Job.builder(1).build();
-		HostScheduler tested = new HostScheduler(host, null);
+		HostScheduler tested = new HostScheduler(host, null, new LinkedListWaitingQueue());
 		tested.hasPotentialResourceFor(job);
 		verify(host).hasPotentialResourceFor(job);
 	}
@@ -34,7 +34,7 @@ public class HostSchedulerTest
 	{
 		Host host = Host.builder().build();
 		JobDispatcher dispatcher = mock(JobDispatcher.class);
-		HostScheduler tested = new HostScheduler(host, dispatcher);
+		HostScheduler tested = new HostScheduler(host, dispatcher, new LinkedListWaitingQueue());
 		Job job = Job.builder(1).build();
 		tested.addJob(job);
 		assertEquals(1, tested.schedule(1));
@@ -45,12 +45,10 @@ public class HostSchedulerTest
 	public void testSchedule1JobOnHostCannotEnter()
 	{
 		Host host = Host.builder().cores(1.0).build();
-		HostScheduler tested = new HostScheduler(host, mock(JobDispatcher.class));
+		HostScheduler tested = new HostScheduler(host, mock(JobDispatcher.class), new LinkedListWaitingQueue());
 		Job job = Job.builder(1).cores(2.0).build();
 		tested.addJob(job);
 		assertEquals(0, tested.schedule(1));
-		assertEquals(1, tested.collectAdd());
-		assertEquals(0, tested.collectAdd());
 		Job job1 = Job.builder(1).memory(1.0).build();
 		tested.addJob(job1);
 		assertEquals(0, tested.schedule(1));
@@ -63,17 +61,32 @@ public class HostSchedulerTest
 		Host host = Host.builder().cores(2.0).build();
 		Job jobOnHost = Job.builder(1).cores(1.0).build();
 		host.dispatchJob(jobOnHost);
-		HostScheduler tested = new HostScheduler(host, new JobDispatcher(mock(EventQueue.class)));
+		HostScheduler tested = new HostScheduler(host, new JobDispatcher(mock(EventQueue.class)), new LinkedListWaitingQueue());
 		Job job = Job.builder(1).cores(2.0).build();
 		tested.addJob(job);
-		assertEquals(0, tested.collectRemove());
 		assertEquals(0, tested.schedule(1));
 		host.finishJob(jobOnHost);
 		assertEquals(1, tested.schedule(1));
-		assertEquals(1, tested.collectRemove());
-		assertEquals(0, tested.collectRemove());
 		host.finishJob(job);
 		assertEquals(0, tested.schedule(1));
+	}
+
+	@Test
+	public void testRemove()
+	{
+		AbstractWaitingQueue w = mock(AbstractWaitingQueue.class);
+		HostScheduler tested = new HostScheduler(null, new JobDispatcher(mock(EventQueue.class)), w);
+		when(w.collectRemove()).thenReturn(12);
+		assertEquals(12, tested.collectRemove());
+	}
+
+	@Test
+	public void testAdd()
+	{
+		AbstractWaitingQueue w = mock(AbstractWaitingQueue.class);
+		HostScheduler tested = new HostScheduler(null, new JobDispatcher(mock(EventQueue.class)), w);
+		when(w.collectAdd()).thenReturn(12);
+		assertEquals(12, tested.collectAdd());
 	}
 
 }

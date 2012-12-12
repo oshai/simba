@@ -231,7 +231,7 @@ public class Simulator
 			@Override
 			public HostScheduler apply(Host host)
 			{
-				return new HostScheduler(host, dispatcher);
+				return new HostScheduler(host, dispatcher, new LinkedListWaitingQueue());
 			}
 		}));
 	}
