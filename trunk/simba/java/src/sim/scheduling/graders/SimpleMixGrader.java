@@ -29,4 +29,10 @@ public class SimpleMixGrader implements Grader
 		}
 	}
 
+	@Override
+	public String toString()
+	{
+		return "simple-mix-fit";
+	}
+
 }

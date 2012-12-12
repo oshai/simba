@@ -19,4 +19,9 @@ public class Constant implements Grader
 		return grade;
 	}
 
+	@Override
+	public String toString()
+	{
+		return "first-fit";
+	}
 }

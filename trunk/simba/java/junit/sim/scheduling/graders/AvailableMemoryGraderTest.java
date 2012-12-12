@@ -18,4 +18,9 @@ public class AvailableMemoryGraderTest
 		assertEquals(8.0, new AvailableMemoryGrader().getGrade(host, null), 0.1);
 	}
 
+	@Test
+	public void testToString()
+	{
+		assertEquals("worse-fit", new AvailableMemoryGrader().toString());
+	}
 }

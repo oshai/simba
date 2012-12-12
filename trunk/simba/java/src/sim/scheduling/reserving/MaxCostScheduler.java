@@ -45,6 +45,10 @@ public class MaxCostScheduler extends ReservingScheduler implements Scheduler
 		for (Pair<String, Map<Job, Host>> current : scheduleResults)
 		{
 			double currentCost = calcCost(current.getValue());
+			if (shouldReport(time))
+			{
+				log.info("algo " + current.getKey() + " cost " + currentCost + " jobs " + current.getValue().size());
+			}
 			if (currentCost > maxCost)
 			{
 				$ = current.getValue();
@@ -54,7 +58,7 @@ public class MaxCostScheduler extends ReservingScheduler implements Scheduler
 		}
 		if (shouldReport(time))
 		{
-			log.info("cost is " + maxCost + " for scheduler " + maxScheduler);
+			log.info("selected scheduler " + maxScheduler);
 		}
 		return $;
 	}

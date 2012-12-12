@@ -5,6 +5,10 @@ import static com.google.common.collect.Lists.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import org.apache.commons.math3.util.Pair;
 
@@ -17,61 +21,51 @@ import sim.scheduling.reserving.ScheduleCalculator;
 public class ParallelScheduleCalculator implements ScheduleCalculator
 {
 
+	private final ExecutorService executor = Executors.newFixedThreadPool(20);
+
 	@Override
 	public Iterable<Pair<String, Map<Job, Host>>> calculateSchedule(List<ReservingScheduler> schedulers2, long time)
 	{
-		ArrayList<Thread> threads = newArrayList();
-		ArrayList<Calc> calcs = newArrayList();
-		List<Pair<String, Map<Job, Host>>> $ = newArrayList();
-		for (ReservingScheduler reservingScheduler : schedulers2)
+		List<Future<Pair<String, Map<Job, Host>>>> list = new ArrayList<Future<Pair<String, Map<Job, Host>>>>();
+		for (int i = 0; i < schedulers2.size(); i++)
 		{
-			Calc c = new Calc(time, reservingScheduler);
-			calcs.add(c);
-			Thread t = new Thread(c);
-			threads.add(t);
-			t.start();
+			Callable<Pair<String, Map<Job, Host>>> worker = new Calc(time, schedulers2.get(i));
+			Future<Pair<String, Map<Job, Host>>> submit = executor.submit(worker);
+			list.add(submit);
 		}
-		for (Thread t : threads)
+		// Now retrieve the result
+		List<Pair<String, Map<Job, Host>>> $ = newArrayList();
+		for (Future<Pair<String, Map<Job, Host>>> future : list)
 		{
 			try
 			{
-				t.join();
+				$.add(future.get());
 			}
-			catch (InterruptedException ex)
+			catch (Exception e)
 			{
-				throw new RuntimeException(ex);
+				throw new RuntimeException(e);
 			}
 		}
-		for (Calc c : calcs)
-		{
-			$.add(c.$());
-		}
+		// executor.shutdown();
 		return $;
 	}
 
-	private static class Calc implements Runnable
+	private static class Calc implements Callable<Pair<String, Map<Job, Host>>>
 	{
+		@Override
+		public Pair<String, Map<Job, Host>> call() throws Exception
+		{
+			return new CalculateScheduleFunction(time).apply(r);
+		}
 
 		long time;
 		ReservingScheduler r;
-		Pair<String, Map<Job, Host>> $;
 
 		public Calc(long time, ReservingScheduler r)
 		{
 			super();
 			this.time = time;
 			this.r = r;
-		}
-
-		public Pair<String, Map<Job, Host>> $()
-		{
-			return $;
-		}
-
-		@Override
-		public void run()
-		{
-			$ = new CalculateScheduleFunction(time).apply(r);
 		}
 
 	}
