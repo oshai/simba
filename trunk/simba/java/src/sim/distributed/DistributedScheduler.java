@@ -82,6 +82,7 @@ public class DistributedScheduler implements Scheduler
 		{
 			HostScheduler h = hostSchedulers.get(i);
 			int w = h.waitingJobs();
+			values[i] = w;
 			maximumJobsWaitingPerHost = Math.max(w, maximumJobsWaitingPerHost);
 			minimumJobsWaitingPerHost = Math.min(w, minimumJobsWaitingPerHost);
 			waitingJobsOnHosts += w;
