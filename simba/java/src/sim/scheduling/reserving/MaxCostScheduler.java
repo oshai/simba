@@ -5,6 +5,7 @@ import static com.google.common.collect.Maps.*;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.math3.util.Pair;
 import org.apache.log4j.Logger;
 
 import sim.SimbaConfiguration;
@@ -16,43 +17,45 @@ import sim.scheduling.JobDispatcher;
 import sim.scheduling.Scheduler;
 import sim.scheduling.graders.Grader;
 
+
 public class MaxCostScheduler extends ReservingScheduler implements Scheduler
 {
 	private static final Logger log = Logger.getLogger(MaxCostScheduler.class);
 	private final List<ReservingScheduler> schedulers;
+	private final ScheduleCalculator scheduleCalculator;
 
 	public MaxCostScheduler(AbstractWaitingQueue waitingQueue, Cluster cluster, Grader grader, JobDispatcher dispatcher, SimbaConfiguration simbaConfiguration,
-			List<ReservingScheduler> schedulers)
+			List<ReservingScheduler> schedulers, ScheduleCalculator scheduleCalculator)
 	{
 		super(waitingQueue, cluster, grader, dispatcher, simbaConfiguration);
 		this.schedulers = schedulers;
+		this.scheduleCalculator = scheduleCalculator;
 		if (schedulers.isEmpty())
 		{
 			throw new IllegalArgumentException("must have at least one scheduler");
 		}
 	}
 
-	@SuppressWarnings("null")
 	@Override
 	protected Map<Job, Host> selectJobsToDispatch(long time)
 	{
 		Map<Job, Host> $ = newHashMap();
 		double maxCost = -1;
-		ReservingScheduler maxScheduler = null;
-		for (ReservingScheduler scheduler : schedulers)
+		String maxScheduler = null;
+		Iterable<Pair<String, Map<Job, Host>>> scheduleResults = scheduleCalculator.calculateSchedule(schedulers, time);
+		for (Pair<String, Map<Job, Host>> current : scheduleResults)
 		{
-			Map<Job, Host> current = scheduler.scheduleWithoutDispatch(time);
-			double currentCost = calcCost(current);
+			double currentCost = calcCost(current.getValue());
 			if (currentCost > maxCost)
 			{
-				$ = current;
+				$ = current.getValue();
 				maxCost = currentCost;
-				maxScheduler = scheduler;
+				maxScheduler = current.getKey();
 			}
 		}
 		if (shouldReport(time))
 		{
-			log.info("selectJobsToDispatch() - cost is " + maxCost + "for scheduler " + maxScheduler.getClass().getSimpleName());
+			log.info("selectJobsToDispatch() - cost is " + maxCost + "for scheduler " + maxScheduler);
 		}
 		return $;
 	}

@@ -21,7 +21,7 @@ public class MaxCostSchedulerTest
 	@Test(expected = IllegalArgumentException.class)
 	public void testEmpty() throws Exception
 	{
-		new MaxCostScheduler(null, null, null, null, mock(SimbaConfiguration.class), Lists.<ReservingScheduler> newArrayList());
+		new MaxCostScheduler(null, null, null, null, mock(SimbaConfiguration.class), Lists.<ReservingScheduler> newArrayList(), new SimpleScheduleCalculator());
 	}
 
 	@Test
@@ -30,7 +30,7 @@ public class MaxCostSchedulerTest
 		Map<Job, Host> map = newHashMap();
 		map.put(Job.builder(1).cost(1).build(), null);
 		List<ReservingScheduler> schedulers = newArrayList(createScheduler(map));
-		MaxCostScheduler tested = new MaxCostScheduler(null, null, null, null, mock(SimbaConfiguration.class), schedulers);
+		MaxCostScheduler tested = new MaxCostScheduler(null, null, null, null, mock(SimbaConfiguration.class), schedulers, new SimpleScheduleCalculator());
 		assertEquals(map, tested.selectJobsToDispatch(0));
 	}
 
@@ -43,7 +43,7 @@ public class MaxCostSchedulerTest
 		map2.put(Job.builder(1).cost(1).build(), null);
 		map2.put(Job.builder(1).cost(1).build(), null);
 		List<ReservingScheduler> schedulers = newArrayList(createScheduler(map), createScheduler(map2));
-		MaxCostScheduler tested = new MaxCostScheduler(null, null, null, null, mock(SimbaConfiguration.class), schedulers);
+		MaxCostScheduler tested = new MaxCostScheduler(null, null, null, null, mock(SimbaConfiguration.class), schedulers, new SimpleScheduleCalculator());
 		assertEquals(map2, tested.selectJobsToDispatch(0));
 	}
 

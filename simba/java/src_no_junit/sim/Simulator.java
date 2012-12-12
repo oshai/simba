@@ -267,12 +267,10 @@ public class Simulator
 		}
 		if ("max-cost".equals(getSchedulerProperty()))
 		{
-			List<ReservingScheduler> l = newArrayList(
-					new ReservingScheduler(waitingQueue, cluster, getGraderForName("BF"), dispatcher, getConfiguration()),
-					new ReservingScheduler(waitingQueue, cluster, getGraderForName("WF"), dispatcher, getConfiguration()),
-					new ReservingScheduler(waitingQueue, cluster, getGraderForName("MF"), dispatcher, getConfiguration())
-					);
-			return new MaxCostScheduler(waitingQueue, cluster, grader, dispatcher, getConfiguration(), l);
+			List<ReservingScheduler> l = newArrayList(new ReservingScheduler(waitingQueue, cluster, getGraderForName("BF"), dispatcher, getConfiguration()),
+					new ReservingScheduler(waitingQueue, cluster, getGraderForName("WF"), dispatcher, getConfiguration()), new ReservingScheduler(waitingQueue,
+							cluster, getGraderForName("MF"), dispatcher, getConfiguration()));
+			return new MaxCostScheduler(waitingQueue, cluster, grader, dispatcher, getConfiguration(), l, new ParallelScheduleCalculator());
 		}
 		if (isDistributed())
 		{
