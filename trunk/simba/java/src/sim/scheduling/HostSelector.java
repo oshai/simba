@@ -23,7 +23,7 @@ public class HostSelector
 		for (; cyclicIterator.hasNext();)
 		{
 			HostScheduler h = cyclicIterator.next();
-			if (h.hasPotentialResourceFor(job))
+			if (h.isAllowedToAddJob(job))
 			{
 				return h;
 			}

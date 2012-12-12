@@ -62,6 +62,10 @@ public class HostParser
 				dropped++;
 			}
 		}
+		for (Host host : cluster.hosts())
+		{
+			log.info("host - " + host);
+		}
 		log.info("parse() - dropped " + dropped + " which is: " + (int) ((double) dropped * 100 / (cluster.hosts().size() + dropped)) + "%");
 	}
 

@@ -42,9 +42,9 @@ public class HostScheduler
 		return $;
 	}
 
-	public boolean hasPotentialResourceFor(Job job)
+	public boolean isAllowedToAddJob(Job job)
 	{
-		return host.hasPotentialResourceFor(job);
+		return host.hasPotentialResourceFor(job) && !(waitingJobs.contains(job));
 	}
 
 	public int waitingJobs()
