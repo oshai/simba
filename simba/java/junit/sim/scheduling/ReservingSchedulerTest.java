@@ -29,11 +29,12 @@ public class ReservingSchedulerTest
 		cluster.add(host);
 		Grader grader = mock(Grader.class);
 		JobDispatcher dispatcher = mock(JobDispatcher.class);
-		Scheduler scheduler = createScheduler(waitingQueue, cluster, grader, dispatcher);
+		ReservingScheduler scheduler = createScheduler(waitingQueue, cluster, grader, dispatcher);
 		long time = 1;
 		scheduler.schedule(time);
 		assertTrue(waitingQueue.isEmpty());
 		verify(dispatcher).dispatch(job, host, time);
+		assertNotNull(scheduler.grader());
 	}
 
 	@Test
