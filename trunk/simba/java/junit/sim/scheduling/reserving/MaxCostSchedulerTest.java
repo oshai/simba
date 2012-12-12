@@ -13,6 +13,8 @@ import org.junit.Test;
 import sim.SimbaConfiguration;
 import sim.model.Host;
 import sim.model.Job;
+import sim.scheduling.graders.Grader;
+import sim.scheduling.graders.ThrowingExceptionGrader;
 
 import com.google.common.collect.Lists;
 
@@ -55,6 +57,12 @@ public class MaxCostSchedulerTest
 			protected Map<Job, Host> scheduleWithoutDispatch(long time)
 			{
 				return map;
+			}
+
+			@Override
+			public Grader grader()
+			{
+				return new ThrowingExceptionGrader();
 			}
 		};
 		return s;
