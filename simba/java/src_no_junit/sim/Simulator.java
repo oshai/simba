@@ -243,7 +243,7 @@ public class Simulator
 		{
 			ArrayList<HostScheduler> hostsSched = hostSchedulers;
 			HostSelector hostSelector1 = new HostSelector(hostsSched);
-			return new DistributedScheduler(waitingQueue, hostsSched, hostSelector1, distributedWaitingJobs);
+			return new ExpandingDistributedScheduler(waitingQueue, hostsSched, hostSelector1, distributedWaitingJobs);
 		}
 		throw new RuntimeException("no scheduler " + getSchedulerProperty());
 	}

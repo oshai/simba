@@ -1,11 +1,9 @@
 package sim.distributed;
 
-import java.util.Iterator;
+import java.util.*;
 
-import sim.model.Host;
-import sim.model.Job;
-import sim.scheduling.AbstractWaitingQueue;
-import sim.scheduling.JobDispatcher;
+import sim.model.*;
+import sim.scheduling.*;
 
 public class HostScheduler
 {
@@ -34,6 +32,10 @@ public class HostScheduler
 		while (iterator.hasNext())
 		{
 			Job job = iterator.next();
+			if (!host.hasPotentialResourceFor(job))
+			{
+				iterator.remove();
+			}
 			if (host.availableCores() >= job.cores() && host.availableMemory() >= job.memory())
 			{
 				dispatcher.dispatch(job, host, time);

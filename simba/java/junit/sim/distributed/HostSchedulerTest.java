@@ -20,6 +20,18 @@ public class HostSchedulerTest
 	}
 
 	@Test
+	public void testJobCannotRunBecauseOfResourcesIsRemovedFromWaitingQueue()
+	{
+		Host host = Host.builder().build();
+		LinkedListWaitingQueue waitingQueue = new LinkedListWaitingQueue();
+		Job job = Job.builder(1).cores(1.0).build();
+		waitingQueue.add(job);
+		HostScheduler tested = new HostScheduler(host, mock(JobDispatcher.class), waitingQueue);
+		assertEquals(0, tested.schedule(1));
+		assertEquals(0, waitingQueue.size());
+	}
+
+	@Test
 	public void testIsAllowedToAddJobBecauseOfResources()
 	{
 		Host host = mock(Host.class);
@@ -64,7 +76,7 @@ public class HostSchedulerTest
 		Job job1 = Job.builder(1).memory(1.0).build();
 		tested.addJob(job1);
 		assertEquals(0, tested.schedule(1));
-		assertEquals(2, tested.waitingJobs());
+		assertEquals(0, tested.waitingJobs());
 	}
 
 	@Test
@@ -73,10 +85,12 @@ public class HostSchedulerTest
 		Host host = Host.builder().cores(2.0).build();
 		Job jobOnHost = Job.builder(1).cores(1.0).build();
 		host.dispatchJob(jobOnHost);
-		HostScheduler tested = new HostScheduler(host, new JobDispatcher(mock(EventQueue.class)), new LinkedListWaitingQueue());
+		LinkedListWaitingQueue waitingQueue = new LinkedListWaitingQueue();
+		HostScheduler tested = new HostScheduler(host, new JobDispatcher(mock(EventQueue.class)), waitingQueue);
 		Job job = Job.builder(1).cores(2.0).build();
-		tested.addJob(job);
+		waitingQueue.add(job);
 		assertEquals(0, tested.schedule(1));
+		assertEquals(1, waitingQueue.size());
 		host.finishJob(jobOnHost);
 		assertEquals(1, tested.schedule(1));
 		host.finishJob(job);
