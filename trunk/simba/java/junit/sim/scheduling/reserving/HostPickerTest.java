@@ -19,10 +19,26 @@ public class HostPickerTest
 	{
 		List<Host> hosts = newArrayList(Host.builder().cores(1).memory(3).build());
 		Job job = Job.builder(100).cores(2).build();
+		HostPicker tested = createHostPicker(hosts);
+		assertEquals(ReservingScheduler.DUMMY_HOST, tested.getBestHost(job));
+		assertEquals(3, tested.maxAvailableMemory(), 0.1);
+	}
+
+	@Test
+	public void testHostCanRunjob() throws Exception
+	{
+		Host host = Host.builder().cores(1).build();
+		List<Host> hosts = newArrayList(host);
+		Job job = Job.builder(100).cores(1).build();
+		HostPicker tested = createHostPicker(hosts);
+		assertEquals(host, tested.getBestHost(job));
+	}
+
+	private HostPicker createHostPicker(List<Host> hosts)
+	{
 		ReservingSchedulerUtils r = new ReservingSchedulerUtils(new ReservationsHolder());
 		Grader g = mock(Grader.class);
 		HostPicker tested = new HostPicker(r, hosts, g);
-		assertNull(tested.getBestHost(job));
-		assertEquals(3, tested.maxAvailableMemory(), 0.1);
+		return tested;
 	}
 }

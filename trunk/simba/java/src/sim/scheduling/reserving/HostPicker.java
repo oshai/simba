@@ -23,7 +23,7 @@ public class HostPicker
 
 	public Host getBestHost(Job job)
 	{
-		Host selectedHost = null;
+		Host selectedHost = ReservingScheduler.DUMMY_HOST;
 		boolean isAvailable = false;
 
 		for (Host host : currentCycleHosts)
@@ -34,12 +34,7 @@ public class HostPicker
 				continue;
 			}
 			double grade = grader.getGrade(host, job);
-			if (null == selectedHost)
-			{
-				selectedHost = host;
-				isAvailable = reservingSchedulerUtils.isAvailable(host, job);
-			}
-			else if (reservingSchedulerUtils.isAvailable(host, job))
+			if (reservingSchedulerUtils.isAvailable(host, job))
 			{
 				if (!isAvailable || grade > grader.getGrade(selectedHost, job))
 				{
@@ -59,6 +54,9 @@ public class HostPicker
 					selectedHost = host;
 				}
 			}
+			// else current host not available for job, but selected host is
+			// available for job
+			// so current host is not relevant
 		}
 		return selectedHost;
 	}
