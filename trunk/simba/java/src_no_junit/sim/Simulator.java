@@ -2,27 +2,58 @@ package sim;
 
 import static com.google.common.collect.Lists.*;
 
-import java.util.*;
-import java.util.concurrent.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
-import org.apache.log4j.*;
+import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 
-import sim.collectors.*;
-import sim.configuration.*;
+import sim.collectors.IntervalCollector;
+import sim.collectors.JobCollector;
+import sim.collectors.WaitingQueueStatistics;
+import sim.configuration.DistributedSimulationConfiguration;
+import sim.configuration.ProductionSimbaConfiguration;
 import sim.configuration.ProductionSimbaConfiguration.LooperFactory;
-import sim.distributed.*;
-import sim.event_handling.*;
-import sim.events.*;
-import sim.model.*;
-import sim.parsers.*;
-import sim.scheduling.*;
-import sim.scheduling.graders.*;
-import sim.scheduling.matchers.*;
-import sim.scheduling.reserving.*;
+import sim.distributed.DistributedJobDispatcher;
+import sim.distributed.HostScheduler;
+import sim.distributed.WaitOnAllHostsDistributedScheduler;
+import sim.event_handling.EventQueue;
+import sim.events.Event;
+import sim.events.Submit;
+import sim.model.Cluster;
+import sim.model.Host;
+import sim.model.Job;
+import sim.parsers.HostParser;
+import sim.parsers.JobParser;
+import sim.scheduling.AbstractWaitingQueue;
+import sim.scheduling.ByTraceScheduler;
+import sim.scheduling.JobDispatcher;
+import sim.scheduling.LinkedListWaitingQueue;
+import sim.scheduling.Scheduler;
+import sim.scheduling.SetWaitingQueue;
+import sim.scheduling.SimpleScheduler;
+import sim.scheduling.SortedWaitingQueue;
+import sim.scheduling.WaitingQueueForStatistics;
+import sim.scheduling.graders.AvailableMemoryGrader;
+import sim.scheduling.graders.Constant;
+import sim.scheduling.graders.Grader;
+import sim.scheduling.graders.RandomGrader;
+import sim.scheduling.graders.ThrowingExceptionGrader;
+import sim.scheduling.matchers.GradeMatcher;
+import sim.scheduling.matchers.GradeMatcherProvider;
+import sim.scheduling.reserving.MaxCostScheduler;
+import sim.scheduling.reserving.ReservingScheduler;
 
-import com.google.common.base.*;
-import com.google.common.collect.*;
-import com.google.inject.*;
+import com.google.common.base.Function;
+import com.google.common.base.Stopwatch;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.Maps;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 
 public class Simulator
 {
@@ -170,7 +201,7 @@ public class Simulator
 		if (isDistributed())
 		{
 			dispatcher = new DistributedJobDispatcher(eventQueue, distributedWaitingJobs);
-			hostSchedulers = createHostSchedulers(cluster, dispatcher);
+			hostSchedulers = createHostSchedulers(cluster, dispatcher, distributedWaitingJobs);
 		}
 		WaitingQueueForStatistics waitingQueueForStatistics = isDistributed() ? distributedWaitingJobs : waitingQueue;
 		log.info("wait queue is " + waitingQueueForStatistics.getClass().getSimpleName());
@@ -193,15 +224,14 @@ public class Simulator
 		return looper;
 	}
 
-	private ArrayList<HostScheduler> createHostSchedulers(Cluster cluster, final JobDispatcher dispatcher)
+	private ArrayList<HostScheduler> createHostSchedulers(Cluster cluster, final JobDispatcher dispatcher, final SetWaitingQueue distributedWaitingJobs)
 	{
 		return newArrayList(Collections2.transform(cluster.hosts(), new Function<Host, HostScheduler>()
 		{
-
 			@Override
 			public HostScheduler apply(Host host)
 			{
-				return new HostScheduler(host, dispatcher, new LinkedListWaitingQueue());
+				return new HostScheduler(host, dispatcher, new LinkedListWaitingQueue(), distributedWaitingJobs);
 			}
 		}));
 	}
@@ -242,8 +272,8 @@ public class Simulator
 		if (isDistributed())
 		{
 			ArrayList<HostScheduler> hostsSched = hostSchedulers;
-			HostSelector hostSelector1 = new HostSelector(hostsSched);
-			return new ExpandingDistributedScheduler(waitingQueue, hostsSched, hostSelector1, distributedWaitingJobs);
+			// HostSelector hostSelector1 = new HostSelector(hostsSched);
+			return new WaitOnAllHostsDistributedScheduler(waitingQueue, hostsSched, distributedWaitingJobs);
 		}
 		throw new RuntimeException("no scheduler " + getSchedulerProperty());
 	}

@@ -1,12 +1,14 @@
 package sim.distributed;
 
-import java.util.*;
+import java.util.List;
 
-import org.apache.commons.math3.stat.descriptive.rank.*;
-import org.apache.log4j.*;
+import org.apache.commons.math3.stat.descriptive.rank.Percentile;
+import org.apache.log4j.Logger;
 
-import sim.model.*;
-import sim.scheduling.*;
+import sim.model.Job;
+import sim.scheduling.AbstractWaitingQueue;
+import sim.scheduling.Scheduler;
+import sim.scheduling.SetWaitingQueue;
 
 public abstract class DistributedScheduler implements Scheduler
 {
@@ -54,7 +56,7 @@ public abstract class DistributedScheduler implements Scheduler
 		// log.info("schedule - avail-hosts start " + startingHostsCount +
 		// " avail-host end " + currentCycleHosts.size() + " wait-jobs start " +
 		// startingJobsCount
-		log.info(" wait-jobs end " + waitingQueue.size());
+		log.info(" wait-jobs end (should be 0) " + waitingQueue.size());
 		log.info("schedule -  first job " + waitingQueue.peek());
 		int waitingJobsOnHosts = 0;
 		int maximumJobsWaitingPerHost = 0;

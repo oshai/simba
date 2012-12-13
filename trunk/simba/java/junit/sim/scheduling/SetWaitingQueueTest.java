@@ -3,11 +3,11 @@ package sim.scheduling;
 import static junit.framework.Assert.*;
 import static org.mockito.Mockito.*;
 
-import java.util.*;
+import java.util.Iterator;
 
-import org.junit.*;
+import org.junit.Test;
 
-import sim.model.*;
+import sim.model.Job;
 
 public class SetWaitingQueueTest
 {
@@ -17,6 +17,7 @@ public class SetWaitingQueueTest
 		SetWaitingQueue tested = new SetWaitingQueue();
 		Job j = mock(Job.class);
 		tested.add(j);
+		assertTrue(tested.contains(j));
 		assertEquals(1, tested.size());
 		assertEquals(1, tested.collectAdd());
 		assertEquals(0, tested.collectAdd());

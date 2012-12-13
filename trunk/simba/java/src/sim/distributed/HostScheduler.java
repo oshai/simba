@@ -1,22 +1,27 @@
 package sim.distributed;
 
-import java.util.*;
+import java.util.Iterator;
 
-import sim.model.*;
-import sim.scheduling.*;
+import sim.model.Host;
+import sim.model.Job;
+import sim.scheduling.AbstractWaitingQueue;
+import sim.scheduling.JobDispatcher;
+import sim.scheduling.SetWaitingQueue;
 
 public class HostScheduler
 {
 	private final Host host;
 	private final AbstractWaitingQueue waitingJobs;
 	private final JobDispatcher dispatcher;
+	private final SetWaitingQueue distributedWaitingJobs;
 
-	public HostScheduler(Host host, JobDispatcher dispatcher, AbstractWaitingQueue waitingQueue)
+	public HostScheduler(Host host, JobDispatcher dispatcher, AbstractWaitingQueue waitingQueue, SetWaitingQueue distributedWaitingJobs)
 	{
 		super();
 		this.host = host;
 		this.dispatcher = dispatcher;
 		this.waitingJobs = waitingQueue;
+		this.distributedWaitingJobs = distributedWaitingJobs;
 	}
 
 	public void addJob(Job job)
@@ -32,9 +37,10 @@ public class HostScheduler
 		while (iterator.hasNext())
 		{
 			Job job = iterator.next();
-			if (!host.hasPotentialResourceFor(job))
+			if (!host.hasPotentialResourceFor(job) || !distributedWaitingJobs.contains(job))
 			{
 				iterator.remove();
+				continue;
 			}
 			if (host.availableCores() >= job.cores() && host.availableMemory() >= job.memory())
 			{
