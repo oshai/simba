@@ -131,7 +131,7 @@
     	     <report sourcepath="${src_dir}" >
     	         <fileset dir="${coverage.dir}" >
     	             <include name="*.emma" />
-    	         	<include name="coverage.ec" />
+    	         	<include name="coverage.emma" />
     	         </fileset>
     	     	<fileset dir="${basedir}" >
     	     		<include name="coverage.ec" />
