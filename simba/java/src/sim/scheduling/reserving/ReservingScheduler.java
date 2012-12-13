@@ -53,7 +53,7 @@ public class ReservingScheduler implements Scheduler
 		this.dispatcher = dispatcher;
 		this.simbaConfiguration = simbaConfiguration;
 		reservationsSupplier = new ReservationsHolderSupplier(this.simbaConfiguration.reservationsLimit());
-		DUMMY_JOB = Job.builder(1).cores(this.simbaConfiguration.jobCoresRatio() * 0.5).memory(1).build();
+		DUMMY_JOB = Job.builder(1).cores(1).memory(1).build();
 		// log.setLevel(Level.DEBUG);
 	}
 
@@ -140,8 +140,7 @@ public class ReservingScheduler implements Scheduler
 		log.info("=============================================");
 		log.info("schedule took " + (System.currentTimeMillis() - started));
 		log.info("schedule - time " + time + " scheduled jobs " + scheduledJobs + " processed jobs " + processedJobsCount + " skippedJobs " + skippedJobs);
-		log.info("schedule - avail-hosts start " + startingHostsCount + " avail-host end " + currentCycleHosts.size() + " wait-jobs start " + startingJobsCount
-				+ " wait-jobs end " + waitingQueue.size());
+		log.info("schedule - avail-hosts start " + startingHostsCount + " avail-host end " + currentCycleHosts.size() + " wait-jobs start " + startingJobsCount + " wait-jobs end " + waitingQueue.size());
 		log.info("schedule -  first job " + waitingQueue.peek());
 		if (!currentCycleHosts.isEmpty())
 		{
