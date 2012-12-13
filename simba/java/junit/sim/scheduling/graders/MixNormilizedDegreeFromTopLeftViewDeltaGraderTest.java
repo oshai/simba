@@ -28,6 +28,12 @@ public class MixNormilizedDegreeFromTopLeftViewDeltaGraderTest
 		assertTrue(0 < grader.getGrade(host, job));
 	}
 
+	@Test
+	public void testToString()
+	{
+		assertFalse(createGrader().toString().contains("@"));
+	}
+
 	private Grader createGrader()
 	{
 		return new MixNormilizedDegreeFromTopLeftViewDeltaGrader();
