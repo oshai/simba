@@ -1,14 +1,16 @@
 package sim.scheduling;
 
-import java.util.*;
+import java.util.Iterator;
+import java.util.Set;
 
-import sim.model.*;
+import sim.model.Job;
 
-import com.google.common.collect.*;
+import com.google.common.collect.ForwardingIterator;
+import com.google.common.collect.Sets;
 
 public class SetWaitingQueue implements WaitingQueueForStatistics
 {
-	Set<Job> jobs = Sets.<Job> newHashSet();
+	private final Set<Job> jobs = Sets.newHashSet();
 	private int added = 0;
 	private int removed = 0;
 
@@ -72,6 +74,11 @@ public class SetWaitingQueue implements WaitingQueueForStatistics
 			removed++;
 		}
 		return remove;
+	}
+
+	public boolean contains(Job job)
+	{
+		return jobs.contains(job);
 	}
 
 }
