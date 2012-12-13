@@ -1,18 +1,21 @@
 package sim.distributed;
 
-import java.util.*;
+import java.util.Iterator;
+import java.util.List;
 
-import org.apache.commons.math3.stat.descriptive.rank.*;
-import org.apache.log4j.*;
+import org.apache.commons.math3.stat.descriptive.rank.Percentile;
+import org.apache.log4j.Logger;
 
-import sim.model.*;
-import sim.scheduling.*;
+import sim.model.Job;
+import sim.scheduling.AbstractWaitingQueue;
+import sim.scheduling.Scheduler;
+import sim.scheduling.SetWaitingQueue;
 
 public class DistributedScheduler implements Scheduler
 {
 	private static final Logger log = Logger.getLogger(DistributedScheduler.class);
-	public static long VIRUS_TIME = 30;
-	private static double VIRUS_POWER = 2;
+	public static long VIRUS_TIME = 10;
+	public static double VIRUS_POWER = 10;
 	private final AbstractWaitingQueue waitingQueue;
 	private final List<HostScheduler> hostSchedulers;
 	private final HostSelector hostSelector;
@@ -49,7 +52,7 @@ public class DistributedScheduler implements Scheduler
 			long waitingTime = time - job.submitTime();
 			if (waitingTime % VIRUS_TIME == 0)
 			{
-				for (int i = 0; i < Math.pow(VIRUS_POWER, (waitingTime / VIRUS_TIME) - 1); i++)
+				for (int i = 0; i < hostSchedulers.size() && i < Math.pow(VIRUS_POWER, (waitingTime / VIRUS_TIME) - 1); i++)
 				{
 					waitingQueue.add(job);
 				}
