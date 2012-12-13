@@ -127,11 +127,11 @@
 		</junit>
     </target>
     <target name="emma-report">
-    	<emma enabled="true" >
+    	<emma enabled="true" verbosity="verbose" >
     	     <report sourcepath="${src_dir}" >
     	         <fileset dir="${coverage.dir}" >
     	             <include name="*.emma" />
-    	             
+    	         	<include name="coverage.ec" />
     	         </fileset>
     	     	<fileset dir="${basedir}" >
     	     		<include name="coverage.ec" />
