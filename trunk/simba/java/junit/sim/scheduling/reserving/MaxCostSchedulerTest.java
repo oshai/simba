@@ -23,7 +23,8 @@ public class MaxCostSchedulerTest
 	@Test(expected = IllegalArgumentException.class)
 	public void testEmpty() throws Exception
 	{
-		new MaxCostScheduler(null, null, null, null, mock(SimbaConfiguration.class), Lists.<ReservingScheduler> newArrayList(), new SimpleScheduleCalculator());
+		List<ReservingScheduler> schedulers = Lists.<ReservingScheduler> newArrayList();
+		createSchduler(schedulers);
 	}
 
 	@Test
@@ -32,8 +33,20 @@ public class MaxCostSchedulerTest
 		Map<Job, Host> map = newHashMap();
 		map.put(Job.builder(1).cost(1).build(), null);
 		List<ReservingScheduler> schedulers = newArrayList(createScheduler(map));
-		MaxCostScheduler tested = new MaxCostScheduler(null, null, null, null, mock(SimbaConfiguration.class), schedulers, new SimpleScheduleCalculator());
+		MaxCostScheduler tested = createSchduler(schedulers);
 		assertEquals(map, tested.selectJobsToDispatch(0));
+	}
+
+	private MaxCostScheduler createSchduler(List<ReservingScheduler> schedulers)
+	{
+		MaxCostScheduler tested = new MaxCostScheduler(null, null, null, null, mock(SimbaConfiguration.class), schedulers, new SimpleScheduleCalculator(), new IMaxCostCollector()
+		{
+			@Override
+			public void collect(long time, Iterable<ScheduleCostResult> results)
+			{
+			}
+		});
+		return tested;
 	}
 
 	@Test
@@ -45,7 +58,7 @@ public class MaxCostSchedulerTest
 		map2.put(Job.builder(1).cost(1).build(), null);
 		map2.put(Job.builder(1).cost(1).build(), null);
 		List<ReservingScheduler> schedulers = newArrayList(createScheduler(map), createScheduler(map2));
-		MaxCostScheduler tested = new MaxCostScheduler(null, null, null, null, mock(SimbaConfiguration.class), schedulers, new SimpleScheduleCalculator());
+		MaxCostScheduler tested = createSchduler(schedulers);
 		assertEquals(map2, tested.selectJobsToDispatch(0));
 	}
 

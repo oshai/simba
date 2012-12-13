@@ -2,14 +2,12 @@ package sim.scheduling.reserving;
 
 import java.util.Map;
 
-import org.apache.commons.math3.util.Pair;
-
 import sim.model.Host;
 import sim.model.Job;
 
 import com.google.common.base.Function;
 
-public class CalculateScheduleFunction implements Function<ReservingScheduler, Pair<String, Map<Job, Host>>>
+public class CalculateScheduleFunction implements Function<ReservingScheduler, ScheduleCostResult>
 {
 	private final long time;
 
@@ -19,8 +17,20 @@ public class CalculateScheduleFunction implements Function<ReservingScheduler, P
 	}
 
 	@Override
-	public Pair<String, Map<Job, Host>> apply(ReservingScheduler sched)
+	public ScheduleCostResult apply(ReservingScheduler sched)
 	{
-		return new Pair<String, Map<Job, Host>>(sched.grader().toString(), sched.scheduleWithoutDispatch(time));
+		Map<Job, Host> map = sched.scheduleWithoutDispatch(time);
+		double cost = calcCost(map);
+		return new ScheduleCostResult(sched.grader().toString(), cost, map);
+	}
+
+	private double calcCost(Map<Job, Host> current)
+	{
+		double $ = 0;
+		for (Job job : current.keySet())
+		{
+			$ += job.cost();
+		}
+		return $;
 	}
 }

@@ -1,11 +1,8 @@
 package sim.scheduling.reserving;
 
-import static com.google.common.collect.Maps.*;
-
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.math3.util.Pair;
 import org.apache.log4j.Logger;
 
 import sim.SimbaConfiguration;
@@ -22,54 +19,44 @@ public class MaxCostScheduler extends ReservingScheduler implements Scheduler
 	private static final Logger log = Logger.getLogger(MaxCostScheduler.class);
 	private final List<ReservingScheduler> schedulers;
 	private final ScheduleCalculator scheduleCalculator;
+	private final IMaxCostCollector maxCostCollector;
 
-	public MaxCostScheduler(AbstractWaitingQueue waitingQueue, Cluster cluster, Grader grader, JobDispatcher dispatcher, SimbaConfiguration simbaConfiguration,
-			List<ReservingScheduler> schedulers, ScheduleCalculator scheduleCalculator)
+	public MaxCostScheduler(AbstractWaitingQueue waitingQueue, Cluster cluster, Grader grader, JobDispatcher dispatcher, SimbaConfiguration simbaConfiguration, List<ReservingScheduler> schedulers, ScheduleCalculator scheduleCalculator, IMaxCostCollector maxCostCollector)
 	{
 		super(waitingQueue, cluster, grader, dispatcher, simbaConfiguration);
 		this.schedulers = schedulers;
 		this.scheduleCalculator = scheduleCalculator;
+		this.maxCostCollector = maxCostCollector;
 		if (schedulers.isEmpty())
 		{
 			throw new IllegalArgumentException("must have at least one scheduler");
 		}
 	}
 
+	@SuppressWarnings("null")
 	@Override
 	protected Map<Job, Host> selectJobsToDispatch(long time)
 	{
-		Map<Job, Host> $ = newHashMap();
-		double maxCost = -1;
-		String maxScheduler = null;
-		Iterable<Pair<String, Map<Job, Host>>> scheduleResults = scheduleCalculator.calculateSchedule(schedulers, time);
-		for (Pair<String, Map<Job, Host>> current : scheduleResults)
+		ScheduleCostResult winner = null;
+		Iterable<ScheduleCostResult> scheduleResults = scheduleCalculator.calculateSchedule(schedulers, time);
+		for (ScheduleCostResult current : scheduleResults)
 		{
-			double currentCost = calcCost(current.getValue());
+			double currentCost = current.cost;
 			if (shouldReport(time))
 			{
-				log.info("algo " + current.getKey() + " cost " + currentCost + " jobs " + current.getValue().size());
+				log.info("algo " + current.algorithmName + " cost " + Math.round(currentCost) + " jobs " + current.shceduledJobsToHost.size());
 			}
-			if (currentCost > maxCost)
+			if (winner == null || currentCost > winner.cost)
 			{
-				$ = current.getValue();
-				maxCost = currentCost;
-				maxScheduler = current.getKey();
+				winner = current;
 			}
 		}
 		if (shouldReport(time))
 		{
-			log.info("selected scheduler " + maxScheduler);
+			log.info("selected scheduler " + winner.algorithmName);
 		}
-		return $;
+		maxCostCollector.collect(time, scheduleResults);
+		return winner.shceduledJobsToHost;
 	}
 
-	private double calcCost(Map<Job, Host> current)
-	{
-		double $ = 0;
-		for (Job job : current.keySet())
-		{
-			$ += job.cost();
-		}
-		return $;
-	}
 }
