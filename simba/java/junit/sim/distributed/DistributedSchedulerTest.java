@@ -4,14 +4,16 @@ import static com.google.common.collect.Lists.*;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
-import org.junit.*;
+import org.junit.Test;
 
-import sim.model.*;
-import sim.scheduling.*;
+import sim.model.Job;
+import sim.scheduling.LinkedListWaitingQueue;
+import sim.scheduling.SetWaitingQueue;
 
-import com.google.common.collect.*;
+import com.google.common.collect.Lists;
 
 public class DistributedSchedulerTest
 {
@@ -90,25 +92,19 @@ public class DistributedSchedulerTest
 		LinkedListWaitingQueue waitingQueue = new LinkedListWaitingQueue();
 		Job job = Job.builder(100).submitTime(time).build();
 		SetWaitingQueue distributedWaitingJobs = createDitributedWaitingQueue(job);
-		DistributedScheduler tested = createScheduler(waitingQueue, Lists.<HostScheduler> newArrayList(), mock(HostSelector.class), distributedWaitingJobs);
+		DistributedScheduler tested = createScheduler(waitingQueue, createHostSchedulers(15), mock(HostSelector.class), distributedWaitingJobs);
 		tested.schedule(time + DistributedScheduler.VIRUS_TIME);
 		assertTrue(waitingQueue.contains(job));
 	}
 
-	@Test
-	public void testVirusJobShouldWaitOn2Hosts() throws Exception
+	private ArrayList<HostScheduler> createHostSchedulers(int size)
 	{
-		int time = 7;
-		LinkedListWaitingQueue waitingQueue = new LinkedListWaitingQueue();
-		Job job = Job.builder(100).submitTime(time).build();
-		SetWaitingQueue distributedWaitingJobs = createDitributedWaitingQueue(job);
-		DistributedScheduler tested = createScheduler(waitingQueue, Lists.<HostScheduler> newArrayList(), mock(HostSelector.class), distributedWaitingJobs);
-		tested.schedule(time + 2 * DistributedScheduler.VIRUS_TIME);
-		assertEquals(job, waitingQueue.remove());
-		assertEquals(job, waitingQueue.remove());
-		assertTrue(waitingQueue.isEmpty());
-		distributedWaitingJobs.remove(job);
-		assertEquals(0, distributedWaitingJobs.size());
+		ArrayList<HostScheduler> $ = Lists.<HostScheduler> newArrayList();
+		for (int i = 0; i < size; i++)
+		{
+			$.add(mock(HostScheduler.class));
+		}
+		return $;
 	}
 
 	@Test
@@ -118,9 +114,22 @@ public class DistributedSchedulerTest
 		LinkedListWaitingQueue waitingQueue = new LinkedListWaitingQueue();
 		Job job = Job.builder(100).submitTime(time).build();
 		SetWaitingQueue distributedWaitingJobs = createDitributedWaitingQueue(job);
-		DistributedScheduler tested = createScheduler(waitingQueue, Lists.<HostScheduler> newArrayList(), mock(HostSelector.class), distributedWaitingJobs);
+		int pow = (int) Math.pow(DistributedScheduler.VIRUS_POWER, 3);
+		DistributedScheduler tested = createScheduler(waitingQueue, createHostSchedulers(pow + 5), mock(HostSelector.class), distributedWaitingJobs);
 		tested.schedule(time + 4 * DistributedScheduler.VIRUS_TIME);
-		assertEquals(8, waitingQueue.size());
+		assertEquals(pow, waitingQueue.size());
+	}
+
+	@Test
+	public void testVirusJobShouldNotWaitOnMoreThanConfiguredHostsWaitOn8Hosts() throws Exception
+	{
+		int time = 7;
+		LinkedListWaitingQueue waitingQueue = new LinkedListWaitingQueue();
+		Job job = Job.builder(100).submitTime(time).build();
+		SetWaitingQueue distributedWaitingJobs = createDitributedWaitingQueue(job);
+		DistributedScheduler tested = createScheduler(waitingQueue, createHostSchedulers(0), mock(HostSelector.class), distributedWaitingJobs);
+		tested.schedule(time + 4 * DistributedScheduler.VIRUS_TIME);
+		assertEquals(0, waitingQueue.size());
 	}
 
 	private SetWaitingQueue createDitributedWaitingQueue(Job job)
