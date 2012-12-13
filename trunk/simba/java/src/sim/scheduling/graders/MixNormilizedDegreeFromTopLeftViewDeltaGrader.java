@@ -15,4 +15,9 @@ public class MixNormilizedDegreeFromTopLeftViewDeltaGrader implements Grader
 		return Math.atan((normalizedAvailableMemory + gap) / normalizedAvailableCores);
 	}
 
+	@Override
+	public String toString()
+	{
+		return getClass().getSimpleName();
+	}
 }
