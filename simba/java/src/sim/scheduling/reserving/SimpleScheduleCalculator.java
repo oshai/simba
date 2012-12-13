@@ -1,17 +1,13 @@
 package sim.scheduling.reserving;
 
-import java.util.*;
+import java.util.List;
 
-import org.apache.commons.math3.util.*;
-
-import sim.model.*;
-
-import com.google.common.collect.*;
+import com.google.common.collect.Iterables;
 
 public class SimpleScheduleCalculator implements ScheduleCalculator
 {
 	@Override
-	public Iterable<Pair<String, Map<Job, Host>>> calculateSchedule(List<ReservingScheduler> schedulers2, final long time)
+	public Iterable<ScheduleCostResult> calculateSchedule(List<ReservingScheduler> schedulers2, final long time)
 	{
 		return Iterables.transform(schedulers2, new CalculateScheduleFunction(time));
 	}
