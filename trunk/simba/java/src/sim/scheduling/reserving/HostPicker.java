@@ -29,6 +29,10 @@ public class HostPicker
 		for (Host host : currentCycleHosts)
 		{
 			maxAvailableMemory = reservingSchedulerUtils.updateMaxAvailableMemory(host, maxAvailableMemory);
+			if (!host.hasPotentialResourceFor(job))
+			{
+				continue;
+			}
 			double grade = grader.getGrade(host, job);
 			if (null == selectedHost)
 			{
@@ -44,11 +48,9 @@ public class HostPicker
 				}
 				// else grade lower
 			}
-			else if (!isAvailable)
-			// and current host also not available
+			else if (!isAvailable) // and current host also not available
 			{
-				// TODO check for job that cannot run on the machine
-				// TODO change to grader 2
+				// optionally - change to grader 2
 				// select host with more available memory
 				double hostAvailable = reservingSchedulerUtils.availableMemory(host);
 				double selectedHostAvailable = reservingSchedulerUtils.availableMemory(selectedHost);
@@ -56,10 +58,7 @@ public class HostPicker
 				{
 					selectedHost = host;
 				}
-				// TODO add test for this case
 			}
-			// else selectedHost is available and this host not
-			// TODO check this ???
 		}
 		return selectedHost;
 	}

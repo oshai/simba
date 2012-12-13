@@ -3,15 +3,17 @@ package sim.scheduling;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
-import java.util.*;
+import java.util.Iterator;
 
-import org.junit.*;
+import org.junit.Test;
 
-import sim.*;
-import sim.event_handling.*;
-import sim.model.*;
-import sim.scheduling.graders.*;
-import sim.scheduling.reserving.*;
+import sim.ForTestingSimbaConfiguration;
+import sim.event_handling.EventQueue;
+import sim.model.Cluster;
+import sim.model.Host;
+import sim.model.Job;
+import sim.scheduling.graders.Grader;
+import sim.scheduling.reserving.ReservingScheduler;
 
 public class ReservingSchedulerTest
 {
@@ -105,6 +107,7 @@ public class ReservingSchedulerTest
 		when(host.availableMemory()).thenReturn(1.0);
 		when(host.availableCores()).thenReturn(1.0);
 		when(host.hasAvailableResourcesFor(job)).thenReturn(true);
+		when(host.hasPotentialResourceFor(job)).thenReturn(true);
 		return host;
 	}
 
