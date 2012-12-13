@@ -120,11 +120,7 @@ public class Simulator
 	{
 		EventQueue eventQueue = injector.getInstance(EventQueue.class);
 		Event event = eventQueue.peek();
-		long time = 0;
-		if (null != event && !submitImmediately())
-		{
-			time = event.time() - 1;
-		}
+		long time = event.time() - 1;
 		log.info("execute() - simulation starting clock (epoc): " + time);
 		injector.getInstance(Clock.class).time(time);
 		return eventQueue;
@@ -207,10 +203,6 @@ public class Simulator
 		WaitingQueueForStatistics waitingQueueForStatistics = isDistributed() ? distributedWaitingJobs : waitingQueue;
 		log.info("wait queue is " + waitingQueueForStatistics.getClass().getSimpleName());
 		WaitingQueueStatistics waitingQueueStatistics = new WaitingQueueStatistics(waitingQueueForStatistics, Integer.MAX_VALUE, clock);
-		if (submitImmediately())
-		{
-			moveJobsToWaitQueue(eventQueue, waitingQueue);
-		}
 		Scheduler scheduler = createSchduler(cluster, grader, dispatcher, waitingQueue, hostSchedulers, distributedWaitingJobs);
 		log.info("createLooper() - scheduler is " + scheduler.getClass().getSimpleName());
 		JobCollector jobCollector = new JobCollector();
@@ -267,17 +259,7 @@ public class Simulator
 		}
 		if ("max-cost".equals(getSchedulerProperty()))
 		{
-			List<ReservingScheduler> l = newArrayList(
-					new ReservingScheduler(waitingQueue, cluster, getGraderForName("BF"), dispatcher, getConfiguration()), 
-					new ReservingScheduler(waitingQueue, cluster, getGraderForName("WF"), dispatcher, getConfiguration()), 
-					new ReservingScheduler(waitingQueue, cluster, getGraderForName("MF"), dispatcher, getConfiguration()), 
-					new ReservingScheduler(waitingQueue, cluster, getGraderForName("FF"), dispatcher, getConfiguration()), 
-					new ReservingScheduler(waitingQueue, cluster, getGraderForName("NF"), dispatcher, getConfiguration()), 
-					new ReservingScheduler(waitingQueue, cluster, getGraderForName("MF3"), dispatcher, getConfiguration()), 
-					new ReservingScheduler(waitingQueue, cluster, getGraderForName("MF4"), dispatcher, getConfiguration()), 
-					new ReservingScheduler(waitingQueue, cluster, getGraderForName("MF6"), dispatcher, getConfiguration()), 
-					new ReservingScheduler(waitingQueue, cluster, getGraderForName("SMF"), dispatcher, getConfiguration()), 
-					new ReservingScheduler(waitingQueue, cluster, getGraderForName("RF"), dispatcher, getConfiguration()));
+			List<ReservingScheduler> l = newArrayList(new ReservingScheduler(waitingQueue, cluster, getGraderForName("BF"), dispatcher, getConfiguration()), new ReservingScheduler(waitingQueue, cluster, getGraderForName("WF"), dispatcher, getConfiguration()), new ReservingScheduler(waitingQueue, cluster, getGraderForName("MF"), dispatcher, getConfiguration()), new ReservingScheduler(waitingQueue, cluster, getGraderForName("FF"), dispatcher, getConfiguration()), new ReservingScheduler(waitingQueue, cluster, getGraderForName("NF"), dispatcher, getConfiguration()), new ReservingScheduler(waitingQueue, cluster, getGraderForName("MF3"), dispatcher, getConfiguration()), new ReservingScheduler(waitingQueue, cluster, getGraderForName("MF4"), dispatcher, getConfiguration()), new ReservingScheduler(waitingQueue, cluster, getGraderForName("MF6"), dispatcher, getConfiguration()), new ReservingScheduler(waitingQueue, cluster, getGraderForName("SMF"), dispatcher, getConfiguration()), new ReservingScheduler(waitingQueue, cluster, getGraderForName("RF"), dispatcher, getConfiguration()));
 			return new MaxCostScheduler(waitingQueue, cluster, grader, dispatcher, getConfiguration(), l, new ParallelScheduleCalculator(), new MaxCostCollector());
 		}
 		if (isDistributed())
@@ -292,16 +274,6 @@ public class Simulator
 	private boolean isDistributed()
 	{
 		return "distributed".equals(getSchedulerProperty());
-	}
-
-	private boolean submitImmediately()
-	{
-		return "immediately".equalsIgnoreCase(getSubmitProperty());
-	}
-
-	private String getSubmitProperty()
-	{
-		return System.getProperty("submit");
 	}
 
 	private void moveJobsToWaitQueue(EventQueue eventQueue, AbstractWaitingQueue waitingQueue)

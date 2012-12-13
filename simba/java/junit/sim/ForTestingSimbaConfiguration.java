@@ -61,4 +61,10 @@ public class ForTestingSimbaConfiguration implements SimbaConfiguration
 	{
 		return Integer.MAX_VALUE;
 	}
+
+	@Override
+	public double submitRatio()
+	{
+		return 1;
+	}
 }
