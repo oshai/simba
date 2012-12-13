@@ -1,9 +1,11 @@
-package sim.scheduling;
+package sim.distributed;
 
 import java.util.Iterator;
 
 import sim.model.Host;
 import sim.model.Job;
+import sim.scheduling.AbstractWaitingQueue;
+import sim.scheduling.JobDispatcher;
 
 public class HostScheduler
 {

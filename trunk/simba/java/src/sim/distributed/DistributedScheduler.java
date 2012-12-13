@@ -1,17 +1,12 @@
 package sim.distributed;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
-import org.apache.commons.math3.stat.descriptive.rank.Percentile;
-import org.apache.log4j.Logger;
+import org.apache.commons.math3.stat.descriptive.rank.*;
+import org.apache.log4j.*;
 
-import sim.model.Job;
-import sim.scheduling.AbstractWaitingQueue;
-import sim.scheduling.HostScheduler;
-import sim.scheduling.HostSelector;
-import sim.scheduling.Scheduler;
+import sim.model.*;
+import sim.scheduling.*;
 
 public class DistributedScheduler implements Scheduler
 {
@@ -21,10 +16,9 @@ public class DistributedScheduler implements Scheduler
 	private final AbstractWaitingQueue waitingQueue;
 	private final List<HostScheduler> hostSchedulers;
 	private final HostSelector hostSelector;
-	private Set<Job> distributedWaitingJobs;
+	private SetWaitingQueue distributedWaitingJobs;
 
-	public DistributedScheduler(AbstractWaitingQueue waitingQueue, List<HostScheduler> hostSchedulers, HostSelector hostSelector,
-			Set<Job> distributedWaitingJobs)
+	public DistributedScheduler(AbstractWaitingQueue waitingQueue, List<HostScheduler> hostSchedulers, HostSelector hostSelector, SetWaitingQueue distributedWaitingJobs)
 	{
 		super();
 		this.waitingQueue = waitingQueue;
@@ -87,8 +81,10 @@ public class DistributedScheduler implements Scheduler
 			minimumJobsWaitingPerHost = Math.min(w, minimumJobsWaitingPerHost);
 			waitingJobsOnHosts += w;
 		}
+		// TODO write how many on each host without duplication
 		int averageJobsWaitingPerHost = waitingJobsOnHosts / hostSchedulers.size();
 		log.info(" wait-jobs on hosts end " + waitingJobsOnHosts);
+		log.info(" wait-jobs on hosts end without duplication " + distributedWaitingJobs.size());
 		log.info(" max jobs waiting per host " + maximumJobsWaitingPerHost);
 		log.info(" min jobs waiting per host " + minimumJobsWaitingPerHost);
 		log.info(" averageJobsWaitingPerHost " + averageJobsWaitingPerHost);

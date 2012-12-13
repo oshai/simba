@@ -12,6 +12,6 @@
 	<classpathentry kind="lib" path="libs/aopalliance.jar"/>
 	<classpathentry kind="lib" path="libs/guice-3.0.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
-	<classpathentry exported="true" kind="lib" path="/common/java/external_jars/guice/guice-3.0/guice-assistedinject-3.0.jar" sourcepath="/common/java/external_jars/guice/guice-3.0-src"/>
+	<classpathentry kind="lib" path="libs/guice-assistedinject-3.0.jar"/>
 	<classpathentry kind="output" path="compiled_classes"/>
 </classpath>

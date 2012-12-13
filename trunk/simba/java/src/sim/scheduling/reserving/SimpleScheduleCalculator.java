@@ -1,15 +1,12 @@
 package sim.scheduling.reserving;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-import org.apache.commons.math3.util.Pair;
+import org.apache.commons.math3.util.*;
 
-import sim.model.Host;
-import sim.model.Job;
+import sim.model.*;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Iterables;
+import com.google.common.collect.*;
 
 public class SimpleScheduleCalculator implements ScheduleCalculator
 {

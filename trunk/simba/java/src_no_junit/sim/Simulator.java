@@ -2,61 +2,27 @@ package sim;
 
 import static com.google.common.collect.Lists.*;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
+import java.util.*;
+import java.util.concurrent.*;
 
-import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
+import org.apache.log4j.*;
 
-import sim.collectors.IntervalCollector;
-import sim.collectors.JobCollector;
-import sim.collectors.WaitingQueueStatistics;
-import sim.configuration.DistributedSimulationConfiguration;
-import sim.configuration.ProductionSimbaConfiguration;
+import sim.collectors.*;
+import sim.configuration.*;
 import sim.configuration.ProductionSimbaConfiguration.LooperFactory;
-import sim.distributed.DistributedJobDispatcher;
-import sim.distributed.DistributedScheduler;
-import sim.event_handling.EventQueue;
-import sim.events.Event;
-import sim.events.Submit;
-import sim.model.Cluster;
-import sim.model.Host;
-import sim.model.Job;
-import sim.parsers.HostParser;
-import sim.parsers.JobParser;
-import sim.scheduling.AbstractWaitingQueue;
-import sim.scheduling.AggregatedWaitingQueue;
-import sim.scheduling.ByTraceScheduler;
-import sim.scheduling.HostScheduler;
-import sim.scheduling.HostSelector;
-import sim.scheduling.JobDispatcher;
-import sim.scheduling.LinkedListWaitingQueue;
-import sim.scheduling.Scheduler;
-import sim.scheduling.SimpleScheduler;
-import sim.scheduling.SortedWaitingQueue;
-import sim.scheduling.WaitingQueueForStatistics;
-import sim.scheduling.graders.AvailableMemoryGrader;
-import sim.scheduling.graders.Constant;
-import sim.scheduling.graders.Grader;
-import sim.scheduling.graders.RandomGrader;
-import sim.scheduling.graders.ThrowingExceptionGrader;
-import sim.scheduling.matchers.GradeMatcher;
-import sim.scheduling.matchers.GradeMatcherProvider;
-import sim.scheduling.reserving.MaxCostScheduler;
-import sim.scheduling.reserving.ReservingScheduler;
+import sim.distributed.*;
+import sim.event_handling.*;
+import sim.events.*;
+import sim.model.*;
+import sim.parsers.*;
+import sim.scheduling.*;
+import sim.scheduling.graders.*;
+import sim.scheduling.matchers.*;
+import sim.scheduling.reserving.*;
 
-import com.google.common.base.Function;
-import com.google.common.base.Stopwatch;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
+import com.google.common.base.*;
+import com.google.common.collect.*;
+import com.google.inject.*;
 
 public class Simulator
 {
@@ -200,13 +166,13 @@ public class Simulator
 			waitingQueue = new SortedWaitingQueue();
 		}
 		ArrayList<HostScheduler> hostSchedulers = null;
-		HashSet<Job> distributedWaitingJobs = Sets.<Job> newHashSet();
+		SetWaitingQueue distributedWaitingJobs = new SetWaitingQueue();
 		if (isDistributed())
 		{
 			dispatcher = new DistributedJobDispatcher(eventQueue, distributedWaitingJobs);
 			hostSchedulers = createHostSchedulers(cluster, dispatcher);
 		}
-		WaitingQueueForStatistics waitingQueueForStatistics = isDistributed() ? createAggregatedWaitingQueue(hostSchedulers) : waitingQueue;
+		WaitingQueueForStatistics waitingQueueForStatistics = isDistributed() ? distributedWaitingJobs : waitingQueue;
 		log.info("wait queue is " + waitingQueueForStatistics.getClass().getSimpleName());
 		WaitingQueueStatistics waitingQueueStatistics = new WaitingQueueStatistics(waitingQueueForStatistics, Integer.MAX_VALUE, clock);
 		if (submitImmediately())
@@ -225,11 +191,6 @@ public class Simulator
 		// // waitingQueue, scheduler,
 		// hostCollector, jobFinisher);
 		return looper;
-	}
-
-	private WaitingQueueForStatistics createAggregatedWaitingQueue(ArrayList<HostScheduler> hostSchedulers)
-	{
-		return new AggregatedWaitingQueue(hostSchedulers);
 	}
 
 	private ArrayList<HostScheduler> createHostSchedulers(Cluster cluster, final JobDispatcher dispatcher)
@@ -255,8 +216,7 @@ public class Simulator
 		return "sorted".equals(getWaitingQueueProperty());
 	}
 
-	private Scheduler createSchduler(Cluster cluster, Grader grader, final JobDispatcher dispatcher, AbstractWaitingQueue waitingQueue,
-			ArrayList<HostScheduler> hostSchedulers, HashSet<Job> distributedWaitingJobs)
+	private Scheduler createSchduler(Cluster cluster, Grader grader, final JobDispatcher dispatcher, AbstractWaitingQueue waitingQueue, ArrayList<HostScheduler> hostSchedulers, SetWaitingQueue distributedWaitingJobs)
 	{
 		if (isSortedWaitingQueue())
 		{
@@ -276,17 +236,7 @@ public class Simulator
 		}
 		if ("max-cost".equals(getSchedulerProperty()))
 		{
-			List<ReservingScheduler> l = newArrayList(
-					new ReservingScheduler(waitingQueue, cluster, getGraderForName("BF"), dispatcher, getConfiguration()),
-					new ReservingScheduler(waitingQueue, cluster, getGraderForName("WF"), dispatcher, getConfiguration()),
-					new ReservingScheduler(waitingQueue, cluster, getGraderForName("MF"), dispatcher, getConfiguration()),
-					new ReservingScheduler(waitingQueue, cluster, getGraderForName("FF"), dispatcher, getConfiguration()),
-					new ReservingScheduler(waitingQueue, cluster, getGraderForName("NF"), dispatcher, getConfiguration()),
-					new ReservingScheduler(waitingQueue, cluster, getGraderForName("MF3"), dispatcher, getConfiguration()),
-					new ReservingScheduler(waitingQueue, cluster, getGraderForName("MF4"), dispatcher, getConfiguration()),
-					new ReservingScheduler(waitingQueue, cluster, getGraderForName("MF6"), dispatcher, getConfiguration()),
-					new ReservingScheduler(waitingQueue, cluster, getGraderForName("SMF"), dispatcher, getConfiguration()),
-					new ReservingScheduler(waitingQueue, cluster, getGraderForName("RF"), dispatcher, getConfiguration()));
+			List<ReservingScheduler> l = newArrayList(new ReservingScheduler(waitingQueue, cluster, getGraderForName("BF"), dispatcher, getConfiguration()), new ReservingScheduler(waitingQueue, cluster, getGraderForName("WF"), dispatcher, getConfiguration()), new ReservingScheduler(waitingQueue, cluster, getGraderForName("MF"), dispatcher, getConfiguration()), new ReservingScheduler(waitingQueue, cluster, getGraderForName("FF"), dispatcher, getConfiguration()), new ReservingScheduler(waitingQueue, cluster, getGraderForName("NF"), dispatcher, getConfiguration()), new ReservingScheduler(waitingQueue, cluster, getGraderForName("MF3"), dispatcher, getConfiguration()), new ReservingScheduler(waitingQueue, cluster, getGraderForName("MF4"), dispatcher, getConfiguration()), new ReservingScheduler(waitingQueue, cluster, getGraderForName("MF6"), dispatcher, getConfiguration()), new ReservingScheduler(waitingQueue, cluster, getGraderForName("SMF"), dispatcher, getConfiguration()), new ReservingScheduler(waitingQueue, cluster, getGraderForName("RF"), dispatcher, getConfiguration()));
 			return new MaxCostScheduler(waitingQueue, cluster, grader, dispatcher, getConfiguration(), l, new ParallelScheduleCalculator());
 		}
 		if (isDistributed())

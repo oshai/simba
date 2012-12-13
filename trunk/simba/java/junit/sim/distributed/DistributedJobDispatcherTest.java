@@ -4,16 +4,12 @@ import static org.junit.Assert.*;
 import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.*;
 
-import java.util.Set;
+import org.junit.*;
 
-import org.junit.Test;
-
-import sim.event_handling.EventQueue;
-import sim.events.Event;
-import sim.model.Host;
-import sim.model.Job;
-
-import com.google.common.collect.Sets;
+import sim.event_handling.*;
+import sim.events.*;
+import sim.model.*;
+import sim.scheduling.*;
 
 public class DistributedJobDispatcherTest
 {
@@ -22,21 +18,27 @@ public class DistributedJobDispatcherTest
 	public void testShoudBeDsipatched() throws Exception
 	{
 		Job job = Job.builder(100).build();
-		Set<Job> jobs = Sets.newHashSet(job);
+		SetWaitingQueue jobs = new SetWaitingQueue();
+		jobs.add(job);
 		EventQueue eq = mock(EventQueue.class);
-		DistributedJobDispatcher tested = new DistributedJobDispatcher(eq, jobs);
+		DistributedJobDispatcher tested = createTested(jobs, eq);
 		tested.dispatch(job, mock(Host.class), 0);
 		verify(eq).add(any(Event.class));
-		assertTrue(jobs.isEmpty());
+		assertEquals(0, jobs.size());
+	}
+
+	private DistributedJobDispatcher createTested(SetWaitingQueue jobs, EventQueue eq)
+	{
+		return new DistributedJobDispatcher(eq, jobs);
 	}
 
 	@Test
 	public void testShoudNotBeDsipatchedIfNotInQueue() throws Exception
 	{
 		Job job = Job.builder(100).build();
-		Set<Job> jobs = Sets.newHashSet();
+		SetWaitingQueue jobs = new SetWaitingQueue();
 		EventQueue eq = mock(EventQueue.class);
-		DistributedJobDispatcher tested = new DistributedJobDispatcher(eq, jobs);
+		DistributedJobDispatcher tested = createTested(jobs, eq);
 		tested.dispatch(job, mock(Host.class), 0);
 		verify(eq, never()).add(any(Event.class));
 	}

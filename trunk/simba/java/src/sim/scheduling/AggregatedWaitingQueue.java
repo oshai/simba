@@ -1,11 +1,11 @@
 package sim.scheduling;
 
-import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.*;
 
-import sim.model.Job;
+import sim.distributed.*;
+import sim.model.*;
 
-import com.google.common.collect.Lists;
+import com.google.common.collect.*;
 
 public class AggregatedWaitingQueue implements WaitingQueueForStatistics
 {

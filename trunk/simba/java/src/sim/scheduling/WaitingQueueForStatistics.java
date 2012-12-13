@@ -1,13 +1,9 @@
 package sim.scheduling;
 
-import java.util.Iterator;
+import sim.model.*;
 
-import sim.model.Job;
-
-public interface WaitingQueueForStatistics
+public interface WaitingQueueForStatistics extends Iterable<Job>
 {
-
-	Iterator<Job> iterator();
 
 	int collectRemove();
 
