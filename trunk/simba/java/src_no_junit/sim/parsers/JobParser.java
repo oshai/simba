@@ -91,7 +91,7 @@ public class JobParser
 					}
 					updateRunTimeBuckets(length);
 					updateMemoryBuckets(memory);
-					long submitTime = l(cols.get(index_iterationsubmittime));
+					long submitTime = Math.round(simbaConfiguration.submitRatio() * l(cols.get(index_iterationsubmittime)));
 					if (simbaConfiguration.isBucketSimulation())
 					{
 						submitTime = submitTime / simbaConfiguration.bucketSize() * simbaConfiguration.bucketSize();
@@ -102,8 +102,7 @@ public class JobParser
 						parallel++;
 						drop = true;
 					}
-					Job job = Job.builder(length).id(id).cost(d(cols.get(index_cost))).priority(submitTime).submitTime(submitTime).cores(cores).memory(memory)
-							.startTime(l(cols.get(index_startttime))).build();
+					Job job = Job.builder(length).id(id).cost(d(cols.get(index_cost))).priority(submitTime).submitTime(submitTime).cores(cores).memory(memory).startTime(l(cols.get(index_startttime))).build();
 					if (canRun(job) && !drop)
 					{
 						eventQueue.add(new Submit(job));

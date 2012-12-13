@@ -21,4 +21,6 @@ public interface SimbaConfiguration
 	public boolean isActualCoreUsageSimulation();
 
 	public int jobsCheckedBySchduler();
+
+	double submitRatio();
 }

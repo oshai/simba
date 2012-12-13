@@ -22,6 +22,7 @@ public class ProductionSimbaConfiguration extends AbstractModule implements Modu
 	private final double memoryRatio = Double.valueOf(System.getProperty("host-memory-multiplier", "1.0"));
 	private final double coreRatio = Double.valueOf(System.getProperty("cores-ratio", "1.0"));
 	private final double machineDropRatio = Double.valueOf(System.getProperty("machine-drop-ratio", "1.0"));
+	private final double submitRatio = Double.valueOf(System.getProperty("submit-ratio", "1.0"));
 	private int bucketSize = 10800;
 	private long timeToLog = 60 * 60 * 24;// 1 day
 	private int timeToSchedule = 10;
@@ -43,8 +44,7 @@ public class ProductionSimbaConfiguration extends AbstractModule implements Modu
 
 	public interface LooperFactory
 	{
-		Looper create(Clock clock, EventQueue eventQueue, AbstractWaitingQueue waitingQueue, Scheduler scheduler, IntervalCollector hostCollector,
-				JobFinisher jobFinisher);
+		Looper create(Clock clock, EventQueue eventQueue, AbstractWaitingQueue waitingQueue, Scheduler scheduler, IntervalCollector hostCollector, JobFinisher jobFinisher);
 	}
 
 	public boolean isBucketSimulation()
@@ -107,12 +107,15 @@ public class ProductionSimbaConfiguration extends AbstractModule implements Modu
 	}
 
 	@Override
+	public double submitRatio()
+	{
+		return submitRatio;
+	}
+
+	@Override
 	public String toString()
 	{
-		return getClass().getSimpleName() + " [isBucketSimulation()=" + isBucketSimulation() + ", bucketSize()=" + bucketSize() + ", timeToSchedule()="
-				+ timeToSchedule() + ", timeToLog()=" + timeToLog() + ", jobCoresRatio()=" + jobCoresRatio() + ", machineDropRatio()=" + machineDropRatio()
-				+ ", hostMemoryRatio()=" + hostMemoryRatio() + ", reservationsLimit()=" + reservationsLimit() + ", isActualCoreUsageSimulation()="
-				+ isActualCoreUsageSimulation() + ", jobsCheckedBySchduler()=" + jobsCheckedBySchduler() + "]";
+		return "ProductionSimbaConfiguration [isBucketSimulation()=" + isBucketSimulation() + ", bucketSize()=" + bucketSize() + ", timeToSchedule()=" + timeToSchedule() + ", timeToLog()=" + timeToLog() + ", jobCoresRatio()=" + jobCoresRatio() + ", machineDropRatio()=" + machineDropRatio() + ", hostMemoryRatio()=" + hostMemoryRatio() + ", reservationsLimit()=" + reservationsLimit() + ", isActualCoreUsageSimulation()=" + isActualCoreUsageSimulation() + ", jobsCheckedBySchduler()=" + jobsCheckedBySchduler() + ", submitRatio()=" + submitRatio() + "]";
 	}
 
 }
