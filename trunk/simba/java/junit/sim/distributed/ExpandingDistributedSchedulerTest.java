@@ -15,7 +15,7 @@ import sim.scheduling.SetWaitingQueue;
 
 import com.google.common.collect.Lists;
 
-public class DistributedSchedulerTest
+public class ExpandingDistributedSchedulerTest
 {
 
 	@Test
@@ -82,7 +82,7 @@ public class DistributedSchedulerTest
 
 	private DistributedScheduler createScheduler(LinkedListWaitingQueue waitingQueue, List<HostScheduler> hostSchedulers, HostSelector hostSelector, SetWaitingQueue distributedWaitingJobs)
 	{
-		return new DistributedScheduler(waitingQueue, hostSchedulers, hostSelector, distributedWaitingJobs);
+		return new ExpandingDistributedScheduler(waitingQueue, hostSchedulers, hostSelector, distributedWaitingJobs);
 	}
 
 	@Test
