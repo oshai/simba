@@ -87,4 +87,9 @@ public abstract class AbstractWaitingQueue implements WaitingQueueForStatistics
 		return getQueue().contains(job);
 	}
 
+	public boolean remove(Job job)
+	{
+		return getQueue().remove(job);
+	}
+
 }

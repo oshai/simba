@@ -3,39 +3,18 @@ package sim.scheduling;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
-import java.util.Iterator;
+import java.util.*;
 
-import org.junit.Test;
+import org.junit.*;
 
-import sim.ForTestingSimbaConfiguration;
-import sim.event_handling.EventQueue;
-import sim.model.Cluster;
-import sim.model.Host;
-import sim.model.Job;
-import sim.scheduling.graders.Grader;
-import sim.scheduling.reserving.ReservingScheduler;
+import sim.*;
+import sim.event_handling.*;
+import sim.model.*;
+import sim.scheduling.graders.*;
+import sim.scheduling.reserving.*;
 
 public class ReservingSchedulerTest
 {
-
-	@Test
-	public void testJobMatchHost()
-	{
-		AbstractWaitingQueue waitingQueue = new LinkedListWaitingQueue();
-		Job job = mock(Job.class);
-		waitingQueue.add(job);
-		Cluster cluster = new Cluster();
-		Host host = createHost(job);
-		cluster.add(host);
-		Grader grader = mock(Grader.class);
-		JobDispatcher dispatcher = mock(JobDispatcher.class);
-		ReservingScheduler scheduler = createScheduler(waitingQueue, cluster, grader, dispatcher);
-		long time = 1;
-		scheduler.schedule(time);
-		assertTrue(waitingQueue.isEmpty());
-		verify(dispatcher).dispatch(job, host, time);
-		assertNotNull(scheduler.grader());
-	}
 
 	@Test
 	public void testJobMatchHost_BugNoDispatch()
@@ -61,6 +40,25 @@ public class ReservingSchedulerTest
 		scheduler.schedule(time);
 		assertTrue(waitingQueue.isEmpty());
 		verify(dispatcher).dispatch(job, host, time);
+	}
+
+	@Test
+	public void testJobMatchHost()
+	{
+		AbstractWaitingQueue waitingQueue = new LinkedListWaitingQueue();
+		Job job = mock(Job.class);
+		waitingQueue.add(job);
+		Cluster cluster = new Cluster();
+		Host host = createHost(job);
+		cluster.add(host);
+		Grader grader = mock(Grader.class);
+		JobDispatcher dispatcher = mock(JobDispatcher.class);
+		ReservingScheduler scheduler = createScheduler(waitingQueue, cluster, grader, dispatcher);
+		long time = 1;
+		scheduler.schedule(time);
+		assertTrue(waitingQueue.isEmpty());
+		verify(dispatcher).dispatch(job, host, time);
+		assertNotNull(scheduler.grader());
 	}
 
 	@Test
@@ -95,8 +93,7 @@ public class ReservingSchedulerTest
 		return createScheduler(waitingQueue, cluster, grader, dispatcher, simbaConfiguration);
 	}
 
-	private ReservingScheduler createScheduler(AbstractWaitingQueue waitingQueue, Cluster cluster, Grader grader, JobDispatcher dispatcher,
-			ForTestingSimbaConfiguration simbaConfiguration)
+	private ReservingScheduler createScheduler(AbstractWaitingQueue waitingQueue, Cluster cluster, Grader grader, JobDispatcher dispatcher, ForTestingSimbaConfiguration simbaConfiguration)
 	{
 		return new ReservingScheduler(waitingQueue, cluster, grader, dispatcher, simbaConfiguration);
 	}
@@ -201,8 +198,7 @@ public class ReservingSchedulerTest
 		assertEquals(job3, iterator.next());
 	}
 
-	private ReservingScheduler createScheduler(AbstractWaitingQueue waitingQueue, Cluster cluster, Grader grader, JobDispatcher dispatcher,
-			final int reservationsLimit)
+	private ReservingScheduler createScheduler(AbstractWaitingQueue waitingQueue, Cluster cluster, Grader grader, JobDispatcher dispatcher, final int reservationsLimit)
 	{
 		return new ReservingScheduler(waitingQueue, cluster, grader, dispatcher, new ForTestingSimbaConfiguration()
 		{

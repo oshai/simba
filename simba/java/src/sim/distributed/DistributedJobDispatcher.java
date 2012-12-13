@@ -1,18 +1,15 @@
 package sim.distributed;
 
-import java.util.Set;
-
-import sim.event_handling.EventQueue;
-import sim.model.Host;
-import sim.model.Job;
-import sim.scheduling.JobDispatcher;
+import sim.event_handling.*;
+import sim.model.*;
+import sim.scheduling.*;
 
 public class DistributedJobDispatcher extends JobDispatcher
 {
 
-	private final Set<Job> distributedWaitingJobs;
+	private final SetWaitingQueue distributedWaitingJobs;
 
-	public DistributedJobDispatcher(EventQueue eventQueue, Set<Job> distributedWaitingJobs)
+	public DistributedJobDispatcher(EventQueue eventQueue, SetWaitingQueue distributedWaitingJobs)
 	{
 		super(eventQueue);
 		this.distributedWaitingJobs = distributedWaitingJobs;

@@ -1,4 +1,4 @@
-package sim.scheduling;
+package sim.distributed;
 
 import java.util.Iterator;
 import java.util.List;

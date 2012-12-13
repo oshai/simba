@@ -1,14 +1,14 @@
-package sim.scheduling;
+package sim.distributed;
 
 import static com.google.common.collect.Lists.*;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
-import java.util.List;
+import java.util.*;
 
-import org.junit.Test;
+import org.junit.*;
 
-import sim.model.Job;
+import sim.model.*;
 
 public class HostSelectorTest
 {

@@ -1,13 +1,13 @@
-package sim.scheduling;
+package sim.distributed;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
-import org.junit.Test;
+import org.junit.*;
 
-import sim.event_handling.EventQueue;
-import sim.model.Host;
-import sim.model.Job;
+import sim.event_handling.*;
+import sim.model.*;
+import sim.scheduling.*;
 
 public class HostSchedulerTest
 {
