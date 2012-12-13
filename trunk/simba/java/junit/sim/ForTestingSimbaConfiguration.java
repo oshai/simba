@@ -27,7 +27,7 @@ public class ForTestingSimbaConfiguration implements SimbaConfiguration
 	}
 
 	@Override
-	public double jobCoresRatio()
+	public double hostCoreRatio()
 	{
 		return 1.0;
 	}

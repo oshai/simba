@@ -47,17 +47,6 @@ public class ProductionSimbaConfiguration extends AbstractModule implements Modu
 		Looper create(Clock clock, EventQueue eventQueue, AbstractWaitingQueue waitingQueue, Scheduler scheduler, IntervalCollector hostCollector, JobFinisher jobFinisher);
 	}
 
-	public boolean isBucketSimulation()
-	{
-		return false;
-	}
-
-	@Override
-	public long bucketSize()
-	{
-		return bucketSize;
-	}
-
 	@Override
 	public long timeToSchedule()
 	{
@@ -71,7 +60,7 @@ public class ProductionSimbaConfiguration extends AbstractModule implements Modu
 	}
 
 	@Override
-	public double jobCoresRatio()
+	public double hostCoreRatio()
 	{
 		return coreRatio;
 	}
@@ -112,10 +101,21 @@ public class ProductionSimbaConfiguration extends AbstractModule implements Modu
 		return submitRatio;
 	}
 
+	public boolean isBucketSimulation()
+	{
+		return false;
+	}
+
+	@Override
+	public long bucketSize()
+	{
+		return bucketSize;
+	}
+
 	@Override
 	public String toString()
 	{
-		return "ProductionSimbaConfiguration [isBucketSimulation()=" + isBucketSimulation() + ", bucketSize()=" + bucketSize() + ", timeToSchedule()=" + timeToSchedule() + ", timeToLog()=" + timeToLog() + ", jobCoresRatio()=" + jobCoresRatio() + ", machineDropRatio()=" + machineDropRatio() + ", hostMemoryRatio()=" + hostMemoryRatio() + ", reservationsLimit()=" + reservationsLimit() + ", isActualCoreUsageSimulation()=" + isActualCoreUsageSimulation() + ", jobsCheckedBySchduler()=" + jobsCheckedBySchduler() + ", submitRatio()=" + submitRatio() + "]";
+		return "ProductionSimbaConfiguration [timeToSchedule()=" + timeToSchedule() + ", timeToLog()=" + timeToLog() + ", hostCoreRatio()=" + hostCoreRatio() + ", machineDropRatio()=" + machineDropRatio() + ", hostMemoryRatio()=" + hostMemoryRatio() + ", reservationsLimit()=" + reservationsLimit() + ", isActualCoreUsageSimulation()=" + isActualCoreUsageSimulation() + ", jobsCheckedBySchduler()=" + jobsCheckedBySchduler() + ", submitRatio()=" + submitRatio() + ", isBucketSimulation()=" + isBucketSimulation() + ", bucketSize()=" + bucketSize() + "]";
 	}
 
 }

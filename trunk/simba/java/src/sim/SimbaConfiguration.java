@@ -10,7 +10,7 @@ public interface SimbaConfiguration
 
 	public long timeToLog();
 
-	double jobCoresRatio();
+	double hostCoreRatio();
 
 	double hostMemoryRatio();
 

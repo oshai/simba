@@ -76,7 +76,7 @@ public class JobParser
 				try
 				{
 					List<String> cols = splitComma(line);
-					double cores = getCores(cols) * simbaConfiguration.jobCoresRatio();
+					double cores = getCores(cols);
 					double memory = getMapValue("memory", cols.get(index_actualclassreservation));
 					long length = simbaConfiguration.isBucketSimulation() ? 1 : d2l(cols.get(index_wtime));
 					if (length < 1)
