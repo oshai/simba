@@ -5,6 +5,19 @@
     <property name="debuglevel" value="source,lines,vars"/>
     <property name="target" value="1.6"/>
     <property name="source" value="1.6"/>
+	<property name="coverage.dir" value="${basedir}/coverage/" />
+	 <property name="emma_dir" value="${basedir}/libs/emma-2.0.5312/" />
+	 <property name="src_dir" value="${basedir}/java/src/"/>
+	 <property name="compiled_classes" value="${basedir}/compiled_classes/"/>
+	 <property name="instrumented.dir" value="${basedir}/inst/"/>
+	 <path id="emma_lib">
+	     <fileset dir="${emma_dir}">
+	         <include name="*.jar"/>
+	     </fileset>
+	 </path>
+	   
+	 <taskdef resource="emma_ant.properties" classpathref="emma_lib" />
+	
 	<path id="JUnit4.libraryclasspath">
 			<pathelement location="libs/junit-4.9.jar" />
 		</path>
@@ -19,6 +32,19 @@
         <pathelement location="libs/guice-assistedinject-3.0.jar"/>
         <pathelement location="libs/aopalliance.jar"/>
         <path refid="JUnit4.libraryclasspath"/>
+    </path>
+    <path id="simba_junit_classpath">
+        <pathelement location="inst/classes"/>
+        <pathelement location="libs/log4j-1.2.17.jar"/>
+        <pathelement location="libs/guava-13.0.1.jar"/>
+        <pathelement location="libs/javax.inject.jar"/>
+        <pathelement location="libs/mockito-all-1.9.5.jar"/>
+        <pathelement location="libs/commons-math3-3.0.jar"/>
+        <pathelement location="libs/guice-3.0.jar"/>
+        <pathelement location="libs/guice-assistedinject-3.0.jar"/>
+        <pathelement location="libs/aopalliance.jar"/>
+        <path refid="JUnit4.libraryclasspath"/>
+    	 <path refid="emma_lib"/>
     </path>
     <target name="init">
         <mkdir dir="compiled_classes"/>
@@ -43,7 +69,7 @@
         <delete dir="compiled_classes"/>
     </target>
     <target depends="clean" name="cleanall"/>
-    <target depends="build-subprojects,build-project,create-jar,test" name="build"/>
+    <target depends="build-subprojects,build-project,create-jar,emma-prepare,test,emma-report" name="build"/>
     <target name="build-subprojects"/>
     <target depends="init" name="build-project">
         <echo message="${ant.project.name}: ${ant.file}"/>
@@ -74,19 +100,46 @@
     	            <zipfileset excludes="META-INF/*.SF" src="libs/aopalliance.jar"/>
     	        </jar>
 	</target>
+	<target name="emma-prepare">
+	<emma enabled="true" verbosity="verbose">
+	     <instr instrpath="${compiled_classes}" destdir="${instrumented.dir}" metadatafile="${coverage.dir}/metadata.emma" merge="true" mode="fullcopy">
+	         <!--filter excludes="au.com.jenisys.view.*"/-->
+	     </instr>
+	 </emma>
+		</target>
 	<target depends="junit-testing" name="test" />
     <target name="junit-testing">
         <mkdir dir="${junit.output.dir}"/>
-        <junit fork="no" printsummary="withOutAndErr">
-			<formatter type="xml" />
+        <junit fork="no" printsummary="true" showoutput="true"
+            failureproperty="tests.failed"
+            errorproperty="tests.failed">
 			<batchtest fork="no" todir="${junit.output.dir}">
 				<fileset dir="java/junit">
 					<include name="**/*Test.java" />
 				</fileset>
 			</batchtest>
-			<classpath refid="simba.classpath" />
+			<classpath refid="simba_junit_classpath" />
+        	<formatter type="xml"/>
+        	<!--
+        	
+        	<formatter usefile="false" type="plain"/>
+        	-->
 		</junit>
     </target>
+    <target name="emma-report">
+    	<emma enabled="true" >
+    	     <report sourcepath="${src_dir}" >
+    	         <fileset dir="${coverage.dir}" >
+    	             <include name="*.emma" />
+    	             
+    	         </fileset>
+    	     	<fileset dir="${basedir}" >
+    	     		<include name="coverage.ec" />
+    	     		</fileset>
+    	         <xml outfile="${coverage.dir}/coverage.xml" depth="method"/>
+    	     </report>
+    	 </emma>
+    	</target>
     <target name="junit-report">
         <junitreport todir="${junit.output.dir}">
             <fileset dir="${junit.output.dir}">
