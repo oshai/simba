@@ -6,7 +6,7 @@ import sim.model.Job;
 
 public class ReservingSchedulerUtils
 {
-	private Reservations reservations;
+	private final Reservations reservations;
 
 	public ReservingSchedulerUtils(Reservations reservations)
 	{

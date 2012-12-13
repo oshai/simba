@@ -25,7 +25,7 @@ public class ReservingScheduler implements Scheduler
 {
 	private static final Logger log = Logger.getLogger(ReservingScheduler.class);
 	private final Job DUMMY_JOB;
-	private static final Host DUMMY_HOST = Host.builder().id("dummy").cores(0).memory(0).build();
+	public static final Host DUMMY_HOST = Host.builder().id("dummy").cores(0).memory(0).build();
 	private final AbstractWaitingQueue waitingQueue;
 	private final Cluster cluster;
 	private final Grader grader;
