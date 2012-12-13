@@ -14,11 +14,6 @@ public abstract class DistributedScheduler implements Scheduler
 {
 	private static final Logger log = Logger.getLogger(DistributedScheduler.class);
 	public static long VIRUS_TIME = 10;
-
-	protected abstract void distributeJobs(long time);
-
-	protected abstract void scheduleWaitingJobsAgain(long time);
-
 	public static double VIRUS_POWER = 10;
 	protected final AbstractWaitingQueue waitingQueue;
 	protected final List<HostScheduler> hostSchedulers;
@@ -46,6 +41,10 @@ public abstract class DistributedScheduler implements Scheduler
 		}
 		return dispatchJobs;
 	}
+
+	protected abstract void distributeJobs(long time);
+
+	protected abstract void scheduleWaitingJobsAgain(long time);
 
 	private void logScheduler(long time, long started, int dispatchJobs, int waitingJobs)
 	{
