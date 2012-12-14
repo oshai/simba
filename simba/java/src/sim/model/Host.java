@@ -4,7 +4,8 @@ import static com.google.common.collect.Lists.*;
 import static utils.GlobalUtils.*;
 import static utils.assertions.Asserter.*;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
 
 public class Host
 {
@@ -23,7 +24,6 @@ public class Host
 		this.memory = memory;
 	}
 
-	@SuppressWarnings("hiding")
 	public static class Builder
 	{
 		private String id;
