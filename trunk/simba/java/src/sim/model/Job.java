@@ -39,7 +39,6 @@ public class Job
 		}
 	}
 
-	@SuppressWarnings("hiding")
 	public static class Builder
 	{
 		private String id;
@@ -162,8 +161,7 @@ public class Job
 	@Override
 	public String toString()
 	{
-		return "Job [id=" + id + ", priority=" + priority + ", submitTime=" + submitTime + ", length=" + length + ", cores=" + cores + ", memory=" + memory
-				+ ", startTime=" + startTime + ", cost=" + cost + "]";
+		return "Job [id=" + id + ", priority=" + priority + ", submitTime=" + submitTime + ", length=" + length + ", cores=" + cores + ", memory=" + memory + ", startTime=" + startTime + ", cost=" + cost + "]";
 	}
 
 }
