@@ -127,7 +127,7 @@
 		</junit>
     </target>
     <target name="emma-report">
-    	<emma enabled="true" verbosity="verbose" >
+    	<emma enabled="false" verbosity="verbose" >
     	     <report sourcepath="${src_dir}" >
     	         <fileset dir="${coverage.dir}" >
     	             <include name="*.emma" />
