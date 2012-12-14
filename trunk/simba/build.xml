@@ -73,6 +73,7 @@
     <target name="build-subprojects"/>
     <target depends="init" name="build-project">
         <echo message="${ant.project.name}: ${ant.file}"/>
+    	<mkdir dir="${instrumented.dir}"/>
         <javac debug="true" debuglevel="${debuglevel}" destdir="compiled_classes" source="${source}" target="${target}">
             <src path="java/src:java/src_no_junit"/>
             <classpath refid="simba.classpath"/>
@@ -105,7 +106,6 @@
     	        </jar>
 	</target>
 	<target name="emma-prepare">
-		<mkdir dir="${instrumented.dir}"/>
 	<emma enabled="true" verbosity="verbose">
 	     <instr instrpath="${instrumented.dir}" destdir="${instrumented.dir}" metadatafile="${coverage.dir}/metadata.emma" merge="true" mode="overwrite">
 	         <!--filter excludes="au.com.jenisys.view.*"/-->
