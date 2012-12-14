@@ -105,6 +105,7 @@
     	        </jar>
 	</target>
 	<target name="emma-prepare">
+		<mkdir dir="${instrumented.dir}"/>
 	<emma enabled="true" verbosity="verbose">
 	     <instr instrpath="${instrumented.dir}" destdir="${instrumented.dir}" metadatafile="${coverage.dir}/metadata.emma" merge="true" mode="overwrite">
 	         <!--filter excludes="au.com.jenisys.view.*"/-->
