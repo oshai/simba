@@ -77,6 +77,10 @@
             <src path="java/src:java/src_no_junit"/>
             <classpath refid="simba.classpath"/>
         </javac>
+    	<javac debug="true" debuglevel="${debuglevel}" destdir="inst" source="${source}" target="${target}">
+    	            <src path="java/src"/>
+    	            <classpath refid="simba.classpath"/>
+    	        </javac>
         <javac debug="true" debuglevel="${debuglevel}" destdir="compiled_classes" source="${source}" target="${target}">
             <src path="java/junit"/>
             <classpath refid="simba.classpath"/>
@@ -102,7 +106,7 @@
 	</target>
 	<target name="emma-prepare">
 	<emma enabled="true" verbosity="verbose">
-	     <instr instrpath="${compiled_classes}" destdir="${instrumented.dir}" metadatafile="${coverage.dir}/metadata.emma" merge="true" mode="fullcopy">
+	     <instr instrpath="${instrumented.dir}" destdir="${instrumented.dir}" metadatafile="${coverage.dir}/metadata.emma" merge="true" mode="overwrite">
 	         <!--filter excludes="au.com.jenisys.view.*"/-->
 	     </instr>
 	 </emma>
