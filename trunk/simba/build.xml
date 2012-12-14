@@ -34,7 +34,8 @@
         <path refid="JUnit4.libraryclasspath"/>
     </path>
     <path id="simba_junit_classpath">
-        <pathelement location="inst/classes"/>
+        <pathelement location="inst"/>
+    	<pathelement location="compiled_classes"/>
         <pathelement location="libs/log4j-1.2.17.jar"/>
         <pathelement location="libs/guava-13.0.1.jar"/>
         <pathelement location="libs/javax.inject.jar"/>
@@ -78,7 +79,7 @@
             <src path="java/src:java/src_no_junit"/>
             <classpath refid="simba.classpath"/>
         </javac>
-    	<javac debug="true" debuglevel="${debuglevel}" destdir="inst" source="${source}" target="${target}">
+    	<javac debug="true" debuglevel="${debuglevel}" destdir="${instrumented.dir}" source="${source}" target="${target}">
     	            <src path="java/src"/>
     	            <classpath refid="simba.classpath"/>
     	        </javac>
