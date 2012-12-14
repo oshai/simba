@@ -39,11 +39,6 @@ public class Job
 		}
 	}
 
-	public static void main(String[] args)
-	{
-		System.out.println();
-	}
-
 	public static class Builder
 	{
 		private String id;
