@@ -28,7 +28,20 @@ public class ByStrategyHostSelector implements HostSelector
 			lastJob = job;
 			leftHostSchedulers = newArrayList(hostSchedulers);
 		}
-		return listSelector.selectFromList(leftHostSchedulers);
+		return selectNext(job);
+	}
+
+	private HostScheduler selectNext(Job job)
+	{
+		HostScheduler selected;
+		while (null != (selected = listSelector.selectFromList(leftHostSchedulers)))
+		{
+			if (selected.isAllowedToAddJob(job))
+			{
+				return selected;
+			}
+		}
+		return null;
 	}
 
 }
