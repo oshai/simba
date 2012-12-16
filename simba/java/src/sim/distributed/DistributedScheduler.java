@@ -1,12 +1,16 @@
 package sim.distributed;
 
-import java.util.*;
+import static utils.assertions.Asserter.*;
 
-import org.apache.commons.math3.stat.descriptive.rank.*;
-import org.apache.log4j.*;
+import java.util.List;
 
-import sim.model.*;
-import sim.scheduling.*;
+import org.apache.commons.math3.stat.descriptive.rank.Percentile;
+import org.apache.log4j.Logger;
+
+import sim.model.Job;
+import sim.scheduling.AbstractWaitingQueue;
+import sim.scheduling.Scheduler;
+import sim.scheduling.SetWaitingQueue;
 
 public abstract class DistributedScheduler implements Scheduler
 {
@@ -37,10 +41,7 @@ public abstract class DistributedScheduler implements Scheduler
 		{
 			logScheduler(time, started, dispatchJobs, waitingJobs);
 		}
-		if (waitingQueue.size() > 0)
-		{
-			log.error("waiting queue should always be zero in the end of cycle first waiting job: " + waitingQueue.peek() + " is already waiting on hosts? " + distributedWaitingJobs.contains(waitingQueue.peek()));
-		}
+		asserter().throwsError().assertFalse(waitingQueue.size() > 0, "waiting queue should always be zero in the end of cycle first waiting job: " + waitingQueue.peek() + " is already waiting on hosts? " + distributedWaitingJobs.contains(waitingQueue.peek()));
 		return dispatchJobs;
 	}
 
