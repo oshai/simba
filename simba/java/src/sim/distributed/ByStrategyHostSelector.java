@@ -11,9 +11,9 @@ public class ByStrategyHostSelector implements HostSelector
 	private final List<HostScheduler> hostSchedulers;
 	private List<HostScheduler> leftHostSchedulers;
 	private Job lastJob;
-	private SequentialListSelector listSelector;
+	private ListSelector listSelector;
 
-	public ByStrategyHostSelector(List<HostScheduler> hostSchedulers, SequentialListSelector listSelector)
+	public ByStrategyHostSelector(List<HostScheduler> hostSchedulers, ListSelector listSelector)
 	{
 		this.hostSchedulers = hostSchedulers;
 		leftHostSchedulers = newArrayList(hostSchedulers);

@@ -19,9 +19,11 @@ import sim.collectors.WaitingQueueStatistics;
 import sim.configuration.DistributedSimulationConfiguration;
 import sim.configuration.ProductionSimbaConfiguration;
 import sim.configuration.ProductionSimbaConfiguration.LooperFactory;
+import sim.distributed.ByStrategyHostSelector;
 import sim.distributed.DistributedJobDispatcher;
+import sim.distributed.ExpandingDistributedScheduler;
 import sim.distributed.HostScheduler;
-import sim.distributed.WaitOnAllHostsDistributedScheduler;
+import sim.distributed.RandomListSelector;
 import sim.event_handling.EventQueue;
 import sim.events.Event;
 import sim.events.Submit;
@@ -264,9 +266,11 @@ public class Simulator
 		}
 		if (isDistributed())
 		{
-			ArrayList<HostScheduler> hostsSched = hostSchedulers;
+			// ArrayList<HostScheduler> hostsSched = hostSchedulers;
 			// HostSelector hostSelector1 = new HostSelector(hostsSched);
-			return new WaitOnAllHostsDistributedScheduler(waitingQueue, hostsSched, distributedWaitingJobs);
+			// return new WaitOnAllHostsDistributedScheduler(waitingQueue,
+			// hostsSched, distributedWaitingJobs);
+			return new ExpandingDistributedScheduler(waitingQueue, hostSchedulers, new ByStrategyHostSelector(hostSchedulers, new RandomListSelector()), distributedWaitingJobs);
 		}
 		throw new RuntimeException("no scheduler " + getSchedulerProperty());
 	}

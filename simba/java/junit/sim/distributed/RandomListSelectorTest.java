@@ -21,18 +21,10 @@ public class RandomListSelectorTest
 		List<String> l = newArrayList("A", "B", "C");
 		HashSet<String> expected = Sets.newHashSet(l);
 		Set<String> actual = Sets.newHashSet();
-		actual.add(removeFromListAndSelect(tested, l));
-		actual.add(removeFromListAndSelect(tested, l));
-		actual.add(removeFromListAndSelect(tested, l));
+		actual.add(tested.selectFromList(l));
+		actual.add(tested.selectFromList(l));
+		actual.add(tested.selectFromList(l));
 		assertEquals(expected, actual);
-		assertNull(removeFromListAndSelect(tested, l));
-
-	}
-
-	private String removeFromListAndSelect(RandomListSelector tested, List<String> l)
-	{
-		String selectFromList = tested.selectFromList(l);
-		l.remove(selectFromList);
-		return selectFromList;
+		assertNull(tested.selectFromList(l));
 	}
 }
