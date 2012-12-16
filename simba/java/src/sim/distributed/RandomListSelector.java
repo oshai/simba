@@ -6,7 +6,7 @@ import java.util.Random;
 public class RandomListSelector implements ListSelector
 {
 
-	private Random random = new Random();
+	private Random random = new Random(5);
 
 	@Override
 	public <T> T selectFromList(List<T> list)
