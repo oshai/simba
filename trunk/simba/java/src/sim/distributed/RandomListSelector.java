@@ -15,7 +15,7 @@ public class RandomListSelector implements ListSelector
 		{
 			return null;
 		}
-		return list.get(random.nextInt(list.size()));
+		return list.remove(random.nextInt(list.size()));
 	}
 
 }
