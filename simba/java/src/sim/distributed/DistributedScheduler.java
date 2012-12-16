@@ -15,11 +15,9 @@ import sim.scheduling.SetWaitingQueue;
 public abstract class DistributedScheduler implements Scheduler
 {
 	private static final Logger log = Logger.getLogger(DistributedScheduler.class);
-	public static long VIRUS_TIME = 10;
-	public static double VIRUS_POWER = 10;
-	protected final AbstractWaitingQueue waitingQueue;
-	protected final List<HostScheduler> hostSchedulers;
-	protected SetWaitingQueue distributedWaitingJobs;
+	private final AbstractWaitingQueue waitingQueue;
+	private final List<HostScheduler> hostSchedulers;
+	private SetWaitingQueue distributedWaitingJobs;
 
 	public DistributedScheduler(AbstractWaitingQueue waitingQueue, List<HostScheduler> hostSchedulers, SetWaitingQueue distributedWaitingJobs)
 	{
@@ -48,6 +46,21 @@ public abstract class DistributedScheduler implements Scheduler
 	protected abstract void distributeJobs(long time);
 
 	protected abstract void scheduleWaitingJobsAgain(long time);
+
+	protected final SetWaitingQueue distributedWaitingJobs()
+	{
+		return distributedWaitingJobs;
+	}
+
+	protected final AbstractWaitingQueue waitingQueue()
+	{
+		return waitingQueue;
+	}
+
+	protected final List<HostScheduler> hostSchedulers()
+	{
+		return hostSchedulers;
+	}
 
 	private void logScheduler(long time, long started, int dispatchJobs, int waitingJobs)
 	{

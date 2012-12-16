@@ -10,7 +10,7 @@ import org.junit.*;
 
 import sim.model.*;
 
-public class HostSelectorTest
+public class CyclicHostSelectorTest
 {
 
 	@Test
@@ -18,7 +18,7 @@ public class HostSelectorTest
 	{
 		Job j = mock(Job.class);
 		List<HostScheduler> s = newArrayList();
-		HostSelector tested = new HostSelector(s);
+		HostSelector tested = new CyclicHostSelector(s);
 		assertNull(tested.select(j));
 	}
 
@@ -29,7 +29,7 @@ public class HostSelectorTest
 		HostScheduler hs = mock(HostScheduler.class);
 		List<HostScheduler> s = newArrayList(hs);
 		when(hs.isAllowedToAddJob(j)).thenReturn(true);
-		HostSelector tested = new HostSelector(s);
+		HostSelector tested = new CyclicHostSelector(s);
 		assertEquals(hs, tested.select(j));
 		assertEquals(hs, tested.select(j));
 	}
@@ -43,7 +43,7 @@ public class HostSelectorTest
 		when(hs1.isAllowedToAddJob(j)).thenReturn(true);
 		List<HostScheduler> s = newArrayList(hs, hs1);
 
-		HostSelector tested = new HostSelector(s);
+		HostSelector tested = new CyclicHostSelector(s);
 		assertEquals(hs1, tested.select(j));
 	}
 
@@ -53,7 +53,7 @@ public class HostSelectorTest
 		Job j = mock(Job.class);
 		HostScheduler hs = mock(HostScheduler.class);
 		List<HostScheduler> s = newArrayList(hs);
-		HostSelector tested = new HostSelector(s);
+		HostSelector tested = new CyclicHostSelector(s);
 		assertEquals(null, tested.select(j));
 	}
 

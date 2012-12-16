@@ -27,7 +27,7 @@ public class ExpandingDistributedSchedulerTest
 		List<HostScheduler> hostSchedulers = newArrayList();
 		HostScheduler hostScheduler = mock(HostScheduler.class);
 		hostSchedulers.add(hostScheduler);
-		HostSelector hostSelector = mock(HostSelector.class);
+		CyclicHostSelector hostSelector = mock(CyclicHostSelector.class);
 		ExpandingDistributedScheduler tested = createScheduler(waitingQueue, hostSchedulers, hostSelector);
 		when(hostSelector.select(job)).thenReturn(hostScheduler);
 		int scheduledSessions = 1;
@@ -49,7 +49,7 @@ public class ExpandingDistributedSchedulerTest
 		waitingQueue.add(job);
 		SetWaitingQueue distributedWaitingJobs = createDitributedWaitingQueue();
 		distributedWaitingJobs.add(job);
-		ExpandingDistributedScheduler tested = createScheduler(waitingQueue, createHostSchedulers(0), mock(HostSelector.class), distributedWaitingJobs);
+		ExpandingDistributedScheduler tested = createScheduler(waitingQueue, createHostSchedulers(0), mock(CyclicHostSelector.class), distributedWaitingJobs);
 		tested.distributeJobs(time);
 		assertEquals(1, distributedWaitingJobs.size());
 		assertEquals(0, waitingQueue.size());
@@ -62,7 +62,7 @@ public class ExpandingDistributedSchedulerTest
 		Job job = Job.builder(100).build();
 		waitingQueue.add(job);
 		List<HostScheduler> hostSchedulers = newArrayList();
-		HostSelector hostSelector = mock(HostSelector.class);
+		HostSelector hostSelector = mock(CyclicHostSelector.class);
 		ExpandingDistributedScheduler tested = createScheduler(waitingQueue, hostSchedulers, hostSelector);
 		when(hostSelector.select(job)).thenReturn(null);
 		int scheduledSessions = 0;
@@ -79,7 +79,7 @@ public class ExpandingDistributedSchedulerTest
 		waitingQueue.add(job);
 		HostScheduler h = mock(HostScheduler.class);
 		List<HostScheduler> hostSchedulers = newArrayList(h);
-		HostSelector hostSelector = mock(HostSelector.class);
+		CyclicHostSelector hostSelector = mock(CyclicHostSelector.class);
 		ExpandingDistributedScheduler tested = createScheduler(waitingQueue, hostSchedulers, hostSelector);
 		when(hostSelector.select(job)).thenReturn(h);
 		when(h.schedule(time)).thenReturn(1);
@@ -105,8 +105,8 @@ public class ExpandingDistributedSchedulerTest
 		LinkedListWaitingQueue waitingQueue = new LinkedListWaitingQueue();
 		Job job = Job.builder(100).submitTime(time).build();
 		SetWaitingQueue distributedWaitingJobs = createDitributedWaitingQueue(job);
-		ExpandingDistributedScheduler tested = createScheduler(waitingQueue, createHostSchedulers(15), mock(HostSelector.class), distributedWaitingJobs);
-		tested.scheduleWaitingJobsAgain(time + DistributedScheduler.VIRUS_TIME);
+		ExpandingDistributedScheduler tested = createScheduler(waitingQueue, createHostSchedulers(15), mock(CyclicHostSelector.class), distributedWaitingJobs);
+		tested.scheduleWaitingJobsAgain(time + ExpandingDistributedScheduler.VIRUS_TIME);
 		assertTrue(waitingQueue.contains(job));
 	}
 
@@ -127,9 +127,9 @@ public class ExpandingDistributedSchedulerTest
 		LinkedListWaitingQueue waitingQueue = new LinkedListWaitingQueue();
 		Job job = Job.builder(100).submitTime(time).build();
 		SetWaitingQueue distributedWaitingJobs = createDitributedWaitingQueue(job);
-		int pow = (int) Math.pow(DistributedScheduler.VIRUS_POWER, 3);
-		ExpandingDistributedScheduler tested = createScheduler(waitingQueue, createHostSchedulers(pow + 5), mock(HostSelector.class), distributedWaitingJobs);
-		tested.scheduleWaitingJobsAgain(time + 4 * DistributedScheduler.VIRUS_TIME);
+		int pow = (int) Math.pow(ExpandingDistributedScheduler.VIRUS_POWER, 3);
+		ExpandingDistributedScheduler tested = createScheduler(waitingQueue, createHostSchedulers(pow + 5), mock(CyclicHostSelector.class), distributedWaitingJobs);
+		tested.scheduleWaitingJobsAgain(time + 4 * ExpandingDistributedScheduler.VIRUS_TIME);
 		assertEquals(pow, waitingQueue.size());
 	}
 
@@ -140,8 +140,8 @@ public class ExpandingDistributedSchedulerTest
 		LinkedListWaitingQueue waitingQueue = new LinkedListWaitingQueue();
 		Job job = Job.builder(100).submitTime(time).build();
 		SetWaitingQueue distributedWaitingJobs = createDitributedWaitingQueue(job);
-		ExpandingDistributedScheduler tested = createScheduler(waitingQueue, createHostSchedulers(0), mock(HostSelector.class), distributedWaitingJobs);
-		tested.schedule(time + 4 * DistributedScheduler.VIRUS_TIME);
+		ExpandingDistributedScheduler tested = createScheduler(waitingQueue, createHostSchedulers(0), mock(CyclicHostSelector.class), distributedWaitingJobs);
+		tested.schedule(time + 4 * ExpandingDistributedScheduler.VIRUS_TIME);
 		assertEquals(0, waitingQueue.size());
 	}
 
