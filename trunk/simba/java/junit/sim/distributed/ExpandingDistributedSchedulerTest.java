@@ -4,16 +4,15 @@ import static com.google.common.collect.Lists.*;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
-import org.junit.Test;
+import org.apache.log4j.*;
+import org.junit.*;
 
-import sim.model.Job;
-import sim.scheduling.LinkedListWaitingQueue;
-import sim.scheduling.SetWaitingQueue;
+import sim.model.*;
+import sim.scheduling.*;
 
-import com.google.common.collect.Lists;
+import com.google.common.collect.*;
 
 public class ExpandingDistributedSchedulerTest
 {
@@ -41,8 +40,24 @@ public class ExpandingDistributedSchedulerTest
 	}
 
 	@Test
+	public void testShouldBeRemovedFromWaitingIfAlreadyDistributedAndthereIsNoOtherHostThatCanAccept() throws Exception
+	{
+		LinkedListWaitingQueue waitingQueue = new LinkedListWaitingQueue();
+		int time = 7;
+		Job job = Job.builder(100).submitTime(time).build();
+		waitingQueue.add(job);
+		SetWaitingQueue distributedWaitingJobs = createDitributedWaitingQueue();
+		distributedWaitingJobs.add(job);
+		DistributedScheduler tested = createScheduler(waitingQueue, createHostSchedulers(0), mock(HostSelector.class), distributedWaitingJobs);
+		tested.distributeJobs(time);
+		assertEquals(1, distributedWaitingJobs.size());
+		assertEquals(0, waitingQueue.size());
+	}
+
+	@Test
 	public void testOneJobNoHosts() throws Exception
 	{
+		Logger.getLogger(DistributedScheduler.class).setLevel(Level.FATAL);
 		LinkedListWaitingQueue waitingQueue = new LinkedListWaitingQueue();
 		Job job = Job.builder(100).build();
 		waitingQueue.add(job);
@@ -60,6 +75,7 @@ public class ExpandingDistributedSchedulerTest
 	@Test
 	public void testTime0() throws Exception
 	{
+		int time = 0;
 		LinkedListWaitingQueue waitingQueue = new LinkedListWaitingQueue();
 		Job job = Job.builder(100).build();
 		waitingQueue.add(job);
@@ -67,11 +83,10 @@ public class ExpandingDistributedSchedulerTest
 		List<HostScheduler> hostSchedulers = newArrayList(h);
 		HostSelector hostSelector = mock(HostSelector.class);
 		DistributedScheduler tested = createScheduler(waitingQueue, hostSchedulers, hostSelector);
-		when(hostSelector.select(job)).thenReturn(null);
-		int scheduledSessions = 0;
-		int time = 0;
-		assertEquals(scheduledSessions, tested.schedule(time));
-		assertEquals(1, waitingQueue.size());
+		when(hostSelector.select(job)).thenReturn(h);
+		when(h.schedule(time)).thenReturn(1);
+		assertEquals(1, tested.schedule(time));
+		assertEquals(0, waitingQueue.size());
 		verify(hostSelector).select(job);
 	}
 
@@ -93,7 +108,7 @@ public class ExpandingDistributedSchedulerTest
 		Job job = Job.builder(100).submitTime(time).build();
 		SetWaitingQueue distributedWaitingJobs = createDitributedWaitingQueue(job);
 		DistributedScheduler tested = createScheduler(waitingQueue, createHostSchedulers(15), mock(HostSelector.class), distributedWaitingJobs);
-		tested.schedule(time + DistributedScheduler.VIRUS_TIME);
+		tested.scheduleWaitingJobsAgain(time + DistributedScheduler.VIRUS_TIME);
 		assertTrue(waitingQueue.contains(job));
 	}
 
@@ -116,7 +131,7 @@ public class ExpandingDistributedSchedulerTest
 		SetWaitingQueue distributedWaitingJobs = createDitributedWaitingQueue(job);
 		int pow = (int) Math.pow(DistributedScheduler.VIRUS_POWER, 3);
 		DistributedScheduler tested = createScheduler(waitingQueue, createHostSchedulers(pow + 5), mock(HostSelector.class), distributedWaitingJobs);
-		tested.schedule(time + 4 * DistributedScheduler.VIRUS_TIME);
+		tested.scheduleWaitingJobsAgain(time + 4 * DistributedScheduler.VIRUS_TIME);
 		assertEquals(pow, waitingQueue.size());
 	}
 
@@ -132,10 +147,13 @@ public class ExpandingDistributedSchedulerTest
 		assertEquals(0, waitingQueue.size());
 	}
 
-	private SetWaitingQueue createDitributedWaitingQueue(Job job)
+	private SetWaitingQueue createDitributedWaitingQueue(Job... jobs)
 	{
 		SetWaitingQueue distributedWaitingJobs = new SetWaitingQueue();
-		distributedWaitingJobs.add(job);
+		for (Job job : jobs)
+		{
+			distributedWaitingJobs.add(job);
+		}
 		return distributedWaitingJobs;
 	}
 

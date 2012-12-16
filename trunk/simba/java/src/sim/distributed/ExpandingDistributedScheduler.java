@@ -43,6 +43,10 @@ public class ExpandingDistributedScheduler extends DistributedScheduler
 				iterator.remove();
 				addJobToHost(j, hostScheduler);
 			}
+			else if (distributedWaitingJobs.contains(j))
+			{
+				iterator.remove();
+			}
 		}
 	}
 
