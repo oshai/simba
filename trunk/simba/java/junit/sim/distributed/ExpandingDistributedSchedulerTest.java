@@ -4,15 +4,16 @@ import static com.google.common.collect.Lists.*;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
-import org.apache.log4j.*;
-import org.junit.*;
+import org.junit.Test;
 
-import sim.model.*;
-import sim.scheduling.*;
+import sim.model.Job;
+import sim.scheduling.LinkedListWaitingQueue;
+import sim.scheduling.SetWaitingQueue;
 
-import com.google.common.collect.*;
+import com.google.common.collect.Lists;
 
 public class ExpandingDistributedSchedulerTest
 {
@@ -54,10 +55,9 @@ public class ExpandingDistributedSchedulerTest
 		assertEquals(0, waitingQueue.size());
 	}
 
-	@Test
+	@Test(expected = AssertionError.class)
 	public void testOneJobNoHosts() throws Exception
 	{
-		Logger.getLogger(DistributedScheduler.class).setLevel(Level.FATAL);
 		LinkedListWaitingQueue waitingQueue = new LinkedListWaitingQueue();
 		Job job = Job.builder(100).build();
 		waitingQueue.add(job);
@@ -68,8 +68,6 @@ public class ExpandingDistributedSchedulerTest
 		int scheduledSessions = 0;
 		int time = 7;
 		assertEquals(scheduledSessions, tested.schedule(time));
-		assertEquals(1, waitingQueue.size());
-		verify(hostSelector).select(job);
 	}
 
 	@Test
