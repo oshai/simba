@@ -2,6 +2,7 @@ package sim.distributed;
 
 import static utils.assertions.Asserter.*;
 
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.math3.stat.descriptive.rank.Percentile;
@@ -35,12 +36,17 @@ public abstract class DistributedScheduler implements Scheduler
 		int waitingJobs = waitingQueue.size();
 		distributeJobs(time);
 		int dispatchJobs = dispatch(time);
-		if (time % 10800 == 0)
+		if (shouldLog(time))
 		{
 			logScheduler(time, started, dispatchJobs, waitingJobs);
 		}
 		asserter().throwsError().assertFalse(waitingQueue.size() > 0, "waiting queue should always be zero in the end of cycle first waiting job: " + waitingQueue.peek() + " is already waiting on hosts? " + distributedWaitingJobs.contains(waitingQueue.peek()));
 		return dispatchJobs;
+	}
+
+	private boolean shouldLog(long time)
+	{
+		return time % 10800 == 0;
 	}
 
 	protected abstract void distributeJobs(long time);
@@ -93,15 +99,33 @@ public abstract class DistributedScheduler implements Scheduler
 		log.info(" max jobs waiting per host " + maximumJobsWaitingPerHost);
 		log.info(" min jobs waiting per host " + minimumJobsWaitingPerHost);
 		log.info(" averageJobsWaitingPerHost " + averageJobsWaitingPerHost);
-		Percentile p = new Percentile();
-		p.setData(values);
-		log.info(" averageJobsWaitingPerHost " + averageJobsWaitingPerHost);
-		for (int i = 10; i < 100; i += 10)
+
+		logPrecentile(values, "hosts", "jobs");
+		double[] valuesJobMemory = new double[distributedWaitingJobs.size()];
+		Iterator<Job> iterator = distributedWaitingJobs.iterator();
+		for (int i = 0; i < valuesJobMemory.length; i++)
 		{
-			log.info("precentile " + i + " JobsWaitingPerHost " + p.evaluate(i));
-
+			valuesJobMemory[i] = iterator.next().memory();
 		}
+		logPrecentile(valuesJobMemory, "jobs", "memory");
+		double[] valuesJobCore = new double[distributedWaitingJobs.size()];
+		iterator = distributedWaitingJobs.iterator();
+		for (int i = 0; i < valuesJobMemory.length; i++)
+		{
+			valuesJobCore[i] = iterator.next().cores();
+		}
+		logPrecentile(valuesJobCore, "jobs", "cores");
 
+	}
+
+	private void logPrecentile(double[] values, String key, String value)
+	{
+		Percentile p2 = new Percentile();
+		p2.setData(values);
+		for (int i = 10; i <= 100; i += 10)
+		{
+			log.info("" + i + "% of " + key + " has less than " + p2.evaluate(i) + " " + value);
+		}
 	}
 
 	protected int dispatch(long time)
