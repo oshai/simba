@@ -26,14 +26,29 @@ public class ExpandingDistributedScheduler extends DistributedScheduler
 		for (Job job : distributedWaitingJobs())
 		{
 			long waitingTime = time - job.submitTime();
-			if (waitingTime % simbaConfiguration.virusTime() < simbaConfiguration.timeToSchedule())
+			if (isTimeToDivide(waitingTime) && isLastIterationFilledAllHosts(waitingTime))
 			{
-				for (int i = 0; i < hostSchedulers().size() && i < Math.pow(simbaConfiguration.virusPower(), (waitingTime / simbaConfiguration.virusTime()) - 1); i++)
+				for (int i = 0; i < hostSchedulers().size() && i < virusDivisionFactor(waitingTime, 1); i++)
 				{
 					waitingQueue().add(job);
 				}
 			}
 		}
+	}
+
+	private boolean isTimeToDivide(long waitingTime)
+	{
+		return waitingTime % simbaConfiguration.virusTime() < simbaConfiguration.timeToSchedule();
+	}
+
+	private boolean isLastIterationFilledAllHosts(long waitingTime)
+	{
+		return virusDivisionFactor(waitingTime, 2) < hostSchedulers().size();
+	}
+
+	private double virusDivisionFactor(long waitingTime, int factor)
+	{
+		return Math.pow(simbaConfiguration.virusPower(), (waitingTime / simbaConfiguration.virusTime()) - factor);
 	}
 
 	@Override

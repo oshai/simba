@@ -204,6 +204,19 @@ public class ExpandingDistributedSchedulerTest
 		assertEquals(0, waitingQueue.size());
 	}
 
+	@Test
+	public void testVirusJobShouldNotWaitOnMoreThanConfiguredHostsWaitOn8HostsTwice() throws Exception
+	{
+		int time = 7;
+		LinkedListWaitingQueue waitingQueue = new LinkedListWaitingQueue();
+		Job job = Job.builder(100).submitTime(time).build();
+		SetWaitingQueue distributedWaitingJobs = createDitributedWaitingQueue(job);
+		ForTestingDistributedSimbaConfiguration forTestingDistributedSimbaConfiguration = new ForTestingDistributedSimbaConfiguration();
+		ExpandingDistributedScheduler tested = createScheduler(waitingQueue, createHostSchedulers(2), mock(CyclicHostSelector.class), distributedWaitingJobs, forTestingDistributedSimbaConfiguration);
+		tested.scheduleWaitingJobsAgain(time + 3 * forTestingDistributedSimbaConfiguration.virusTime());
+		assertEquals(0, waitingQueue.size());
+	}
+
 	private SetWaitingQueue createDitributedWaitingQueue(Job... jobs)
 	{
 		SetWaitingQueue distributedWaitingJobs = new SetWaitingQueue();
