@@ -23,4 +23,5 @@ public interface SimbaConfiguration
 	public int jobsCheckedBySchduler();
 
 	double submitRatio();
+
 }

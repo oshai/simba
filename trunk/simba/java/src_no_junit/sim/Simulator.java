@@ -270,7 +270,7 @@ public class Simulator
 			// HostSelector hostSelector1 = new HostSelector(hostsSched);
 			// return new WaitOnAllHostsDistributedScheduler(waitingQueue,
 			// hostsSched, distributedWaitingJobs);
-			return new ExpandingDistributedScheduler(waitingQueue, hostSchedulers, new ByStrategyHostSelector(hostSchedulers, new RandomListSelector()), distributedWaitingJobs);
+			return new ExpandingDistributedScheduler(waitingQueue, hostSchedulers, new ByStrategyHostSelector(hostSchedulers, new RandomListSelector()), distributedWaitingJobs, (DistributedSimbaConfiguration) getConfiguration());
 		}
 		throw new RuntimeException("no scheduler " + getSchedulerProperty());
 	}

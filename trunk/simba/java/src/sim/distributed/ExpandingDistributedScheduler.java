@@ -3,6 +3,7 @@ package sim.distributed;
 import java.util.Iterator;
 import java.util.List;
 
+import sim.DistributedSimbaConfiguration;
 import sim.model.Job;
 import sim.scheduling.AbstractWaitingQueue;
 import sim.scheduling.SetWaitingQueue;
@@ -10,13 +11,13 @@ import sim.scheduling.SetWaitingQueue;
 public class ExpandingDistributedScheduler extends DistributedScheduler
 {
 	private final HostSelector hostSelector;
-	public static double VIRUS_POWER = 10;
-	public static long VIRUS_TIME = 10;
+	private final DistributedSimbaConfiguration simbaConfiguration;
 
-	public ExpandingDistributedScheduler(AbstractWaitingQueue waitingQueue, List<HostScheduler> hostSchedulers, HostSelector hostSelector, SetWaitingQueue distributedWaitingJobs)
+	public ExpandingDistributedScheduler(AbstractWaitingQueue waitingQueue, List<HostScheduler> hostSchedulers, HostSelector hostSelector, SetWaitingQueue distributedWaitingJobs, DistributedSimbaConfiguration simbaConfiguration)
 	{
 		super(waitingQueue, hostSchedulers, distributedWaitingJobs);
 		this.hostSelector = hostSelector;
+		this.simbaConfiguration = simbaConfiguration;
 	}
 
 	@Override
@@ -25,9 +26,9 @@ public class ExpandingDistributedScheduler extends DistributedScheduler
 		for (Job job : distributedWaitingJobs())
 		{
 			long waitingTime = time - job.submitTime();
-			if (waitingTime % ExpandingDistributedScheduler.VIRUS_TIME == 0)
+			if (waitingTime % simbaConfiguration.virusTime() < simbaConfiguration.timeToSchedule())
 			{
-				for (int i = 0; i < hostSchedulers().size() && i < Math.pow(ExpandingDistributedScheduler.VIRUS_POWER, (waitingTime / ExpandingDistributedScheduler.VIRUS_TIME) - 1); i++)
+				for (int i = 0; i < hostSchedulers().size() && i < Math.pow(simbaConfiguration.virusPower(), (waitingTime / simbaConfiguration.virusTime()) - 1); i++)
 				{
 					waitingQueue().add(job);
 				}
