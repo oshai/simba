@@ -4,9 +4,8 @@ import sim.DistributedSimbaConfiguration;
 
 public class DistributedSimulationConfiguration extends ProductionSimbaConfiguration implements DistributedSimbaConfiguration
 {
-
-	public double virusPower = 10;
-	public long virusTime = 10;
+	private final double virusPower = Double.valueOf(System.getProperty("virus-power", "2"));
+	private final long virusTime = Long.valueOf(System.getProperty("virus-time", "10"));
 
 	@Override
 	public double virusPower()
@@ -18,6 +17,26 @@ public class DistributedSimulationConfiguration extends ProductionSimbaConfigura
 	public long virusTime()
 	{
 		return virusTime;
+	}
+
+	@Override
+	public String toString()
+	{
+		return "DistributedSimulationConfiguration [" +
+				"virusPower()=" + virusPower() + 
+				", virusTime()=" + virusTime() + 
+				", timeToSchedule()=" + timeToSchedule() + 
+				", timeToLog()=" + timeToLog() + 
+				", hostCoreRatio()=" + hostCoreRatio() + 
+				", machineDropRatio()=" + machineDropRatio() + 
+				", hostMemoryRatio()=" + hostMemoryRatio() + 
+				", reservationsLimit()=" + reservationsLimit() + 
+				", isActualCoreUsageSimulation()=" + isActualCoreUsageSimulation() + 
+				", jobsCheckedBySchduler()=" + jobsCheckedBySchduler() + 
+				", submitRatio()=" + submitRatio() + 
+				", isBucketSimulation()=" + isBucketSimulation() + 
+				", bucketSize()=" + bucketSize() + 
+				"]";
 	}
 
 }
