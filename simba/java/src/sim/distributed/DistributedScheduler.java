@@ -50,7 +50,12 @@ public abstract class DistributedScheduler implements Scheduler
 
 	private boolean shouldLog(long time, long started)
 	{
-		return time % TimeUnit.HOURS.toSeconds(3) == 0 || (System.currentTimeMillis() - started > TimeUnit.SECONDS.toMillis(10));
+		return time % TimeUnit.HOURS.toSeconds(3) == 0 || longCycle(started);
+	}
+
+	private boolean longCycle(long started)
+	{
+		return System.currentTimeMillis() - started > TimeUnit.SECONDS.toMillis(10);
 	}
 
 	protected abstract int distributeJobs(long time);
@@ -73,6 +78,10 @@ public abstract class DistributedScheduler implements Scheduler
 	private void logScheduler(long time, long started, int dispatchJobs, int waitingJobs, long newJobs)
 	{
 		log.info("=============================================");
+		if (longCycle(started))
+		{
+			log.info("long cycle !!!!!!!");
+		}
 		log.info("schedule took " + (System.currentTimeMillis() - started));
 		log.info("schedule - time " + time + " scheduled jobs " + waitingJobs + " dispatchJobs " + dispatchJobs);
 		// " skippedJobs " + skippedJobs);
@@ -143,7 +152,7 @@ public abstract class DistributedScheduler implements Scheduler
 
 	private void logJobsDistribution(Multimap<Job, HostScheduler> jobsForHosts)
 	{
-		double[] jobsForHostsDist = new double[jobsForHosts.size()];
+		double[] jobsForHostsDist = new double[jobsForHosts.asMap().size()];
 		Iterator<Collection<HostScheduler>> iterator = jobsForHosts.asMap().values().iterator();
 		for (int i = 0; i < jobsForHostsDist.length; i++)
 		{
