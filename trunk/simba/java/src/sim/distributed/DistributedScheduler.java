@@ -33,7 +33,6 @@ public abstract class DistributedScheduler implements Scheduler
 	{
 		long started = System.currentTimeMillis();
 		long newJobs = waitingQueue.size();
-		scheduleWaitingJobsAgain(time);
 		int waitingJobs = distributeJobs(time);
 		int dispatchJobs = dispatch(time);
 		if (shouldLog(time))
@@ -50,8 +49,6 @@ public abstract class DistributedScheduler implements Scheduler
 	}
 
 	protected abstract int distributeJobs(long time);
-
-	protected abstract void scheduleWaitingJobsAgain(long time);
 
 	protected final SetWaitingQueue distributedWaitingJobs()
 	{

@@ -31,10 +31,4 @@ public class WaitOnAllHostsDistributedScheduler extends DistributedScheduler
 		return $;
 	}
 
-	@Override
-	protected final void scheduleWaitingJobsAgain(long time)
-	{
-		// do nothing
-	}
-
 }

@@ -6,6 +6,7 @@ public class DistributedSimulationConfiguration extends ProductionSimbaConfigura
 {
 	private final double virusPower = Double.valueOf(System.getProperty("virus-power", "2"));
 	private final long virusTime = Long.valueOf(System.getProperty("virus-time", "10"));
+	private final int intialDispatchFactor = Integer.valueOf(System.getProperty("initial-dispatch-factor", "3"));
 
 	@Override
 	public double virusPower()
@@ -25,6 +26,7 @@ public class DistributedSimulationConfiguration extends ProductionSimbaConfigura
 		return "DistributedSimulationConfiguration [" +
 				"virusPower()=" + virusPower() + 
 				", virusTime()=" + virusTime() + 
+				", intialDispatchFactor()=" + intialDispatchFactor() + 
 				", timeToSchedule()=" + timeToSchedule() + 
 				", timeToLog()=" + timeToLog() + 
 				", hostCoreRatio()=" + hostCoreRatio() + 
@@ -37,6 +39,12 @@ public class DistributedSimulationConfiguration extends ProductionSimbaConfigura
 				", isBucketSimulation()=" + isBucketSimulation() + 
 				", bucketSize()=" + bucketSize() + 
 				"]";
+	}
+
+	@Override
+	public int intialDispatchFactor()
+	{
+		return intialDispatchFactor;
 	}
 
 }

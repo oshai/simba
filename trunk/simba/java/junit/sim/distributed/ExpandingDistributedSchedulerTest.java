@@ -39,6 +39,12 @@ public class ExpandingDistributedSchedulerTest
 		{
 			return 10;
 		}
+
+		@Override
+		public int intialDispatchFactor()
+		{
+			return 1;
+		}
 	}
 
 	@Test
@@ -142,8 +148,7 @@ public class ExpandingDistributedSchedulerTest
 		SetWaitingQueue distributedWaitingJobs = createDitributedWaitingQueue(job);
 		ForTestingDistributedSimbaConfiguration forTestingDistributedSimbaConfiguration = new ForTestingDistributedSimbaConfiguration();
 		ExpandingDistributedScheduler tested = createScheduler(waitingQueue, createHostSchedulers(15), mock(CyclicHostSelector.class), distributedWaitingJobs, forTestingDistributedSimbaConfiguration);
-		tested.scheduleWaitingJobsAgain(time + forTestingDistributedSimbaConfiguration.virusTime());
-		assertTrue(waitingQueue.contains(job));
+		assertEquals(1, tested.distributeJobs(time + forTestingDistributedSimbaConfiguration.virusTime()));
 	}
 
 	@Test
@@ -155,8 +160,7 @@ public class ExpandingDistributedSchedulerTest
 		SetWaitingQueue distributedWaitingJobs = createDitributedWaitingQueue(job);
 		ForTestingDistributedSimbaConfiguration forTestingDistributedSimbaConfiguration = new ForTestingDistributedSimbaConfiguration();
 		ExpandingDistributedScheduler tested = createScheduler(waitingQueue, createHostSchedulers(15), mock(CyclicHostSelector.class), distributedWaitingJobs, forTestingDistributedSimbaConfiguration);
-		tested.scheduleWaitingJobsAgain(10 + forTestingDistributedSimbaConfiguration.virusTime());
-		assertTrue(waitingQueue.contains(job));
+		assertEquals(1, tested.distributeJobs(10 + forTestingDistributedSimbaConfiguration.virusTime()));
 	}
 
 	@Test
@@ -175,8 +179,7 @@ public class ExpandingDistributedSchedulerTest
 			}
 		};
 		ExpandingDistributedScheduler tested = createScheduler(waitingQueue, createHostSchedulers(15), mock(CyclicHostSelector.class), distributedWaitingJobs, forTestingDistributedSimbaConfiguration);
-		tested.scheduleWaitingJobsAgain(20);
-		assertFalse(waitingQueue.contains(job));
+		assertEquals(0, tested.distributeJobs(20));
 	}
 
 	private ArrayList<HostScheduler> createHostSchedulers(int size)
@@ -190,6 +193,26 @@ public class ExpandingDistributedSchedulerTest
 	}
 
 	@Test
+	public void testShouldDuplicateJobsInWaiting() throws Exception
+	{
+		int time = 7;
+		LinkedListWaitingQueue waitingQueue = new LinkedListWaitingQueue();
+		Job job = Job.builder(100).submitTime(time).build();
+		waitingQueue.add(job);
+		final int dispatchFactor = 3;
+		ForTestingDistributedSimbaConfiguration forTestingDistributedSimbaConfiguration = new ForTestingDistributedSimbaConfiguration()
+		{
+			@Override
+			public int intialDispatchFactor()
+			{
+				return dispatchFactor;
+			}
+		};
+		ExpandingDistributedScheduler tested = createScheduler(waitingQueue, createHostSchedulers(5), mock(CyclicHostSelector.class), new SetWaitingQueue(), forTestingDistributedSimbaConfiguration);
+		assertEquals(dispatchFactor, tested.distributeJobs(time));
+	}
+
+	@Test
 	public void testVirusJobShouldWaitOn8Hosts() throws Exception
 	{
 		int time = 7;
@@ -199,8 +222,7 @@ public class ExpandingDistributedSchedulerTest
 		ForTestingDistributedSimbaConfiguration forTestingDistributedSimbaConfiguration = new ForTestingDistributedSimbaConfiguration();
 		int pow = (int) Math.pow(forTestingDistributedSimbaConfiguration.virusPower(), 3);
 		ExpandingDistributedScheduler tested = createScheduler(waitingQueue, createHostSchedulers(pow + 5), mock(CyclicHostSelector.class), distributedWaitingJobs, forTestingDistributedSimbaConfiguration);
-		tested.scheduleWaitingJobsAgain(time + 4 * forTestingDistributedSimbaConfiguration.virusTime());
-		assertEquals(pow, waitingQueue.size());
+		assertEquals(pow, tested.distributeJobs(time + 4 * forTestingDistributedSimbaConfiguration.virusTime()));
 	}
 
 	@Test
@@ -225,7 +247,7 @@ public class ExpandingDistributedSchedulerTest
 		SetWaitingQueue distributedWaitingJobs = createDitributedWaitingQueue(job);
 		ForTestingDistributedSimbaConfiguration forTestingDistributedSimbaConfiguration = new ForTestingDistributedSimbaConfiguration();
 		ExpandingDistributedScheduler tested = createScheduler(waitingQueue, createHostSchedulers(2), mock(CyclicHostSelector.class), distributedWaitingJobs, forTestingDistributedSimbaConfiguration);
-		tested.scheduleWaitingJobsAgain(time + 3 * forTestingDistributedSimbaConfiguration.virusTime());
+		tested.distributeJobs(time + 3 * forTestingDistributedSimbaConfiguration.virusTime());
 		assertEquals(0, waitingQueue.size());
 	}
 
