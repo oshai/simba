@@ -51,7 +51,7 @@ public class AggregatedWaitingQueue implements WaitingQueueForStatistics
 		int $ = 0;
 		for (HostScheduler h : hostSchedulers)
 		{
-			$ += h.waitingJobs();
+			$ += h.waitingJobsSize();
 		}
 		return $;
 	}

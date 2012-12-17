@@ -7,6 +7,7 @@ import sim.model.Job;
 import sim.scheduling.AbstractWaitingQueue;
 import sim.scheduling.JobDispatcher;
 import sim.scheduling.SetWaitingQueue;
+import sim.scheduling.WaitingQueueForStatistics;
 
 public class HostScheduler
 {
@@ -57,7 +58,7 @@ public class HostScheduler
 		return host.hasPotentialResourceFor(job) && !(waitingJobs.contains(job));
 	}
 
-	public int waitingJobs()
+	public int waitingJobsSize()
 	{
 		return waitingJobs.size();
 	}
@@ -70,5 +71,10 @@ public class HostScheduler
 	public int collectRemove()
 	{
 		return waitingJobs.collectRemove();
+	}
+
+	public WaitingQueueForStatistics waitingJobs()
+	{
+		return waitingJobs;
 	}
 }

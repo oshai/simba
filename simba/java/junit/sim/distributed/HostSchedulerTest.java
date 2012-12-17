@@ -82,7 +82,7 @@ public class HostSchedulerTest
 		Job job1 = Job.builder(1).memory(1.0).build();
 		tested.addJob(job1);
 		assertEquals(0, tested.schedule(1));
-		assertEquals(0, tested.waitingJobs());
+		assertEquals(0, tested.waitingJobsSize());
 	}
 
 	@Test
@@ -94,7 +94,7 @@ public class HostSchedulerTest
 		HostScheduler tested = createHostScheduler(host, mock(JobDispatcher.class), new LinkedListWaitingQueue(), distributedWaitingJobs);
 		tested.addJob(job);
 		assertEquals(0, tested.schedule(1));
-		assertEquals(0, tested.waitingJobs());
+		assertEquals(0, tested.waitingJobsSize());
 	}
 
 	@Test
@@ -133,6 +133,14 @@ public class HostSchedulerTest
 		HostScheduler tested = createHostScheduler(null, new JobDispatcher(mock(EventQueue.class)), w);
 		when(w.collectAdd()).thenReturn(12);
 		assertEquals(12, tested.collectAdd());
+	}
+
+	@Test
+	public void testAddJob()
+	{
+		AbstractWaitingQueue w = new LinkedListWaitingQueue();
+		HostScheduler tested = createHostScheduler(null, new JobDispatcher(mock(EventQueue.class)), w);
+		assertEquals(w, tested.waitingJobs());
 	}
 
 	private HostScheduler createHostScheduler(Host host, JobDispatcher dispatcher, AbstractWaitingQueue waitingQueue)
