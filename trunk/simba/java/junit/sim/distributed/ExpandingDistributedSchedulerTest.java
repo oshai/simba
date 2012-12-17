@@ -78,6 +78,18 @@ public class ExpandingDistributedSchedulerTest
 		assertEquals(0, waitingQueue.size());
 	}
 
+	@Test
+	public void testDistributeJobsReturnsWaitingQueueSizeBeforeIteration() throws Exception
+	{
+		LinkedListWaitingQueue waitingQueue = new LinkedListWaitingQueue();
+		int time = 7;
+		Job job = Job.builder(100).submitTime(time).build();
+		waitingQueue.add(job);
+		SetWaitingQueue distributedWaitingJobs = createDitributedWaitingQueue();
+		ExpandingDistributedScheduler tested = createScheduler(waitingQueue, createHostSchedulers(0), mock(CyclicHostSelector.class), distributedWaitingJobs, new ForTestingDistributedSimbaConfiguration());
+		assertEquals(1, tested.distributeJobs(time));
+	}
+
 	@Test(expected = AssertionError.class)
 	public void testOneJobNoHosts() throws Exception
 	{

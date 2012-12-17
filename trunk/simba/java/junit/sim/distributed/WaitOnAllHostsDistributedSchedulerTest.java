@@ -1,5 +1,6 @@
 package sim.distributed;
 
+import static junit.framework.Assert.*;
 import static org.mockito.Mockito.*;
 
 import java.util.ArrayList;
@@ -27,7 +28,7 @@ public class WaitOnAllHostsDistributedSchedulerTest
 		Job job = mock(Job.class);
 		waitingQueue.add(job);
 		WaitOnAllHostsDistributedScheduler tested = createScheduler(hostSchedulers, waitingQueue);
-		tested.distributeJobs(time);
+		assertEquals(1, tested.distributeJobs(time));
 		for (HostScheduler hostScheduler : hostSchedulers)
 		{
 			verify(hostScheduler).addJob(job);
