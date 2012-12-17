@@ -41,13 +41,6 @@ public class WaitOnAllHostsDistributedSchedulerTest
 		return tested;
 	}
 
-	@Test
-	public void testDoNothing()
-	{
-		WaitOnAllHostsDistributedScheduler tested = createScheduler(null, null);
-		tested.scheduleWaitingJobsAgain(0);
-	}
-
 	private ArrayList<HostScheduler> createHostSchedulers(int size)
 	{
 		ArrayList<HostScheduler> $ = Lists.<HostScheduler> newArrayList();

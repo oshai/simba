@@ -1,5 +1,7 @@
 package sim.distributed;
 
+import static com.google.common.collect.Lists.*;
+
 import java.util.Iterator;
 import java.util.List;
 
@@ -20,8 +22,7 @@ public class ExpandingDistributedScheduler extends DistributedScheduler
 		this.simbaConfiguration = simbaConfiguration;
 	}
 
-	@Override
-	protected void scheduleWaitingJobsAgain(long time)
+	private void scheduleWaitingJobsAgain(long time)
 	{
 		for (Job job : distributedWaitingJobs())
 		{
@@ -54,7 +55,15 @@ public class ExpandingDistributedScheduler extends DistributedScheduler
 	@Override
 	protected int distributeJobs(long time)
 	{
+		duplicateWaitingJobs();
+		scheduleWaitingJobsAgain(time);
 		int $ = waitingQueue().size();
+		assignHosts();
+		return $;
+	}
+
+	private void assignHosts()
+	{
 		for (Iterator<Job> iterator = waitingQueue().iterator(); iterator.hasNext();)
 		{
 			Job j = iterator.next();
@@ -69,7 +78,18 @@ public class ExpandingDistributedScheduler extends DistributedScheduler
 				iterator.remove();
 			}
 		}
-		return $;
+	}
+
+	private void duplicateWaitingJobs()
+	{
+		List<Job> jobs = newArrayList(waitingQueue());
+		for (Job j : jobs)
+		{
+			for (int i = 1; i < simbaConfiguration.intialDispatchFactor(); i++)
+			{
+				waitingQueue().add(j);
+			}
+		}
 	}
 
 }
