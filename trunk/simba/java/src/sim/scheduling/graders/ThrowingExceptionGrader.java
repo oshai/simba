@@ -11,4 +11,11 @@ public class ThrowingExceptionGrader implements Grader
 	{
 		throw new UnsupportedOperationException("should not be called");
 	}
+
+	@Override
+	public String toString()
+	{
+		return "ThrowingExceptionGrader";
+	}
+
 }

@@ -1,5 +1,7 @@
 package sim.collectors;
 
+import java.util.List;
+
 import sim.scheduling.reserving.IMaxCostCollector;
 import sim.scheduling.reserving.ScheduleCostResult;
 
@@ -16,7 +18,7 @@ public class MaxCostCollector extends Collector implements IMaxCostCollector
 	}
 
 	@Override
-	public void collect(long time, Iterable<ScheduleCostResult> results)
+	public void collect(long time, Iterable<ScheduleCostResult> results, List<ScheduleCostResult> winner)
 	{
 		if (first)
 		{
@@ -25,7 +27,7 @@ public class MaxCostCollector extends Collector implements IMaxCostCollector
 			{
 				line += SEPERATOR + scheduleCostResult.algorithmName;
 			}
-			appendLine(line);
+			appendLine(line + SEPERATOR + "winner");
 			first = false;
 		}
 		String line = String.valueOf(time);
@@ -33,7 +35,12 @@ public class MaxCostCollector extends Collector implements IMaxCostCollector
 		{
 			line += SEPERATOR + scheduleCostResult.cost;
 		}
-		appendLine(line);
+		String winners = "";
+		for (ScheduleCostResult w : winner)
+		{
+			winners += w.algorithmName.replace(' ', '_');
+		}
+		appendLine(line + SEPERATOR + winners);
 	}
 
 	@Override

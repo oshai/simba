@@ -41,10 +41,12 @@ public class MaxCostSchedulerTest
 	{
 		MaxCostScheduler tested = new MaxCostScheduler(null, null, null, null, mock(SimbaConfiguration.class), schedulers, new SimpleScheduleCalculator(), new IMaxCostCollector()
 		{
+
 			@Override
-			public void collect(long time, Iterable<ScheduleCostResult> results)
+			public void collect(long time, Iterable<ScheduleCostResult> results, List<ScheduleCostResult> winner)
 			{
 			}
+
 		});
 		return tested;
 	}
@@ -60,6 +62,16 @@ public class MaxCostSchedulerTest
 		List<ReservingScheduler> schedulers = newArrayList(createScheduler(map), createScheduler(map2));
 		MaxCostScheduler tested = createSchduler(schedulers);
 		assertEquals(map2, tested.selectJobsToDispatch(0));
+	}
+
+//	@Test
+	public void testTwoWinners() throws Exception
+	{
+		Map<Job, Host> map = newHashMap();
+		map.put(Job.builder(1).cost(1).build(), null);
+		List<ReservingScheduler> schedulers = newArrayList(createScheduler(map), createScheduler(map));
+		MaxCostScheduler tested = createSchduler(schedulers);
+		assertEquals(map, tested.selectJobsToDispatch(0));
 	}
 
 	protected ReservingScheduler createScheduler(final Map<Job, Host> map)
