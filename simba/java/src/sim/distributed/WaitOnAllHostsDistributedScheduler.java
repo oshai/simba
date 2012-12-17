@@ -16,8 +16,9 @@ public class WaitOnAllHostsDistributedScheduler extends DistributedScheduler
 	}
 
 	@Override
-	protected final void distributeJobs(long time)
+	protected final int distributeJobs(long time)
 	{
+		int $ = waitingQueue().size();
 		for (Iterator<Job> iterator = waitingQueue().iterator(); iterator.hasNext();)
 		{
 			Job j = iterator.next();
@@ -26,8 +27,8 @@ public class WaitOnAllHostsDistributedScheduler extends DistributedScheduler
 				addJobToHost(j, h);
 			}
 			iterator.remove();
-
 		}
+		return $;
 	}
 
 	@Override

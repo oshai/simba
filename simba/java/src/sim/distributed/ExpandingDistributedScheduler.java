@@ -52,8 +52,9 @@ public class ExpandingDistributedScheduler extends DistributedScheduler
 	}
 
 	@Override
-	protected void distributeJobs(long time)
+	protected int distributeJobs(long time)
 	{
+		int $ = waitingQueue().size();
 		for (Iterator<Job> iterator = waitingQueue().iterator(); iterator.hasNext();)
 		{
 			Job j = iterator.next();
@@ -68,6 +69,7 @@ public class ExpandingDistributedScheduler extends DistributedScheduler
 				iterator.remove();
 			}
 		}
+		return $;
 	}
 
 }

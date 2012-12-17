@@ -32,13 +32,13 @@ public abstract class DistributedScheduler implements Scheduler
 	public int schedule(long time)
 	{
 		long started = System.currentTimeMillis();
+		long newJobs = waitingQueue.size();
 		scheduleWaitingJobsAgain(time);
-		int waitingJobs = waitingQueue.size();
-		distributeJobs(time);
+		int waitingJobs = distributeJobs(time);
 		int dispatchJobs = dispatch(time);
 		if (shouldLog(time))
 		{
-			logScheduler(time, started, dispatchJobs, waitingJobs);
+			logScheduler(time, started, dispatchJobs, waitingJobs, newJobs);
 		}
 		asserter().throwsError().assertFalse(waitingQueue.size() > 0, "waiting queue should always be zero in the end of cycle first waiting job: " + waitingQueue.peek() + " is already waiting on hosts? " + distributedWaitingJobs.contains(waitingQueue.peek()));
 		return dispatchJobs;
@@ -49,7 +49,7 @@ public abstract class DistributedScheduler implements Scheduler
 		return time % 10800 == 0;
 	}
 
-	protected abstract void distributeJobs(long time);
+	protected abstract int distributeJobs(long time);
 
 	protected abstract void scheduleWaitingJobsAgain(long time);
 
@@ -68,7 +68,7 @@ public abstract class DistributedScheduler implements Scheduler
 		return hostSchedulers;
 	}
 
-	private void logScheduler(long time, long started, int dispatchJobs, int waitingJobs)
+	private void logScheduler(long time, long started, int dispatchJobs, int waitingJobs, long newJobs)
 	{
 		log.info("=============================================");
 		log.info("schedule took " + (System.currentTimeMillis() - started));
@@ -77,6 +77,7 @@ public abstract class DistributedScheduler implements Scheduler
 		// log.info("schedule - avail-hosts start " + startingHostsCount +
 		// " avail-host end " + currentCycleHosts.size() + " wait-jobs start " +
 		// startingJobsCount
+		log.info(" wait-jobs new submitted jobs " + newJobs);
 		log.info(" wait-jobs end (should be 0) " + waitingQueue.size());
 		log.info("schedule -  first job " + waitingQueue.peek());
 		int waitingJobsOnHosts = 0;
