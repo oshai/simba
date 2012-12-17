@@ -64,7 +64,7 @@ public class MaxCostSchedulerTest
 		assertEquals(map2, tested.selectJobsToDispatch(0));
 	}
 
-//	@Test
+	@Test
 	public void testTwoWinners() throws Exception
 	{
 		Map<Job, Host> map = newHashMap();
