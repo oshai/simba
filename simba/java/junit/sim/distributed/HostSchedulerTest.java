@@ -13,6 +13,8 @@ import sim.scheduling.JobDispatcher;
 import sim.scheduling.LinkedListWaitingQueue;
 import sim.scheduling.SetWaitingQueue;
 
+import com.google.common.collect.Lists;
+
 public class HostSchedulerTest
 {
 
@@ -121,6 +123,7 @@ public class HostSchedulerTest
 	public void testRemove()
 	{
 		AbstractWaitingQueue w = mock(AbstractWaitingQueue.class);
+		when(w.iterator()).thenReturn(Lists.<Job> newArrayList().iterator());
 		HostScheduler tested = createHostScheduler(null, new JobDispatcher(mock(EventQueue.class)), w);
 		when(w.collectRemove()).thenReturn(12);
 		assertEquals(12, tested.collectRemove());
@@ -130,6 +133,7 @@ public class HostSchedulerTest
 	public void testAdd()
 	{
 		AbstractWaitingQueue w = mock(AbstractWaitingQueue.class);
+		when(w.iterator()).thenReturn(Lists.<Job> newArrayList().iterator());
 		HostScheduler tested = createHostScheduler(null, new JobDispatcher(mock(EventQueue.class)), w);
 		when(w.collectAdd()).thenReturn(12);
 		assertEquals(12, tested.collectAdd());

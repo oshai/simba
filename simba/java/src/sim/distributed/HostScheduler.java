@@ -1,6 +1,7 @@
 package sim.distributed;
 
 import java.util.Iterator;
+import java.util.Set;
 
 import sim.model.Host;
 import sim.model.Job;
@@ -9,10 +10,13 @@ import sim.scheduling.JobDispatcher;
 import sim.scheduling.SetWaitingQueue;
 import sim.scheduling.WaitingQueueForStatistics;
 
+import com.google.common.collect.Sets;
+
 public class HostScheduler
 {
 	private final Host host;
 	private final AbstractWaitingQueue waitingJobs;
+	private Set<Job> jobs;
 	private final JobDispatcher dispatcher;
 	private final SetWaitingQueue distributedWaitingJobs;
 
@@ -23,10 +27,12 @@ public class HostScheduler
 		this.dispatcher = dispatcher;
 		this.waitingJobs = waitingQueue;
 		this.distributedWaitingJobs = distributedWaitingJobs;
+		jobs = Sets.newHashSet(waitingQueue);
 	}
 
 	public void addJob(Job job)
 	{
+		jobs.add(job);
 		waitingJobs.add(job);
 	}
 
@@ -40,12 +46,14 @@ public class HostScheduler
 			Job job = iterator.next();
 			if (!host.hasPotentialResourceFor(job) || !distributedWaitingJobs.contains(job))
 			{
+				jobs.remove(job);
 				iterator.remove();
 				continue;
 			}
 			if (host.availableCores() >= job.cores() && host.availableMemory() >= job.memory())
 			{
 				dispatcher.dispatch(job, host, time);
+				jobs.remove(job);
 				iterator.remove();
 				$++;
 			}
@@ -55,7 +63,7 @@ public class HostScheduler
 
 	public boolean isAllowedToAddJob(Job job)
 	{
-		return host.hasPotentialResourceFor(job) && !(waitingJobs.contains(job));
+		return host.hasPotentialResourceFor(job) && !(jobs.contains(job));
 	}
 
 	public int waitingJobsSize()
