@@ -2,6 +2,7 @@ package sim.distributed;
 
 import static com.google.common.collect.Lists.*;
 import static org.junit.Assert.*;
+import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.*;
 
 import java.util.ArrayList;
@@ -118,11 +119,15 @@ public class ExpandingDistributedSchedulerTest
 		LinkedListWaitingQueue waitingQueue = new LinkedListWaitingQueue();
 		Job job = Job.builder(100).build();
 		waitingQueue.add(job);
+		waitingQueue.add(Job.builder(100).build());
 		HostScheduler h = mock(HostScheduler.class);
+		LinkedListWaitingQueue waitingQueueForHost = new LinkedListWaitingQueue();
+		when(h.waitingJobs()).thenReturn(waitingQueueForHost);
+		waitingQueueForHost.add(job);
 		List<HostScheduler> hostSchedulers = newArrayList(h);
 		CyclicHostSelector hostSelector = mock(CyclicHostSelector.class);
 		ExpandingDistributedScheduler tested = createScheduler(waitingQueue, hostSchedulers, hostSelector);
-		when(hostSelector.select(job)).thenReturn(h);
+		when(hostSelector.select(any(Job.class))).thenReturn(h);
 		when(h.schedule(time)).thenReturn(1);
 		assertEquals(1, tested.schedule(time));
 		assertEquals(0, waitingQueue.size());

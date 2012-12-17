@@ -2,8 +2,10 @@ package sim.distributed;
 
 import static utils.assertions.Asserter.*;
 
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.math3.stat.descriptive.rank.Percentile;
 import org.apache.log4j.Logger;
@@ -12,6 +14,9 @@ import sim.model.Job;
 import sim.scheduling.AbstractWaitingQueue;
 import sim.scheduling.Scheduler;
 import sim.scheduling.SetWaitingQueue;
+
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 
 public abstract class DistributedScheduler implements Scheduler
 {
@@ -35,7 +40,7 @@ public abstract class DistributedScheduler implements Scheduler
 		long newJobs = waitingQueue.size();
 		int waitingJobs = distributeJobs(time);
 		int dispatchJobs = dispatch(time);
-		if (shouldLog(time))
+		if (shouldLog(time, started))
 		{
 			logScheduler(time, started, dispatchJobs, waitingJobs, newJobs);
 		}
@@ -43,9 +48,9 @@ public abstract class DistributedScheduler implements Scheduler
 		return dispatchJobs;
 	}
 
-	private boolean shouldLog(long time)
+	private boolean shouldLog(long time, long started)
 	{
-		return time % 10800 == 0;
+		return time % TimeUnit.HOURS.toSeconds(3) == 0 || (System.currentTimeMillis() - started > TimeUnit.SECONDS.toMillis(10));
 	}
 
 	protected abstract int distributeJobs(long time);
@@ -77,43 +82,74 @@ public abstract class DistributedScheduler implements Scheduler
 		log.info(" wait-jobs new submitted jobs " + newJobs);
 		log.info(" wait-jobs end (should be 0) " + waitingQueue.size());
 		log.info("schedule -  first job " + waitingQueue.peek());
+		logHosts();
+		logJobs(time);
+
+	}
+
+	private void logJobs(long time)
+	{
+		double[] valuesJobMemory = new double[distributedWaitingJobs.size()];
+		double[] valuesJobCore = new double[distributedWaitingJobs.size()];
+		double[] valuesJobWait = new double[distributedWaitingJobs.size()];
+		Job maxWaitingJobJob = null;
+		Iterator<Job> iterator = distributedWaitingJobs.iterator();
+		for (int i = 0; i < valuesJobWait.length; i++)
+		{
+			Job job = iterator.next();
+			valuesJobCore[i] = job.cores();
+			valuesJobMemory[i] = job.memory();
+			valuesJobWait[i] = time - job.submitTime();
+			if (maxWaitingJobJob == null || maxWaitingJobJob.submitTime() > job.submitTime())
+			{
+				maxWaitingJobJob = job;
+			}
+		}
+		logPrecentile(valuesJobMemory, "jobs", "memory");
+		logPrecentile(valuesJobCore, "jobs", "cores");
+		logPrecentile(valuesJobWait, "jobs", "wait-time");
+		log.info("max waiting job is " + maxWaitingJobJob);
+	}
+
+	private void logHosts()
+	{
 		int waitingJobsOnHosts = 0;
 		int maximumJobsWaitingPerHost = 0;
 		int minimumJobsWaitingPerHost = Integer.MAX_VALUE;
 		double[] values = new double[hostSchedulers.size()];
+		Multimap<Job, HostScheduler> jobsForHosts = HashMultimap.create();
 		for (int i = 0; i < values.length; i++)
 		{
 			HostScheduler h = hostSchedulers.get(i);
-			int w = h.waitingJobs();
+			int w = h.waitingJobsSize();
 			values[i] = w;
 			maximumJobsWaitingPerHost = Math.max(w, maximumJobsWaitingPerHost);
 			minimumJobsWaitingPerHost = Math.min(w, minimumJobsWaitingPerHost);
 			waitingJobsOnHosts += w;
+			for (Job j : h.waitingJobs())
+			{
+				jobsForHosts.put(j, h);
+			}
 		}
-		// TODO write how many on each host without duplication
 		int averageJobsWaitingPerHost = waitingJobsOnHosts / hostSchedulers.size();
 		log.info(" wait-jobs on hosts end " + waitingJobsOnHosts);
 		log.info(" wait-jobs on hosts end without duplication " + distributedWaitingJobs.size());
 		log.info(" max jobs waiting per host " + maximumJobsWaitingPerHost);
 		log.info(" min jobs waiting per host " + minimumJobsWaitingPerHost);
 		log.info(" averageJobsWaitingPerHost " + averageJobsWaitingPerHost);
-
 		logPrecentile(values, "hosts", "jobs");
-		double[] valuesJobMemory = new double[distributedWaitingJobs.size()];
-		Iterator<Job> iterator = distributedWaitingJobs.iterator();
-		for (int i = 0; i < valuesJobMemory.length; i++)
-		{
-			valuesJobMemory[i] = iterator.next().memory();
-		}
-		logPrecentile(valuesJobMemory, "jobs", "memory");
-		double[] valuesJobCore = new double[distributedWaitingJobs.size()];
-		iterator = distributedWaitingJobs.iterator();
-		for (int i = 0; i < valuesJobMemory.length; i++)
-		{
-			valuesJobCore[i] = iterator.next().cores();
-		}
-		logPrecentile(valuesJobCore, "jobs", "cores");
+		logJobsDistribution(jobsForHosts);
+	}
 
+	private void logJobsDistribution(Multimap<Job, HostScheduler> jobsForHosts)
+	{
+		double[] jobsForHostsDist = new double[jobsForHosts.size()];
+		Iterator<Collection<HostScheduler>> iterator = jobsForHosts.asMap().values().iterator();
+		for (int i = 0; i < jobsForHostsDist.length; i++)
+		{
+			jobsForHostsDist[i] = iterator.next().size();
+		}
+		logPrecentile(jobsForHostsDist, "jobs", "hosts");
 	}
 
 	private void logPrecentile(double[] values, String key, String value)

@@ -27,7 +27,7 @@ public class AggregatedWaitingQueueTest
 		HostScheduler hs = mock(HostScheduler.class);
 		when(hs.collectAdd()).thenReturn(1);
 		when(hs.collectRemove()).thenReturn(2);
-		when(hs.waitingJobs()).thenReturn(3);
+		when(hs.waitingJobsSize()).thenReturn(3);
 		AggregatedWaitingQueue tested = new AggregatedWaitingQueue(Lists.<HostScheduler> newArrayList(hs, hs));
 		assertEquals(2, tested.collectAdd());
 		assertEquals(4, tested.collectRemove());
