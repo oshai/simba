@@ -134,7 +134,6 @@ public class DistributedSchedulerLogger
 	private void logHostToJobs(Integer key, SummaryStatistics value)
 	{
 		log.info("avereage for machines with " + key + " cores is: " + value.getSum() / value.getN());
-
 	}
 
 	private SummaryStatistics getStats(Map<Integer, SummaryStatistics> coresToWaitingJobs, int cores, AggregateSummaryStatistics aggregate)

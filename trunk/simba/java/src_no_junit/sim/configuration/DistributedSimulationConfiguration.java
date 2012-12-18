@@ -6,7 +6,7 @@ public class DistributedSimulationConfiguration extends ProductionSimbaConfigura
 {
 	private final double virusPower = Double.valueOf(System.getProperty("virus-power", "2"));
 	private final long virusTime = Long.valueOf(System.getProperty("virus-time", "10"));
-	private final int intialDispatchFactor = Integer.valueOf(System.getProperty("initial-dispatch-factor", "3"));
+	private final int intialDispatchFactor = Integer.valueOf(System.getProperty("initial-dispatch-factor", "10"));
 
 	@Override
 	public double virusPower()
