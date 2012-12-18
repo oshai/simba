@@ -3,6 +3,8 @@ package sim.distributed;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
+import java.util.Comparator;
+
 import org.junit.Test;
 
 import sim.event_handling.EventQueue;
@@ -12,6 +14,8 @@ import sim.scheduling.AbstractWaitingQueue;
 import sim.scheduling.JobDispatcher;
 import sim.scheduling.LinkedListWaitingQueue;
 import sim.scheduling.SetWaitingQueue;
+import sim.scheduling.job_comparators.ConstantComparator;
+import sim.scheduling.job_comparators.HigestMemoryFirst;
 
 import com.google.common.collect.Lists;
 
@@ -67,7 +71,7 @@ public class HostSchedulerTest
 		SetWaitingQueue distributedWaitingJobs = new SetWaitingQueue();
 		Job job = Job.builder(1).build();
 		distributedWaitingJobs.add(job);
-		HostScheduler tested = createHostScheduler(host, dispatcher, new LinkedListWaitingQueue(), distributedWaitingJobs);
+		HostScheduler tested = createHostScheduler(host, dispatcher, new LinkedListWaitingQueue(), distributedWaitingJobs, new HigestMemoryFirst());
 		tested.addJob(job);
 		assertEquals(1, tested.schedule(1));
 		verify(dispatcher).dispatch(job, host, 1);
@@ -93,7 +97,7 @@ public class HostSchedulerTest
 		Host host = Host.builder().cores(1.0).build();
 		Job job = Job.builder(1).cores(1.0).build();
 		SetWaitingQueue distributedWaitingJobs = new SetWaitingQueue();
-		HostScheduler tested = createHostScheduler(host, mock(JobDispatcher.class), new LinkedListWaitingQueue(), distributedWaitingJobs);
+		HostScheduler tested = createHostScheduler(host, mock(JobDispatcher.class), new LinkedListWaitingQueue(), distributedWaitingJobs, new HigestMemoryFirst());
 		tested.addJob(job);
 		assertEquals(0, tested.schedule(1));
 		assertEquals(0, tested.waitingJobsSize());
@@ -109,7 +113,7 @@ public class HostSchedulerTest
 		SetWaitingQueue distributedWaitingJobs = new SetWaitingQueue();
 		Job job = Job.builder(1).cores(2.0).build();
 		distributedWaitingJobs.add(job);
-		HostScheduler tested = createHostScheduler(host, new JobDispatcher(mock(EventQueue.class)), waitingQueue, distributedWaitingJobs);
+		HostScheduler tested = createHostScheduler(host, new JobDispatcher(mock(EventQueue.class)), waitingQueue, distributedWaitingJobs, new HigestMemoryFirst());
 		waitingQueue.add(job);
 		assertEquals(0, tested.schedule(1));
 		assertEquals(1, waitingQueue.size());
@@ -147,15 +151,52 @@ public class HostSchedulerTest
 		assertEquals(w, tested.waitingJobs());
 	}
 
+	@Test
+	public void testOrderJobsByNumberOfMemory() throws Exception
+	{
+		Host host = Host.builder().memory(2.0).build();
+		LinkedListWaitingQueue waitingQueue = new LinkedListWaitingQueue();
+		SetWaitingQueue distributedWaitingJobs = new SetWaitingQueue();
+		Job job = createAndAddJobToQueues(waitingQueue, distributedWaitingJobs, 1.0);
+		Job largerJob = createAndAddJobToQueues(waitingQueue, distributedWaitingJobs, 2.0);
+		HostScheduler tested = createHostScheduler(host, new JobDispatcher(mock(EventQueue.class)), waitingQueue, distributedWaitingJobs, new HigestMemoryFirst());
+		assertEquals(1, tested.schedule(1));
+		assertFalse(waitingQueue.getQueue().contains(largerJob));
+		assertTrue(waitingQueue.getQueue().contains(job));
+	}
+
+	@Test
+	// actually for coverage of constant comparator
+	public void testOrderJobsByOrderOfInsertionToHost() throws Exception
+	{
+		Host host = Host.builder().memory(2.0).build();
+		LinkedListWaitingQueue waitingQueue = new LinkedListWaitingQueue();
+		SetWaitingQueue distributedWaitingJobs = new SetWaitingQueue();
+		Job job = createAndAddJobToQueues(waitingQueue, distributedWaitingJobs, 1.0);
+		Job largerJob = createAndAddJobToQueues(waitingQueue, distributedWaitingJobs, 2.0);
+		HostScheduler tested = createHostScheduler(host, new JobDispatcher(mock(EventQueue.class)), waitingQueue, distributedWaitingJobs, new ConstantComparator());
+		assertEquals(1, tested.schedule(1));
+		assertTrue(waitingQueue.getQueue().contains(largerJob));
+		assertFalse(waitingQueue.getQueue().contains(job));
+	}
+
+	private Job createAndAddJobToQueues(LinkedListWaitingQueue waitingQueue, SetWaitingQueue distributedWaitingJobs, double memory)
+	{
+		Job job = Job.builder(1).memory(memory).build();
+		distributedWaitingJobs.add(job);
+		waitingQueue.add(job);
+		return job;
+	}
+
 	private HostScheduler createHostScheduler(Host host, JobDispatcher dispatcher, AbstractWaitingQueue waitingQueue)
 	{
 		SetWaitingQueue distributedWaitingJobs = new SetWaitingQueue();
-		return createHostScheduler(host, dispatcher, waitingQueue, distributedWaitingJobs);
+		return createHostScheduler(host, dispatcher, waitingQueue, distributedWaitingJobs, new HigestMemoryFirst());
 	}
 
-	private HostScheduler createHostScheduler(Host host, JobDispatcher dispatcher, AbstractWaitingQueue waitingQueue, SetWaitingQueue distributedWaitingJobs)
+	private HostScheduler createHostScheduler(Host host, JobDispatcher dispatcher, AbstractWaitingQueue waitingQueue, SetWaitingQueue distributedWaitingJobs, Comparator<? super Job> jobGrader)
 	{
-		return new HostScheduler(host, dispatcher, waitingQueue, distributedWaitingJobs);
+		return new HostScheduler(host, dispatcher, waitingQueue, distributedWaitingJobs, jobGrader);
 	}
 
 }

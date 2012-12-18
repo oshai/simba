@@ -1,5 +1,8 @@
 package sim.distributed;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -10,6 +13,7 @@ import sim.scheduling.JobDispatcher;
 import sim.scheduling.SetWaitingQueue;
 import sim.scheduling.WaitingQueueForStatistics;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 public class HostScheduler
@@ -19,8 +23,9 @@ public class HostScheduler
 	private Set<Job> jobs;
 	private final JobDispatcher dispatcher;
 	private final SetWaitingQueue distributedWaitingJobs;
+	private Comparator<? super Job> jobsGrader;
 
-	public HostScheduler(Host host, JobDispatcher dispatcher, AbstractWaitingQueue waitingQueue, SetWaitingQueue distributedWaitingJobs)
+	public HostScheduler(Host host, JobDispatcher dispatcher, AbstractWaitingQueue waitingQueue, SetWaitingQueue distributedWaitingJobs, Comparator<? super Job> jobGrader)
 	{
 		super();
 		this.host = host;
@@ -28,6 +33,7 @@ public class HostScheduler
 		this.waitingJobs = waitingQueue;
 		this.distributedWaitingJobs = distributedWaitingJobs;
 		jobs = Sets.newHashSet(waitingQueue);
+		jobsGrader = jobGrader;
 	}
 
 	public void addJob(Job job)
@@ -40,25 +46,31 @@ public class HostScheduler
 	{
 
 		int $ = 0;
-		Iterator<Job> iterator = waitingJobs.iterator();
+		ArrayList<Job> newArrayList = Lists.newArrayList(waitingJobs);
+		Collections.sort(newArrayList, jobsGrader);
+		Iterator<Job> iterator = newArrayList.iterator();
 		while (iterator.hasNext())
 		{
 			Job job = iterator.next();
 			if (!host.hasPotentialResourceFor(job) || !distributedWaitingJobs.contains(job))
 			{
-				jobs.remove(job);
-				iterator.remove();
+				removeJob(job);
 				continue;
 			}
 			if (host.availableCores() >= job.cores() && host.availableMemory() >= job.memory())
 			{
 				dispatcher.dispatch(job, host, time);
-				jobs.remove(job);
-				iterator.remove();
+				removeJob(job);
 				$++;
 			}
 		}
 		return $;
+	}
+
+	private void removeJob(Job job)
+	{
+		jobs.remove(job);
+		waitingJobs.getQueue().remove(job);
 	}
 
 	public boolean isAllowedToAddJob(Job job)

@@ -3,6 +3,7 @@ package sim;
 import static com.google.common.collect.Lists.*;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -29,6 +30,7 @@ import sim.event_handling.EventQueue;
 import sim.events.Event;
 import sim.model.Cluster;
 import sim.model.Host;
+import sim.model.Job;
 import sim.parsers.HostParser;
 import sim.parsers.JobParser;
 import sim.scheduling.AbstractWaitingQueue;
@@ -45,6 +47,9 @@ import sim.scheduling.graders.Constant;
 import sim.scheduling.graders.Grader;
 import sim.scheduling.graders.RandomGrader;
 import sim.scheduling.graders.ThrowingExceptionGrader;
+import sim.scheduling.job_comparators.ConstantComparator;
+import sim.scheduling.job_comparators.HigestMemoryFirst;
+import sim.scheduling.job_comparators.OldestJobFirst;
 import sim.scheduling.matchers.GradeMatcher;
 import sim.scheduling.matchers.GradeMatcherProvider;
 import sim.scheduling.reserving.MaxCostScheduler;
@@ -225,7 +230,7 @@ public class Simulator
 			@Override
 			public HostScheduler apply(Host host)
 			{
-				return new HostScheduler(host, dispatcher, new LinkedListWaitingQueue(), distributedWaitingJobs);
+				return new HostScheduler(host, dispatcher, new LinkedListWaitingQueue(), distributedWaitingJobs, createJobComparator());
 			}
 		}));
 	}
@@ -277,5 +282,24 @@ public class Simulator
 	private boolean isDistributed()
 	{
 		return "distributed".equals(getSchedulerProperty());
+	}
+
+	private Comparator<? super Job> createJobComparator()
+	{
+		String comparator = getJobComparatorProperty();
+		if (comparator.equals("memory"))
+		{
+			return new HigestMemoryFirst();
+		}
+		if (comparator.equals("submitTime"))
+		{
+			return new OldestJobFirst();
+		}
+		return new ConstantComparator();
+	}
+
+	private String getJobComparatorProperty()
+	{
+		return System.getProperty("job-grader", "default");
 	}
 }
