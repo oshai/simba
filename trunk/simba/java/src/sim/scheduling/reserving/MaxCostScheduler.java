@@ -49,7 +49,6 @@ public class MaxCostScheduler extends ReservingScheduler implements Scheduler
 
 	}
 
-	@SuppressWarnings("null")
 	@Override
 	protected Map<Job, Host> selectJobsToDispatch(long time)
 	{

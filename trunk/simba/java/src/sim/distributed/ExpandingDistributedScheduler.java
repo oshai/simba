@@ -14,12 +14,14 @@ public class ExpandingDistributedScheduler extends DistributedScheduler
 {
 	private final HostSelector hostSelector;
 	private final DistributedSimbaConfiguration simbaConfiguration;
+	private ExpandingStrategy expandingStrategy;
 
-	public ExpandingDistributedScheduler(AbstractWaitingQueue waitingQueue, List<HostScheduler> hostSchedulers, HostSelector hostSelector, SetWaitingQueue distributedWaitingJobs, DistributedSimbaConfiguration simbaConfiguration)
+	public ExpandingDistributedScheduler(AbstractWaitingQueue waitingQueue, List<HostScheduler> hostSchedulers, HostSelector hostSelector, SetWaitingQueue distributedWaitingJobs, DistributedSimbaConfiguration simbaConfiguration, ExpandingStrategy expandingStrategy)
 	{
 		super(waitingQueue, hostSchedulers, distributedWaitingJobs);
 		this.hostSelector = hostSelector;
 		this.simbaConfiguration = simbaConfiguration;
+		this.expandingStrategy = expandingStrategy;
 	}
 
 	private void scheduleWaitingJobsAgain(long time)
@@ -29,7 +31,7 @@ public class ExpandingDistributedScheduler extends DistributedScheduler
 			long waitingTime = time - job.submitTime();
 			if (isTimeToDivide(waitingTime) && isLastIterationFilledAllHosts(waitingTime))
 			{
-				for (int i = 0; i < hostSchedulers().size() && i < virusDivisionFactor(waitingTime, 1); i++)
+				for (int i = 0; i < hostSchedulers().size() && i < expandingStrategy.times((waitingTime / simbaConfiguration.virusTime()) - 1); i++)
 				{
 					waitingQueue().add(job);
 				}
@@ -44,12 +46,7 @@ public class ExpandingDistributedScheduler extends DistributedScheduler
 
 	private boolean isLastIterationFilledAllHosts(long waitingTime)
 	{
-		return virusDivisionFactor(waitingTime, 2) < hostSchedulers().size();
-	}
-
-	private double virusDivisionFactor(long waitingTime, int factor)
-	{
-		return Math.pow(simbaConfiguration.virusPower(), (waitingTime / simbaConfiguration.virusTime()) - factor);
+		return expandingStrategy.times((waitingTime / simbaConfiguration.virusTime()) - 1) < hostSchedulers().size();
 	}
 
 	@Override
