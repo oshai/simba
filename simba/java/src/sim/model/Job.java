@@ -39,6 +39,7 @@ public class Job
 		}
 	}
 
+	@SuppressWarnings("hiding")
 	public static class Builder
 	{
 		private String id;

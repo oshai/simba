@@ -24,6 +24,7 @@ public class Host
 		this.memory = memory;
 	}
 
+	@SuppressWarnings("hiding")
 	public static class Builder
 	{
 		private String id;
