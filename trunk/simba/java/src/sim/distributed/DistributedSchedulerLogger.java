@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.math3.stat.descriptive.AggregateSummaryStatistics;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import org.apache.commons.math3.stat.descriptive.rank.Percentile;
 import org.apache.log4j.Logger;
@@ -99,11 +100,12 @@ public class DistributedSchedulerLogger
 		double[] values = new double[hostSchedulers.size()];
 		Multimap<Job, HostScheduler> jobsForHosts = HashMultimap.create();
 		Map<Integer, SummaryStatistics> coresToWaitingJobs = Maps.newHashMap();
+		AggregateSummaryStatistics aggregate = new AggregateSummaryStatistics();
 		for (int i = 0; i < values.length; i++)
 		{
 			HostScheduler h = hostSchedulers.get(i);
 			int w = h.waitingJobsSize();
-			SummaryStatistics s = getStats(coresToWaitingJobs, (int) h.host().cores());
+			SummaryStatistics s = getStats(coresToWaitingJobs, (int) h.host().cores(), aggregate);
 			s.addValue(w);
 			values[i] = w;
 			maximumJobsWaitingPerHost = Math.max(w, maximumJobsWaitingPerHost);
@@ -117,9 +119,10 @@ public class DistributedSchedulerLogger
 		int averageJobsWaitingPerHost = waitingJobsOnHosts / hostSchedulers.size();
 		log.info(" wait-jobs on hosts end " + waitingJobsOnHosts);
 		log.info(" wait-jobs on hosts end without duplication " + distributedWaitingJobs.size());
-		log.info(" max jobs waiting per host " + maximumJobsWaitingPerHost);
-		log.info(" min jobs waiting per host " + minimumJobsWaitingPerHost);
-		log.info(" averageJobsWaitingPerHost " + averageJobsWaitingPerHost);
+		log.info(" max jobs waiting per host " + maximumJobsWaitingPerHost + " aggregate " + aggregate.getMax());
+		log.info(" min jobs waiting per host " + minimumJobsWaitingPerHost + " aggregate " + aggregate.getMin());
+		log.info(" averageJobsWaitingPerHost " + averageJobsWaitingPerHost + " aggregate " + aggregate.getSum() / aggregate.getN());
+		log.info("aggregate statistics to string " + aggregate);
 		logPrecentile(values, "hosts", "jobs");
 		logJobsDistribution(jobsForHosts);
 		for (Entry<Integer, SummaryStatistics> e : coresToWaitingJobs.entrySet())
@@ -134,11 +137,11 @@ public class DistributedSchedulerLogger
 
 	}
 
-	private SummaryStatistics getStats(Map<Integer, SummaryStatistics> coresToWaitingJobs, int cores)
+	private SummaryStatistics getStats(Map<Integer, SummaryStatistics> coresToWaitingJobs, int cores, AggregateSummaryStatistics aggregate)
 	{
 		if (!coresToWaitingJobs.containsKey(cores))
 		{
-			coresToWaitingJobs.put(cores, new SummaryStatistics());
+			coresToWaitingJobs.put(cores, aggregate.createContributingStatistics());
 		}
 		return coresToWaitingJobs.get(cores);
 	}
