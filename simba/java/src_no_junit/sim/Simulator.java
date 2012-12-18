@@ -20,16 +20,15 @@ import sim.configuration.DistributedSimulationConfiguration;
 import sim.configuration.ProductionSimbaConfiguration;
 import sim.configuration.ProductionSimbaConfiguration.LooperFactory;
 import sim.distributed.ByStrategyHostSelector;
+import sim.distributed.ConstantExpandingStrategy;
 import sim.distributed.DistributedJobDispatcher;
 import sim.distributed.ExpandingDistributedScheduler;
 import sim.distributed.HostScheduler;
 import sim.distributed.RandomListSelector;
 import sim.event_handling.EventQueue;
 import sim.events.Event;
-import sim.events.Submit;
 import sim.model.Cluster;
 import sim.model.Host;
-import sim.model.Job;
 import sim.parsers.HostParser;
 import sim.parsers.JobParser;
 import sim.scheduling.AbstractWaitingQueue;
@@ -270,7 +269,7 @@ public class Simulator
 			// HostSelector hostSelector1 = new HostSelector(hostsSched);
 			// return new WaitOnAllHostsDistributedScheduler(waitingQueue,
 			// hostsSched, distributedWaitingJobs);
-			return new ExpandingDistributedScheduler(waitingQueue, hostSchedulers, new ByStrategyHostSelector(hostSchedulers, new RandomListSelector()), distributedWaitingJobs, (DistributedSimbaConfiguration) getConfiguration());
+			return new ExpandingDistributedScheduler(waitingQueue, hostSchedulers, new ByStrategyHostSelector(hostSchedulers, new RandomListSelector()), distributedWaitingJobs, (DistributedSimbaConfiguration) getConfiguration(), new ConstantExpandingStrategy((DistributedSimbaConfiguration) getConfiguration()));
 		}
 		throw new RuntimeException("no scheduler " + getSchedulerProperty());
 	}
@@ -278,16 +277,5 @@ public class Simulator
 	private boolean isDistributed()
 	{
 		return "distributed".equals(getSchedulerProperty());
-	}
-
-	private void moveJobsToWaitQueue(EventQueue eventQueue, AbstractWaitingQueue waitingQueue)
-	{
-		log.info("moveJobsToWaitQueue() - start");
-		while (eventQueue.size() > 0)
-		{
-			Job job = ((Submit) eventQueue.removeFirst()).job();
-			Job jobUpdated = Job.builder(job.length()).cores(job.cores()).submitTime(0L).memory(job.memory()).id(job.id()).priority(job.priority()).build();
-			waitingQueue.add(jobUpdated);
-		}
 	}
 }

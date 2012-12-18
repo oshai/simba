@@ -141,7 +141,7 @@ public class ExpandingDistributedSchedulerTest
 
 	private ExpandingDistributedScheduler createScheduler(LinkedListWaitingQueue waitingQueue, List<HostScheduler> hostSchedulers, HostSelector hostSelector, SetWaitingQueue distributedWaitingJobs, ForTestingDistributedSimbaConfiguration forTestingDistributedSimbaConfiguration)
 	{
-		return new ExpandingDistributedScheduler(waitingQueue, hostSchedulers, hostSelector, distributedWaitingJobs, forTestingDistributedSimbaConfiguration);
+		return new ExpandingDistributedScheduler(waitingQueue, hostSchedulers, hostSelector, distributedWaitingJobs, forTestingDistributedSimbaConfiguration, new PowerExpandingStrategy(forTestingDistributedSimbaConfiguration));
 	}
 
 	@Test
