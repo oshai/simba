@@ -12,6 +12,7 @@ import org.junit.Test;
 
 import sim.DistributedSimbaConfiguration;
 import sim.ForTestingSimbaConfiguration;
+import sim.model.Host;
 import sim.model.Job;
 import sim.scheduling.LinkedListWaitingQueue;
 import sim.scheduling.SetWaitingQueue;
@@ -121,6 +122,7 @@ public class ExpandingDistributedSchedulerTest
 		waitingQueue.add(job);
 		waitingQueue.add(Job.builder(100).build());
 		HostScheduler h = mock(HostScheduler.class);
+		when(h.host()).thenReturn(Host.builder().build());
 		LinkedListWaitingQueue waitingQueueForHost = new LinkedListWaitingQueue();
 		when(h.waitingJobs()).thenReturn(waitingQueueForHost);
 		waitingQueueForHost.add(job);

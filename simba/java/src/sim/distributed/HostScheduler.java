@@ -85,4 +85,9 @@ public class HostScheduler
 	{
 		return waitingJobs;
 	}
+
+	public Host host()
+	{
+		return host;
+	}
 }
