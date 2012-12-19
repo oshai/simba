@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import sim.DistributedSimbaConfiguration;
+import sim.distributed.expanding_strategy.ExpandingStrategy;
 import sim.model.Job;
 import sim.scheduling.AbstractWaitingQueue;
 import sim.scheduling.SetWaitingQueue;
@@ -29,9 +30,9 @@ public class ExpandingDistributedScheduler extends DistributedScheduler
 		for (Job job : distributedWaitingJobs())
 		{
 			long waitingTime = time - job.submitTime();
-			if (isTimeToDivide(waitingTime) && isLastIterationFilledAllHosts(waitingTime))
+			if (isTimeToDivide(waitingTime) && isLastIterationFilledAllHosts(waitingTime, job.memory()))
 			{
-				for (int i = 0; i < hostSchedulers().size() && i < expandingStrategy.times((waitingTime / simbaConfiguration.virusTime()) - 1); i++)
+				for (int i = 0; i < hostSchedulers().size() && i < expandingStrategy.times((waitingTime / simbaConfiguration.virusTime()) - 1, job.memory()); i++)
 				{
 					waitingQueue().add(job);
 				}
@@ -44,9 +45,9 @@ public class ExpandingDistributedScheduler extends DistributedScheduler
 		return waitingTime % simbaConfiguration.virusTime() < simbaConfiguration.timeToSchedule();
 	}
 
-	private boolean isLastIterationFilledAllHosts(long waitingTime)
+	private boolean isLastIterationFilledAllHosts(long waitingTime, double memory)
 	{
-		return expandingStrategy.times((waitingTime / simbaConfiguration.virusTime()) - 1) < hostSchedulers().size();
+		return expandingStrategy.times((waitingTime / simbaConfiguration.virusTime()) - 1, memory) < hostSchedulers().size();
 	}
 
 	@Override

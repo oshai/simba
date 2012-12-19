@@ -12,6 +12,7 @@ import org.junit.Test;
 
 import sim.DistributedSimbaConfiguration;
 import sim.ForTestingSimbaConfiguration;
+import sim.distributed.expanding_strategy.PowerExpandingStrategy;
 import sim.model.Host;
 import sim.model.Job;
 import sim.scheduling.LinkedListWaitingQueue;

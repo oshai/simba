@@ -1,4 +1,4 @@
-package sim.distributed;
+package sim.distributed.expanding_strategy;
 
 import sim.DistributedSimbaConfiguration;
 
@@ -12,7 +12,7 @@ public class ConstantExpandingStrategy implements ExpandingStrategy
 	}
 
 	@Override
-	public int times(long iteration)
+	public int times(long iteration, double memory)
 	{
 		return simbaConfiguration.intialDispatchFactor();
 	}
