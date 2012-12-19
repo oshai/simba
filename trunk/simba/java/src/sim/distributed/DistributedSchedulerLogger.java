@@ -8,6 +8,7 @@ import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.math3.stat.descriptive.AggregateSummaryStatistics;
+import org.apache.commons.math3.stat.descriptive.StatisticalSummary;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import org.apache.commons.math3.stat.descriptive.rank.Percentile;
 import org.apache.log4j.Logger;
@@ -122,7 +123,7 @@ public class DistributedSchedulerLogger
 			{
 				s.addValue(j.submitTime());
 			}
-			log.info("average wait time for memory " + e.getKey() + " is " + s.getMean() + " over " + s.getN() + " jobs");
+			log.info("average wait time for memory " + e.getKey() + " is " + getMeanToString(s) + " over " + s.getN() + " jobs");
 		}
 	}
 
@@ -155,7 +156,7 @@ public class DistributedSchedulerLogger
 		log.info(" wait-jobs on hosts end without duplication " + distributedWaitingJobs.size());
 		log.info(" max jobs waiting per host " + aggregate.getMax());
 		log.info(" min jobs waiting per host " + aggregate.getMin());
-		log.info(" averageJobsWaitingPerHost " + averageJobsWaitingPerHost + " aggregate " + aggregate.getMean());
+		log.info(" averageJobsWaitingPerHost " + averageJobsWaitingPerHost + " aggregate " + getMeanToString(aggregate));
 		log.info("aggregate statistics to string " + aggregate.getSummary());
 		logPrecentile(values, "hosts", "jobs");
 		logJobsDistribution(jobsForHosts);
@@ -167,7 +168,12 @@ public class DistributedSchedulerLogger
 
 	private void logHostToJobs(Integer key, SummaryStatistics value)
 	{
-		log.info("avereage for machines with " + key + " cores is: " + value.getMean());
+		log.info("avereage for machines with " + key + " cores is: " + getMeanToString(value));
+	}
+
+	private String getMeanToString(StatisticalSummary s)
+	{
+		return String.format("%.2f", s.getMean());
 	}
 
 	private SummaryStatistics getStats(Map<Integer, SummaryStatistics> coresToWaitingJobs, int cores, AggregateSummaryStatistics aggregate)
