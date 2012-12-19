@@ -25,7 +25,7 @@ import sim.distributed.DistributedJobDispatcher;
 import sim.distributed.ExpandingDistributedScheduler;
 import sim.distributed.HostScheduler;
 import sim.distributed.RandomListSelector;
-import sim.distributed.expanding_strategy.JobSizeExpandingStrategy;
+import sim.distributed.expanding_strategy.ConstantExpandingStrategy;
 import sim.event_handling.EventQueue;
 import sim.events.Event;
 import sim.model.Cluster;
@@ -274,7 +274,7 @@ public class Simulator
 			// HostSelector hostSelector1 = new HostSelector(hostsSched);
 			// return new WaitOnAllHostsDistributedScheduler(waitingQueue,
 			// hostsSched, distributedWaitingJobs);
-			return new ExpandingDistributedScheduler(waitingQueue, hostSchedulers, new ByStrategyHostSelector(hostSchedulers, new RandomListSelector()), distributedWaitingJobs, (DistributedSimbaConfiguration) getConfiguration(), new JobSizeExpandingStrategy((DistributedSimbaConfiguration) getConfiguration()));
+			return new ExpandingDistributedScheduler(waitingQueue, hostSchedulers, new ByStrategyHostSelector(hostSchedulers, new RandomListSelector()), distributedWaitingJobs, (DistributedSimbaConfiguration) getConfiguration(), new ConstantExpandingStrategy((DistributedSimbaConfiguration) getConfiguration()));
 		}
 		throw new RuntimeException("no scheduler " + getSchedulerProperty());
 	}
