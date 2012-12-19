@@ -16,9 +16,11 @@ import sim.model.Job;
 import sim.scheduling.AbstractWaitingQueue;
 import sim.scheduling.SetWaitingQueue;
 
+import com.google.common.base.Function;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
+import com.google.common.collect.Multimaps;
 
 public class DistributedSchedulerLogger
 {
@@ -75,6 +77,7 @@ public class DistributedSchedulerLogger
 		double[] valuesJobWait = new double[distributedWaitingJobs.size()];
 		Job maxWaitingJobJob = null;
 		Iterator<Job> iterator = distributedWaitingJobs.iterator();
+
 		for (int i = 0; i < valuesJobWait.length; i++)
 		{
 			Job job = iterator.next();
@@ -89,7 +92,38 @@ public class DistributedSchedulerLogger
 		logPrecentile(valuesJobMemory, "jobs", "memory");
 		logPrecentile(valuesJobCore, "jobs", "cores");
 		logPrecentile(valuesJobWait, "jobs", "wait-time");
-		log.info("max waiting job is " + maxWaitingJobJob);
+		logJobsMemoryDistibution();
+
+	}
+
+	private void logJobsMemoryDistibution()
+	{
+		Function<Job, Integer> f = new Function<Job, Integer>()
+		{
+			public Integer apply(Job j)
+			{
+				return (int) j.memory();
+			}
+		};
+		Multimap<Integer, Job> memoryBucketToJobs = Multimaps.index(distributedWaitingJobs, f);
+		double[] memoryForWaitTime = new double[memoryBucketToJobs.asMap().size()];
+		Iterator<Collection<Job>> iterator = memoryBucketToJobs.asMap().values().iterator();
+
+		for (int i = 0; i < memoryForWaitTime.length; i++)
+		{
+			memoryForWaitTime[i] = iterator.next().size();
+		}
+		logPrecentile(memoryForWaitTime, "jobs", "hosts");
+
+		for (Entry<Integer, Collection<Job>> e : memoryBucketToJobs.asMap().entrySet())
+		{
+			SummaryStatistics s = new SummaryStatistics();
+			for (Job j : e.getValue())
+			{
+				s.addValue(j.submitTime());
+			}
+			log.info("average wait time for memory " + e.getKey() + " is " + s.getMean() + " over " + s.getN() + " jobs");
+		}
 	}
 
 	private void logHosts()
@@ -122,7 +156,7 @@ public class DistributedSchedulerLogger
 		log.info(" max jobs waiting per host " + aggregate.getMax());
 		log.info(" min jobs waiting per host " + aggregate.getMin());
 		log.info(" averageJobsWaitingPerHost " + averageJobsWaitingPerHost + " aggregate " + aggregate.getMean());
-		log.info("aggregate statistics to string " + aggregate);
+		log.info("aggregate statistics to string " + aggregate.getSummary());
 		logPrecentile(values, "hosts", "jobs");
 		logJobsDistribution(jobsForHosts);
 		for (Entry<Integer, SummaryStatistics> e : coresToWaitingJobs.entrySet())
