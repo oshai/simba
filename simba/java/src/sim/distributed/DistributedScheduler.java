@@ -4,12 +4,10 @@ import static utils.assertions.Asserter.*;
 
 import java.util.List;
 
-
 import sim.model.Job;
 import sim.scheduling.AbstractWaitingQueue;
 import sim.scheduling.Scheduler;
 import sim.scheduling.SetWaitingQueue;
-
 
 public abstract class DistributedScheduler implements Scheduler
 {

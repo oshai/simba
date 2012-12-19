@@ -25,8 +25,10 @@ public class HostSchedulerTest
 	@Test
 	public void testEmpty()
 	{
-		HostScheduler tested = createHostScheduler(null, mock(JobDispatcher.class), new LinkedListWaitingQueue());
+		Host host = mock(Host.class);
+		HostScheduler tested = createHostScheduler(host, mock(JobDispatcher.class), new LinkedListWaitingQueue());
 		assertEquals(0, tested.schedule(1));
+		assertEquals(host, tested.host());
 	}
 
 	@Test
