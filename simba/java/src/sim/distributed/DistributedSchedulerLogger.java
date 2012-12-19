@@ -119,9 +119,9 @@ public class DistributedSchedulerLogger
 		int averageJobsWaitingPerHost = waitingJobsOnHosts / hostSchedulers.size();
 		log.info(" wait-jobs on hosts end " + waitingJobsOnHosts);
 		log.info(" wait-jobs on hosts end without duplication " + distributedWaitingJobs.size());
-		log.info(" max jobs waiting per host " + maximumJobsWaitingPerHost + " aggregate " + aggregate.getMax());
-		log.info(" min jobs waiting per host " + minimumJobsWaitingPerHost + " aggregate " + aggregate.getMin());
-		log.info(" averageJobsWaitingPerHost " + averageJobsWaitingPerHost + " aggregate " + aggregate.getSum() / aggregate.getN());
+		log.info(" max jobs waiting per host " + aggregate.getMax());
+		log.info(" min jobs waiting per host " + aggregate.getMin());
+		log.info(" averageJobsWaitingPerHost " + averageJobsWaitingPerHost + " aggregate " + aggregate.getMean());
 		log.info("aggregate statistics to string " + aggregate);
 		logPrecentile(values, "hosts", "jobs");
 		logJobsDistribution(jobsForHosts);
@@ -133,7 +133,7 @@ public class DistributedSchedulerLogger
 
 	private void logHostToJobs(Integer key, SummaryStatistics value)
 	{
-		log.info("avereage for machines with " + key + " cores is: " + value.getSum() / value.getN());
+		log.info("avereage for machines with " + key + " cores is: " + value.getMean());
 	}
 
 	private SummaryStatistics getStats(Map<Integer, SummaryStatistics> coresToWaitingJobs, int cores, AggregateSummaryStatistics aggregate)
