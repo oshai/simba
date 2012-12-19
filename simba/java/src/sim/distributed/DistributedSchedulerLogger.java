@@ -168,7 +168,7 @@ public class DistributedSchedulerLogger
 
 	private void logHostToJobs(Integer key, SummaryStatistics value)
 	{
-		log.info("avereage for machines with " + key + " cores is: " + getMeanToString(value));
+		log.info("average number of jobs for machines with " + key + " cores is: " + getMeanToString(value));
 	}
 
 	private String getMeanToString(StatisticalSummary s)
