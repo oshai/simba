@@ -45,6 +45,11 @@
 				<exclude name="log4j.xml" />
 			</fileset>
 		</copy>
+		<copy includeemptydirs="false" todir="compiled_classes">
+			<fileset dir="java/system_tests">
+				<exclude name="**/*.java" />
+			</fileset>
+		</copy>
 	</target>
 	<target name="clean">
 		<delete dir="compiled_classes" />
@@ -66,6 +71,10 @@
 			<src path="java/junit" />
 			<classpath refid="simba.classpath" />
 		</javac>
+		<javac debug="true" debuglevel="${debuglevel}" destdir="compiled_classes" source="${source}" target="${target}">
+					<src path="java/system_tests" />
+					<classpath refid="simba.classpath" />
+				</javac>
 	</target>
 	<target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects" />
 	<target name="create-jar">
@@ -85,7 +94,7 @@
 			<zipfileset excludes="META-INF/*.SF" src="libs/aopalliance.jar" />
 		</jar>
 	</target>
-	<target depends="junit-testing" name="test" />
+	<target depends="junit-testing,system-testing" name="test" />
 	<target name="junit-testing">
 		<mkdir dir="${junit.output.dir}" />
 		<jacoco:coverage destfile="${result.exec.file}">
@@ -100,13 +109,24 @@
 			</junit>
 		</jacoco:coverage>
 	</target>
+	<target name="system-testing">
+			<mkdir dir="${junit.output.dir}" />
+				<junit fork="yes" forkmode="once" printsummary="withOutAndErr">
+					<formatter type="xml" />
+					<batchtest fork="yes" todir="${junit.output.dir}">
+						<fileset dir="java/system_tests">
+							<include name="**/*Test.java" />
+						</fileset>
+					</batchtest>
+					<classpath refid="simba.classpath" />
+				</junit>
+		</target>
 	<target name="coverage-report">
 		<jacoco:report>
 			<executiondata>
 				<file file="${result.exec.file}" />
 			</executiondata>
-			<!--  the class files and optional source files ...  -->
-			<structure name="JaCoCo_Ant">
+			<structure name="JaCoCo_Coverage_Ant">
 				<classfiles>
 					<fileset dir="${result.classes.dir}" />
 				</classfiles>
@@ -116,9 +136,10 @@
 			</structure>
 			
 			<html destdir="${result.report.dir}" />
+			<csv destfile="${result.report.dir}/report.csv" />
 			<!--  to produce reports in different formats.  
 			<xml destfile="${result.report.dir}/report.xml" />
-			<csv destfile="${result.report.dir}/report.csv" />
+			
 			-->
 			
 		</jacoco:report>
