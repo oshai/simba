@@ -9,7 +9,7 @@
 		<pathelement location="libs/junit-4.9.jar" />
 	</path>
 	<property name="result.dir" location="./target" />
-	<property name="result.classes.dir" location="compiled_classes" />
+	<property name="result.classes.dir" location="${result.dir}/classes" />
 	<property name="result.report.dir" location="${result.dir}/site/jacoco" />
 	<property name="result.exec.file" location="${result.dir}/jacoco.exec" />
 	<taskdef uri="antlib:org.jacoco.ant" resource="org/jacoco/ant/antlib.xml">
@@ -58,6 +58,10 @@
 			<src path="java/src:java/src_no_junit" />
 			<classpath refid="simba.classpath" />
 		</javac>
+		<javac debug="true" debuglevel="${debuglevel}" destdir="${result.classes.dir}" source="${source}" target="${target}">
+					<src path="java/src" />
+					<classpath refid="simba.classpath" />
+				</javac>
 		<javac debug="true" debuglevel="${debuglevel}" destdir="compiled_classes" source="${source}" target="${target}">
 			<src path="java/junit" />
 			<classpath refid="simba.classpath" />
@@ -110,9 +114,10 @@
 					<fileset dir="java/src" />
 				</sourcefiles>
 			</structure>
-			<xml destfile="${result.report.dir}/report.xml" />
-			<!--  to produce reports in different formats.  
+			
 			<html destdir="${result.report.dir}" />
+			<!--  to produce reports in different formats.  
+			<xml destfile="${result.report.dir}/report.xml" />
 			<csv destfile="${result.report.dir}/report.csv" />
 			-->
 			
