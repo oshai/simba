@@ -24,6 +24,12 @@ public abstract class DistributedScheduler implements Scheduler
 		schedulerLogger = new DistributedSchedulerLogger(waitingQueue, hostSchedulers, distributedWaitingJobs);
 	}
 
+	public void coverage()
+	{
+		// TODO Auto-generated method stub
+		System.out.println();
+	}
+
 	@Override
 	public int schedule(long time)
 	{
