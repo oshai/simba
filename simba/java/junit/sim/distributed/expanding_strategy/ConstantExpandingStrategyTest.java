@@ -1,4 +1,4 @@
-package sim.distributed;
+package sim.distributed.expanding_strategy;
 
 import static junit.framework.Assert.*;
 import static org.mockito.Mockito.*;
@@ -10,6 +10,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import sim.DistributedSimbaConfiguration;
+import sim.distributed.expanding_strategy.ConstantExpandingStrategy;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ConstantExpandingStrategyTest
@@ -25,7 +26,7 @@ public class ConstantExpandingStrategyTest
 	{
 		int value = 3;
 		when(simbaConfiguration.intialDispatchFactor()).thenReturn(value);
-		assertEquals(value, addExpandingStrategy.times(2));
+		assertEquals(value, addExpandingStrategy.times(2, Double.MIN_VALUE));
 	}
 
 }
