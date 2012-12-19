@@ -36,12 +36,6 @@ public class HostScheduler
 		jobsGrader = jobGrader;
 	}
 
-	public void didid()
-	{
-		// TODO Auto-generated method stub
-		System.out.println();
-	}
-
 	public void addJob(Job job)
 	{
 		jobs.add(job);
