@@ -93,11 +93,11 @@ public class DistributedSchedulerLogger
 		logPrecentile(valuesJobMemory, "jobs", "memory");
 		logPrecentile(valuesJobCore, "jobs", "cores");
 		logPrecentile(valuesJobWait, "jobs", "wait-time");
-		logJobsMemoryDistibution();
+		logJobsMemoryDistibution(time);
 
 	}
 
-	private void logJobsMemoryDistibution()
+	private void logJobsMemoryDistibution(long time)
 	{
 		Function<Job, Integer> f = new Function<Job, Integer>()
 		{
@@ -121,7 +121,7 @@ public class DistributedSchedulerLogger
 			SummaryStatistics s = new SummaryStatistics();
 			for (Job j : e.getValue())
 			{
-				s.addValue(j.submitTime());
+				s.addValue(time - j.submitTime());
 			}
 			log.info("average wait time for memory " + e.getKey() + " is " + getMeanToString(s) + " over " + s.getN() + " jobs");
 		}
