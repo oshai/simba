@@ -1,6 +1,8 @@
 package sim.distributed;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -19,12 +21,22 @@ import sim.scheduling.SetWaitingQueue;
 
 import com.google.common.base.Function;
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 
 public class DistributedSchedulerLogger
 {
+
+	private static final class ByKeyComparator<T extends Comparable<? super T>> implements Comparator<Map.Entry<T, ?>>
+	{
+		@Override
+		public int compare(Entry<T, ?> o1, Entry<T, ?> o2)
+		{
+			return o1.getKey().compareTo(o2.getKey());
+		}
+	}
 
 	private static final Logger log = Logger.getLogger(DistributedSchedulerLogger.class);
 
@@ -116,7 +128,9 @@ public class DistributedSchedulerLogger
 		}
 		logPrecentile(memoryForWaitTime, "jobs", "hosts");
 
-		for (Entry<Integer, Collection<Job>> e : memoryBucketToJobs.asMap().entrySet())
+		List<Entry<Integer, Collection<Job>>> ss = Lists.newArrayList(memoryBucketToJobs.asMap().entrySet());
+		Collections.sort(ss, new ByKeyComparator<Integer>());
+		for (Entry<Integer, Collection<Job>> e : ss)
 		{
 			SummaryStatistics s = new SummaryStatistics();
 			for (Job j : e.getValue())
@@ -160,7 +174,9 @@ public class DistributedSchedulerLogger
 		log.info("aggregate statistics to string " + aggregate.getSummary());
 		logPrecentile(values, "hosts", "jobs");
 		logJobsDistribution(jobsForHosts);
-		for (Entry<Integer, SummaryStatistics> e : coresToWaitingJobs.entrySet())
+		List<Entry<Integer, SummaryStatistics>> ss = Lists.newArrayList(coresToWaitingJobs.entrySet());
+		Collections.sort(ss, new ByKeyComparator<Integer>());
+		for (Entry<Integer, SummaryStatistics> e : ss)
 		{
 			logHostToJobs(e.getKey(), e.getValue());
 		}
