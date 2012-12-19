@@ -1,157 +1,121 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<project basedir="." default="build" name="simba">
-    <property environment="env"/>
-    <property name="junit.output.dir" value="junit"/>
-    <property name="debuglevel" value="source,lines,vars"/>
-    <property name="target" value="1.6"/>
-    <property name="source" value="1.6"/>
-	<property name="coverage.dir" value="${basedir}/coverage/" />
-	 <property name="emma_dir" value="${basedir}/libs/emma-2.0.5312/" />
-	 <property name="src_dir" value="${basedir}/java/src/"/>
-	 <property name="compiled_classes" value="${basedir}/compiled_classes/"/>
-	 <property name="instrumented.dir" value="${basedir}/inst/"/>
-	 <path id="emma_lib">
-	     <fileset dir="${emma_dir}">
-	         <include name="*.jar"/>
-	     </fileset>
-	 </path>
-	   
-	 <taskdef resource="emma_ant.properties" classpathref="emma_lib" />
-	
+<project xmlns:jacoco="antlib:org.jacoco.ant" basedir="." default="build" name="simba">
+	<property environment="env" />
+	<property name="junit.output.dir" value="junit" />
+	<property name="debuglevel" value="source,lines,vars" />
+	<property name="target" value="1.6" />
+	<property name="source" value="1.6" />
 	<path id="JUnit4.libraryclasspath">
-			<pathelement location="libs/junit-4.9.jar" />
-		</path>
-    <path id="simba.classpath">
-        <pathelement location="compiled_classes"/>
-        <pathelement location="libs/log4j-1.2.17.jar"/>
-        <pathelement location="libs/guava-13.0.1.jar"/>
-        <pathelement location="libs/javax.inject.jar"/>
-        <pathelement location="libs/mockito-all-1.9.5.jar"/>
-        <pathelement location="libs/commons-math3-3.0.jar"/>
-        <pathelement location="libs/guice-3.0.jar"/>
-        <pathelement location="libs/guice-assistedinject-3.0.jar"/>
-        <pathelement location="libs/aopalliance.jar"/>
-        <path refid="JUnit4.libraryclasspath"/>
-    </path>
-    <path id="simba_junit_classpath">
-        <pathelement location="inst"/>
-    	<pathelement location="compiled_classes"/>
-        <pathelement location="libs/log4j-1.2.17.jar"/>
-        <pathelement location="libs/guava-13.0.1.jar"/>
-        <pathelement location="libs/javax.inject.jar"/>
-        <pathelement location="libs/mockito-all-1.9.5.jar"/>
-        <pathelement location="libs/commons-math3-3.0.jar"/>
-        <pathelement location="libs/guice-3.0.jar"/>
-        <pathelement location="libs/guice-assistedinject-3.0.jar"/>
-        <pathelement location="libs/aopalliance.jar"/>
-        <path refid="JUnit4.libraryclasspath"/>
-    	 <path refid="emma_lib"/>
-    </path>
-    <target name="init">
-        <mkdir dir="compiled_classes"/>
-        <copy includeemptydirs="false" todir="compiled_classes">
-            <fileset dir="java/src">
-                <exclude name="**/*.java"/>
-            </fileset>
-        </copy>
-        <copy includeemptydirs="false" todir="compiled_classes">
-            <fileset dir="java/src_no_junit">
-                <exclude name="**/*.java"/>
-            </fileset>
-        </copy>
-        <copy includeemptydirs="false" todir="compiled_classes">
-            <fileset dir="java/junit">
-                <exclude name="**/*.java"/>
-            	<exclude name="log4j.xml"/>
-            </fileset>
-        </copy>
-    </target>
-    <target name="clean">
-        <delete dir="compiled_classes"/>
-    </target>
-    <target depends="clean" name="cleanall"/>
-    <target depends="build-subprojects,build-project,create-jar,emma-prepare,test,emma-report" name="build"/>
-    <target name="build-subprojects"/>
-    <target depends="init" name="build-project">
-        <echo message="${ant.project.name}: ${ant.file}"/>
-    	<mkdir dir="${instrumented.dir}"/>
-        <javac debug="true" debuglevel="${debuglevel}" destdir="compiled_classes" source="${source}" target="${target}">
-            <src path="java/src:java/src_no_junit"/>
-            <classpath refid="simba.classpath"/>
-        </javac>
-    	<javac debug="true" debuglevel="${debuglevel}" destdir="${instrumented.dir}" source="${source}" target="${target}">
-    	            <src path="java/src"/>
-    	            <classpath refid="simba.classpath"/>
-    	        </javac>
-        <javac debug="true" debuglevel="${debuglevel}" destdir="compiled_classes" source="${source}" target="${target}">
-            <src path="java/junit"/>
-            <classpath refid="simba.classpath"/>
-        </javac>
-    </target>
-    <target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects"/>
-    <target name="create-jar">
-    	<delete file="simba.jar"/>
-    	        <jar destfile="simba.jar" filesetmanifest="mergewithoutmain">
-    	            <manifest>
-    	                <attribute name="Main-Class" value="sim.Simulator"/>
-    	                <attribute name="Class-Path" value="."/>
-    	            </manifest>
-    	            <fileset dir="compiled_classes"/>
-    	            <zipfileset excludes="META-INF/*.SF" src="libs/log4j-1.2.17.jar"/>
-    	            <zipfileset excludes="META-INF/*.SF" src="libs/guava-13.0.1.jar"/>
-    	            <zipfileset excludes="META-INF/*.SF" src="libs/javax.inject.jar"/>
-    	            <zipfileset excludes="META-INF/*.SF" src="libs/commons-math3-3.0.jar"/>
-    	            <zipfileset excludes="META-INF/*.SF" src="libs/guice-3.0.jar"/>
-    	            <zipfileset excludes="META-INF/*.SF" src="libs/guice-assistedinject-3.0.jar"/>
-    	            <zipfileset excludes="META-INF/*.SF" src="libs/aopalliance.jar"/>
-    	        </jar>
+		<pathelement location="libs/junit-4.9.jar" />
+	</path>
+	<property name="result.dir" location="./target" />
+	<property name="result.classes.dir" location="compiled_classes" />
+	<property name="result.report.dir" location="${result.dir}/site/jacoco" />
+	<property name="result.exec.file" location="${result.dir}/jacoco.exec" />
+	<taskdef uri="antlib:org.jacoco.ant" resource="org/jacoco/ant/antlib.xml">
+		<classpath path="lib/jacoco-0.6.1.201212121017/jacocoant.jar" />
+	</taskdef>
+	<path id="simba.classpath">
+		<pathelement location="compiled_classes" />
+		<pathelement location="libs/log4j-1.2.17.jar" />
+		<pathelement location="libs/guava-13.0.1.jar" />
+		<pathelement location="libs/javax.inject.jar" />
+		<pathelement location="libs/mockito-all-1.9.5.jar" />
+		<pathelement location="libs/commons-math3-3.0.jar" />
+		<pathelement location="libs/guice-3.0.jar" />
+		<pathelement location="libs/guice-assistedinject-3.0.jar" />
+		<pathelement location="libs/aopalliance.jar" />
+		<path refid="JUnit4.libraryclasspath" />
+	</path>
+	<target name="init">
+		<mkdir dir="compiled_classes" />
+		<copy includeemptydirs="false" todir="compiled_classes">
+			<fileset dir="java/src">
+				<exclude name="**/*.java" />
+			</fileset>
+		</copy>
+		<copy includeemptydirs="false" todir="compiled_classes">
+			<fileset dir="java/src_no_junit">
+				<exclude name="**/*.java" />
+			</fileset>
+		</copy>
+		<copy includeemptydirs="false" todir="compiled_classes">
+			<fileset dir="java/junit">
+				<exclude name="**/*.java" />
+				<exclude name="log4j.xml" />
+			</fileset>
+		</copy>
 	</target>
-	<target name="emma-prepare">
-	<emma enabled="true" verbosity="verbose">
-	     <instr instrpath="${instrumented.dir}" destdir="${instrumented.dir}" metadatafile="${coverage.dir}/metadata.emma" merge="true" mode="overwrite">
-	         <!--filter excludes="au.com.jenisys.view.*"/-->
-	     </instr>
-	 </emma>
-		</target>
+	<target name="clean">
+		<delete dir="compiled_classes" />
+	</target>
+	<target depends="clean" name="cleanall" />
+	<target depends="build-subprojects,build-project,create-jar,test,coverage-report" name="build" />
+	<target name="build-subprojects" />
+	<target depends="init" name="build-project">
+		<echo message="${ant.project.name}: ${ant.file}" />
+		<javac debug="true" debuglevel="${debuglevel}" destdir="compiled_classes" source="${source}" target="${target}">
+			<src path="java/src:java/src_no_junit" />
+			<classpath refid="simba.classpath" />
+		</javac>
+		<javac debug="true" debuglevel="${debuglevel}" destdir="compiled_classes" source="${source}" target="${target}">
+			<src path="java/junit" />
+			<classpath refid="simba.classpath" />
+		</javac>
+	</target>
+	<target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects" />
+	<target name="create-jar">
+		<delete file="simba.jar" />
+		<jar destfile="simba.jar" filesetmanifest="mergewithoutmain">
+			<manifest>
+				<attribute name="Main-Class" value="sim.Simulator" />
+				<attribute name="Class-Path" value="." />
+			</manifest>
+			<fileset dir="compiled_classes" />
+			<zipfileset excludes="META-INF/*.SF" src="libs/log4j-1.2.17.jar" />
+			<zipfileset excludes="META-INF/*.SF" src="libs/guava-13.0.1.jar" />
+			<zipfileset excludes="META-INF/*.SF" src="libs/javax.inject.jar" />
+			<zipfileset excludes="META-INF/*.SF" src="libs/commons-math3-3.0.jar" />
+			<zipfileset excludes="META-INF/*.SF" src="libs/guice-3.0.jar" />
+			<zipfileset excludes="META-INF/*.SF" src="libs/guice-assistedinject-3.0.jar" />
+			<zipfileset excludes="META-INF/*.SF" src="libs/aopalliance.jar" />
+		</jar>
+	</target>
 	<target depends="junit-testing" name="test" />
-    <target name="junit-testing">
-        <mkdir dir="${junit.output.dir}"/>
-        <junit fork="no" printsummary="true" showoutput="true"
-            failureproperty="tests.failed"
-            errorproperty="tests.failed">
-			<batchtest fork="no" todir="${junit.output.dir}">
-				<fileset dir="java/junit">
-					<include name="**/*Test.java" />
-				</fileset>
-			</batchtest>
-			<classpath refid="simba_junit_classpath" />
-        	<formatter type="xml"/>
-        	<!--
-        	
-        	<formatter usefile="false" type="plain"/>
-        	-->
-		</junit>
-    </target>
-    <target name="emma-report">
-    	<emma enabled="false" verbosity="verbose" >
-    	     <report sourcepath="${src_dir}" >
-    	         <fileset dir="${coverage.dir}" >
-    	             <include name="*.emma" />
-    	         	<include name="coverage.emma" />
-    	         </fileset>
-    	     	<fileset dir="${basedir}" >
-    	     		<include name="coverage.ec" />
-    	     		</fileset>
-    	         <xml outfile="${coverage.dir}/coverage.xml" depth="method"/>
-    	     </report>
-    	 </emma>
-    	</target>
-    <target name="junit-report">
-        <junitreport todir="${junit.output.dir}">
-            <fileset dir="${junit.output.dir}">
-                <include name="TEST-*.xml"/>
-            </fileset>
-            <report format="frames" todir="${junit.output.dir}"/>
-        </junitreport>
-    </target>
+	<target name="junit-testing">
+		<mkdir dir="${junit.output.dir}" />
+		<jacoco:coverage destfile="${result.exec.file}">
+			<junit fork="yes" forkmode="once" printsummary="withOutAndErr">
+				<formatter type="xml" />
+				<batchtest fork="yes" todir="${junit.output.dir}">
+					<fileset dir="java/junit">
+						<include name="**/*Test.java" />
+					</fileset>
+				</batchtest>
+				<classpath refid="simba.classpath" />
+			</junit>
+		</jacoco:coverage>
+	</target>
+	<target name="coverage-report">
+		<jacoco:report>
+			<executiondata>
+				<file file="${result.exec.file}" />
+			</executiondata>
+			<!--  the class files and optional source files ...  -->
+			<structure name="JaCoCo_Ant">
+				<classfiles>
+					<fileset dir="${result.classes.dir}" />
+				</classfiles>
+				<sourcefiles encoding="UTF-8">
+					<fileset dir="java/src" />
+				</sourcefiles>
+			</structure>
+			<xml destfile="${result.report.dir}/report.xml" />
+			<!--  to produce reports in different formats.  
+			<html destdir="${result.report.dir}" />
+			<csv destfile="${result.report.dir}/report.csv" />
+			-->
+			
+		</jacoco:report>
+	</target>
 </project>
