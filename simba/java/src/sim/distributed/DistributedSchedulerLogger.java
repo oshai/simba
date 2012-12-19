@@ -160,10 +160,15 @@ public class DistributedSchedulerLogger
 	{
 		Percentile p2 = new Percentile();
 		p2.setData(values);
+		String message = "precentile of " + key + " that has <= x " + value + ":";
+		String header = "";
+		String line = "";
 		for (int i = 10; i <= 100; i += 10)
 		{
-			log.info("" + i + "% of " + key + " has less than " + p2.evaluate(i) + " " + value);
+			header += i + "%\t";
+			line += ((double) Math.round(p2.evaluate(i) * 100) / 100) + "\t";
 		}
+		log.info(message + "\n" + header + "\n" + line);
 	}
 
 	public void log(long time, long started, long newJobs, int waitingJobs, int dispatchJobs)
