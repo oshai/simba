@@ -6,7 +6,7 @@ import static org.mockito.Mockito.*;
 
 import org.junit.Test;
 
-import sim.collectors.IntervalCollector;
+import sim.collectors.MiscStatisticsCollector;
 import sim.configuration.ProductionSimbaConfiguration;
 import sim.event_handling.EventQueue;
 import sim.events.Finish;
@@ -148,7 +148,7 @@ public class LooperTest
 	private Looper createLooper(Clock clock, EventQueue eventQueue, AbstractWaitingQueue waitingQueue, Scheduler scheduler, JobFinisher jobFinisher,
 			SimbaConfiguration consts)
 	{
-		return new Looper(clock, eventQueue, waitingQueue, scheduler, mock(IntervalCollector.class), jobFinisher, consts);
+		return new Looper(clock, eventQueue, waitingQueue, scheduler, mock(MiscStatisticsCollector.class), jobFinisher, consts);
 	}
 
 	@Test
