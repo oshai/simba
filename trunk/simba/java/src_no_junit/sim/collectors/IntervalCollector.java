@@ -7,4 +7,6 @@ public interface IntervalCollector
 
 	void finish();
 
+	void init();
+
 }

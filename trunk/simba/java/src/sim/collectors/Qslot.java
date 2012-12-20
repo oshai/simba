@@ -32,4 +32,9 @@ public class Qslot
 		return conf.name();
 	}
 
+	public double costError()
+	{
+		return (maxCost() < runningCost) ? runningCost - maxCost() : 0;
+	}
+
 }

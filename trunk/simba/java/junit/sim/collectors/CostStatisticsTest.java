@@ -69,6 +69,38 @@ public class CostStatisticsTest
 	}
 
 	@Test
+	public void testMaxCostError() throws Exception
+	{
+		String qslot = "qslot";
+		QslotConfiguration qslotConf = createQslot(qslot, 1.0);
+		conf.put(qslot, qslotConf);
+		double cost = 2.5;
+		Host host = mock(Host.class);
+		when(cluster.hosts()).thenReturn(Lists.newArrayList(host));
+		Job j = mock(Job.class);
+		when(j.cost()).thenReturn(cost);
+		when(j.qslot()).thenReturn(qslot);
+		when(host.jobs()).thenReturn(Lists.newArrayList(j));
+		assertEquals(1.5, costStatistics.apply().get(qslot).costError(), 0.0);
+	}
+
+	@Test
+	public void testMaxCostErrorNegative() throws Exception
+	{
+		String qslot = "qslot";
+		QslotConfiguration qslotConf = createQslot(qslot, 2.0);
+		conf.put(qslot, qslotConf);
+		double cost = 1;
+		Host host = mock(Host.class);
+		when(cluster.hosts()).thenReturn(Lists.newArrayList(host));
+		Job j = mock(Job.class);
+		when(j.cost()).thenReturn(cost);
+		when(j.qslot()).thenReturn(qslot);
+		when(host.jobs()).thenReturn(Lists.newArrayList(j));
+		assertEquals(0, costStatistics.apply().get(qslot).costError(), 0.0);
+	}
+
+	@Test
 	public void test2QslotsWith1Running() throws Exception
 	{
 		String qslot = "qslot";
