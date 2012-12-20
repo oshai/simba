@@ -9,6 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import sim.collectors.IntervalCollector;
+import sim.collectors.MiscStatisticsCollector;
 import sim.collectors.JobCollector;
 import sim.collectors.WaitingQueueStatistics;
 import sim.configuration.ProductionSimbaConfiguration.LooperFactory;
@@ -112,7 +113,7 @@ public class SystemTest
 		Scheduler scheduler = new SimpleScheduler(waitingQueue, cluster, matcher, dispatcher);
 		JobCollector jobCollector = new JobCollector();
 		JobFinisher jobFinisher = new JobFinisher(jobCollector);
-		IntervalCollector statistics = new IntervalCollector(cluster, 1, waitingQueueStatistics, jobFinisher);
+		IntervalCollector statistics = new MiscStatisticsCollector(cluster, 1, waitingQueueStatistics, jobFinisher);
 		Looper looper = injector.getInstance(LooperFactory.class).create(clock, eventQueue, waitingQueue, scheduler, statistics, jobFinisher);
 		return looper;
 	}

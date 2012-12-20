@@ -27,7 +27,7 @@ public class Looper
 	private long timeToLogPassed;
 	private final Clock clock;
 	private final EventQueue eventQueue;
-	private IntervalCollector hostCollector;
+	private IntervalCollector intervalCollector;
 	private final JobFinisher jobFinisher;
 	private boolean firstCycle = true;
 	private boolean hasEventsNotScheduleYet = true;
@@ -36,14 +36,13 @@ public class Looper
 	private final Scheduler scheduler;
 
 	@Inject
-	public Looper(@Assisted Clock clock, @Assisted EventQueue eventQueue, @Assisted AbstractWaitingQueue waitingQueue, @Assisted Scheduler scheduler,
-			@Assisted IntervalCollector hostCollector, @Assisted JobFinisher jobFinisher, SimbaConfiguration simbaConsts)
+	public Looper(@Assisted Clock clock, @Assisted EventQueue eventQueue, @Assisted AbstractWaitingQueue waitingQueue, @Assisted Scheduler scheduler, @Assisted IntervalCollector hostCollector, @Assisted JobFinisher jobFinisher, SimbaConfiguration simbaConsts)
 	{
 		this.waitingQueue = waitingQueue;
 		this.scheduler = scheduler;
 		this.eventQueue = eventQueue;
 		this.clock = clock;
-		this.hostCollector = hostCollector;
+		this.intervalCollector = hostCollector;
 		this.jobFinisher = jobFinisher;
 		this.simbaConfiguration = simbaConsts;
 	}
@@ -62,7 +61,7 @@ public class Looper
 
 	private void finish()
 	{
-		hostCollector.finish();
+		intervalCollector.finish();
 		jobFinisher.finishExecution();
 	}
 
@@ -88,7 +87,7 @@ public class Looper
 		{
 			log.info("schduled jobs " + scheduledJobs);
 		}
-		hostCollector.collect(time, handeledEvents, scheduledJobs);
+		intervalCollector.collect(time, handeledEvents, scheduledJobs);
 		if (time % simbaConfiguration.timeToLog() == 0 || firstCycle)
 		{
 			timeToLogPassed++;

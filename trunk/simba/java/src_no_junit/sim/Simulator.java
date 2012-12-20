@@ -13,9 +13,12 @@ import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
+import sim.collectors.CompositeCollector;
+import sim.collectors.CostCollector;
 import sim.collectors.IntervalCollector;
 import sim.collectors.JobCollector;
 import sim.collectors.MaxCostCollector;
+import sim.collectors.MiscStatisticsCollector;
 import sim.collectors.WaitingQueueStatistics;
 import sim.configuration.DistributedSimulationConfiguration;
 import sim.configuration.ProductionSimbaConfiguration;
@@ -58,6 +61,7 @@ import sim.scheduling.reserving.ReservingScheduler;
 import com.google.common.base.Function;
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.Collections2;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -214,8 +218,11 @@ public class Simulator
 		JobCollector jobCollector = new JobCollector();
 		JobFinisher jobFinisher = new JobFinisher(jobCollector);
 		int collectTime = getConfiguration().isBucketSimulation() ? (int) getConfiguration().bucketSize() : 300;
-		IntervalCollector hostCollector = new IntervalCollector(cluster, collectTime, waitingQueueStatistics, jobFinisher);
-		Looper looper = injector.getInstance(LooperFactory.class).create(clock, eventQueue, waitingQueue, scheduler, hostCollector, jobFinisher);
+		List<IntervalCollector> collectors = Lists.<IntervalCollector>newArrayList(
+				new MiscStatisticsCollector(cluster, collectTime, waitingQueueStatistics, jobFinisher),
+				new CostCollector(cluster, collectTime));
+		IntervalCollector intervalCollector = new CompositeCollector(collectors);
+		Looper looper = injector.getInstance(LooperFactory.class).create(clock, eventQueue, waitingQueue, scheduler, intervalCollector, jobFinisher);
 
 		// Looper looper = injector.getI;// new Looper(clock, eventQueue,
 		// // waitingQueue, scheduler,
