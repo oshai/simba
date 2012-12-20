@@ -46,7 +46,7 @@ public class JobParser
 	private static final int index_queue = 14;
 	private static final int index_qslot = 15;
 	private static final int index_cost = 20;
-	private static boolean DEBUG = true;
+	private static boolean DEBUG = false;
 
 	private final SimbaConfiguration simbaConfiguration;
 	private final Cluster cluster;
