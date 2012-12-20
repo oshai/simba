@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 import sim.SimbaConfiguration;
@@ -42,8 +43,13 @@ public class JobParser
 	private static final int index_wtime = 9;
 	private static final int index_utime = 10;
 	private static final int index_stime = 11;
+	private static final int index_queue = 14;
+	private static final int index_qslot = 15;
 	private static final int index_cost = 20;
-	private static boolean DEBUG = false;
+	private static boolean DEBUG = true;
+	{
+		log.setLevel(Level.DEBUG);
+	}
 
 	private final SimbaConfiguration simbaConfiguration;
 	private final Cluster cluster;
@@ -102,11 +108,12 @@ public class JobParser
 						parallel++;
 						drop = true;
 					}
-					Job job = Job.builder(length).id(id).cost(d(cols.get(index_cost))).priority(submitTime).submitTime(submitTime).cores(cores).memory(memory).startTime(l(cols.get(index_startttime))).build();
+					Job job = Job.builder(length).id(id).qslot(parseQslot(cols)).cost(d(cols.get(index_cost))).priority(submitTime).submitTime(submitTime).cores(cores).memory(memory).startTime(l(cols.get(index_startttime))).build();
 					if (canRun(job) && !drop)
 					{
 						eventQueue.add(new Submit(job));
 						left++;
+						log.debug("job is " + job);
 					}
 					else
 					{
@@ -122,6 +129,17 @@ public class JobParser
 					return false;
 				}
 				return true;
+			}
+
+			private String parseQslot(List<String> cols)
+			{
+				String[] qslots = (cols.get(index_queue) + cols.get(index_qslot)).split("/");
+				String $ = "";
+				for (int i = 0; i < 2; i++)
+				{
+					$ += "/" + qslots[i];
+				}
+				return $;
 			}
 
 		};

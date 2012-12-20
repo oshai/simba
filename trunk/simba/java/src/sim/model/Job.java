@@ -4,26 +4,28 @@ public class Job
 {
 	private static final long MAX_JOB_LENGTH = 60 * 60 * 24 * 31;// 1 month
 
-	private String id;
-	private long priority;
-	private long submitTime;
-	private long length;
-	private double cores;
-	private double memory;
+	private final String id;
+	private final long priority;
+	private final long submitTime;
+	private final long length;
+	private final double cores;
+	private final double memory;
 	private long startTime;
-	private double cost;
+	private final double cost;
+	private final String qslot;
 
-	private Job(String id, long priority, long submitTime, long length, double cores, double memory, long startTime, double cost)
+	private Job(Builder builder)
 	{
 		super();
-		this.id = id;
-		this.priority = priority;
-		this.submitTime = submitTime;
-		this.length = length;
-		this.cores = cores;
-		this.memory = memory;
-		this.startTime = startTime;
-		this.cost = cost;
+		this.id = builder.id;
+		this.priority = builder.priority;
+		this.submitTime = builder.submitTime;
+		this.length = builder.length;
+		this.cores = builder.cores;
+		this.memory = builder.memory;
+		this.startTime = builder.startTime;
+		this.cost = builder.cost;
+		this.qslot = builder.qslot;
 		validate();
 	}
 
@@ -50,6 +52,7 @@ public class Job
 		private double cost;
 		private double memory;
 		private long startTime;
+		private String qslot;
 
 		private Builder(long length)
 		{
@@ -94,12 +97,18 @@ public class Job
 
 		public Job build()
 		{
-			return new Job(id, priority, submitTime, length, cores, memory, startTime, cost);
+			return new Job(this);
 		}
 
 		public Builder cost(double cost)
 		{
 			this.cost = cost;
+			return this;
+		}
+
+		public Builder qslot(String qslot)
+		{
+			this.qslot = qslot;
 			return this;
 		}
 	}
@@ -159,10 +168,15 @@ public class Job
 		return cost;
 	}
 
+	public String qslot()
+	{
+		return qslot;
+	}
+
 	@Override
 	public String toString()
 	{
-		return "Job [id=" + id + ", priority=" + priority + ", submitTime=" + submitTime + ", length=" + length + ", cores=" + cores + ", memory=" + memory + ", startTime=" + startTime + ", cost=" + cost + "]";
+		return "Job [id=" + id + ", priority=" + priority + ", submitTime=" + submitTime + ", length=" + length + ", cores=" + cores + ", memory=" + memory + ", startTime=" + startTime + ", cost=" + cost + ", qslot=" + qslot + "]";
 	}
 
 }
