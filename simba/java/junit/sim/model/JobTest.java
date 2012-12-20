@@ -30,7 +30,7 @@ public class JobTest
 	@Test
 	public void testMembers()
 	{
-		Job job = Job.builder(2).priority(7).cost(2.4).submitTime(1).cores(3.1).memory(4.2).id("id").build();
+		Job job = Job.builder(2).qslot("/aaa").priority(7).cost(2.4).submitTime(1).cores(3.1).memory(4.2).id("id").build();
 		assertEquals(1, job.submitTime());
 		assertEquals(2, job.length());
 		assertEquals(3.1, job.cores(), 0.01);
@@ -38,6 +38,7 @@ public class JobTest
 		assertEquals(2.4, job.cost(), 0.01);
 		assertEquals(7, job.priority());
 		assertEquals("id", job.id());
+		assertEquals("/aaa", job.qslot());
 		job.started(8);
 		assertEquals(8, job.startTime());
 	}
@@ -45,7 +46,7 @@ public class JobTest
 	@Test
 	public void testToString()
 	{
-		Job job = Job.builder(2).submitTime(1).cores(3.1).memory(4.2).id("id").build();
-		assertEquals("Job [id=id, priority=0, submitTime=1, length=2, cores=3.1, memory=4.2, startTime=0, cost=0.0]", job.toString());
+		Job job = Job.builder(2).submitTime(1).qslot("/aaa").cores(3.1).memory(4.2).id("id").build();
+		assertEquals("Job [id=id, priority=0, submitTime=1, length=2, cores=3.1, memory=4.2, startTime=0, cost=0.0, qslot=/aaa]", job.toString());
 	}
 }
