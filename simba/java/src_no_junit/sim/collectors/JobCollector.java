@@ -12,7 +12,7 @@ public class JobCollector extends Collector
 	protected String collectHeader()
 	{
 		return "#id" + SEPERATOR + "submitTime" + SEPERATOR + "waitTime" + SEPERATOR + "length" + SEPERATOR + "cores" + SEPERATOR + "memory" + SEPERATOR
-				+ "priority" + SEPERATOR + "host";
+				+ "priority" + SEPERATOR + "host" + SEPERATOR + "qslot";
 	}
 
 	public void collect(Host host, Job job)
@@ -23,7 +23,7 @@ public class JobCollector extends Collector
 	private String collectLine(Host host, Job job)
 	{
 		return job.id() + SEPERATOR + job.submitTime() + SEPERATOR + job.waitTime() + SEPERATOR + job.length() + SEPERATOR + job.cores() + SEPERATOR
-				+ job.memory() + SEPERATOR + job.priority() + SEPERATOR + host.id();
+				+ job.memory() + SEPERATOR + job.priority() + SEPERATOR + host.id() + SEPERATOR + job.qslot();
 	}
 
 	@Override
