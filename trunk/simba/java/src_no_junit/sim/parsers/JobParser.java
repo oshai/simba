@@ -47,9 +47,6 @@ public class JobParser
 	private static final int index_qslot = 15;
 	private static final int index_cost = 20;
 	private static boolean DEBUG = true;
-	{
-		log.setLevel(Level.DEBUG);
-	}
 
 	private final SimbaConfiguration simbaConfiguration;
 	private final Cluster cluster;
@@ -69,6 +66,7 @@ public class JobParser
 		log.info("parse() - starting with file " + JOBS_FILE);
 		if (DEBUG)
 		{
+			log.setLevel(Level.DEBUG);
 			log.info("parse() - DEBUG MODE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 		}
 		Predicate<String> predicate = new Predicate<String>()
