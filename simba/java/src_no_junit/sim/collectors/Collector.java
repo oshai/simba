@@ -12,15 +12,14 @@ public abstract class Collector
 {
 	protected static final String SEPERATOR = " ";
 	private Writer writer;
-	
+
 	public Collector()
 	{
 		super();
-		init();
 	}
-	
+
 	protected abstract String collectHeader();
-	
+
 	protected void appendLine(String line)
 	{
 		try
@@ -32,17 +31,17 @@ public abstract class Collector
 			throw ExceptionUtils.asUnchecked(ex);
 		}
 	}
-	
-	private void init()
+
+	public void init()
 	{
 		FileUtils.createNewFile(getFileName());
 		writer = TextFileUtils.getWriter(new File(getFileName()), true);
 		String line = collectHeader();
 		appendLine(line);
 	}
-	
+
 	protected abstract String getFileName();
-	
+
 	public void finish()
 	{
 		try
@@ -54,5 +53,5 @@ public abstract class Collector
 			throw ExceptionUtils.asUnchecked(ex);
 		}
 	}
-	
+
 }

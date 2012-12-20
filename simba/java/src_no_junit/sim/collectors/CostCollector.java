@@ -16,26 +16,37 @@ public class CostCollector extends Collector implements IntervalCollector
 	private static final Logger log = Logger.getLogger(CostCollector.class);
 	private static final String COST_COLLECTOR_FILE = "fairshare_trace";
 	private long modulo;
-	CostStatistics costStatistics;
-	List<String> orderedQslots = newArrayList();
+	private CostStatistics costStatistics;
+	private List<String> orderedQslots = newArrayList();
 
 	public CostCollector(Cluster cluster, long modulo)
 	{
 		super();
 		this.modulo = modulo;
 		Map<String, QslotConfiguration> conf = newHashMap();
-		costStatistics = new CostStatistics(cluster, conf);
+		this.costStatistics = new CostStatistics(cluster, conf);
 	}
 
 	private String collectLine(long time)
 	{
 		Map<String, Qslot> statistics = costStatistics.apply();
-		String line = String.valueOf(time);
+		String line = "";
+		double totalCost = 0.0;
+		double totalMaxCost = 0.0;
+		double totalErrorCost = 0.0;
 		for (String qslotName : orderedQslots)
 		{
-			line += SEPERATOR + statistics.get(qslotName).cost();
-			line += SEPERATOR + statistics.get(qslotName).maxCost();
+			double cost = statistics.get(qslotName).cost();
+			double maxCost = statistics.get(qslotName).maxCost();
+			double costError = statistics.get(qslotName).costError();
+			line += SEPERATOR + cost;
+			line += SEPERATOR + maxCost;
+			line += SEPERATOR + costError;
+			totalCost += cost;
+			totalMaxCost += maxCost;
+			totalErrorCost += costError;
 		}
+		line = String.valueOf(time) + SEPERATOR + totalCost + SEPERATOR + totalMaxCost + SEPERATOR + totalErrorCost + SEPERATOR + line;
 		if (log.isDebugEnabled())
 		{
 			log.debug("collectLine() - " + line.replace(' ', ','));
@@ -49,11 +60,12 @@ public class CostCollector extends Collector implements IntervalCollector
 		Map<String, Qslot> statistics = costStatistics.apply();
 		orderedQslots.addAll(statistics.keySet());
 		Collections.sort(orderedQslots);
-		String line = "#time";
+		String line = "#time" + SEPERATOR + "totalCost" + SEPERATOR + "totalMaxCost" + SEPERATOR + "totalErrorCost";
 		for (String qslotName : orderedQslots)
 		{
 			line += SEPERATOR + "running-cost_of_" + qslotName;
 			line += SEPERATOR + "max-cost_of_" + qslotName;
+			line += SEPERATOR + "cost-error_of_" + qslotName;
 		}
 		return line;
 	}

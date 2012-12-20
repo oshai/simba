@@ -31,4 +31,13 @@ public class CompositeCollector implements IntervalCollector
 		}
 	}
 
+	@Override
+	public void init()
+	{
+		for (IntervalCollector c : collectors)
+		{
+			c.init();
+		}
+	}
+
 }
