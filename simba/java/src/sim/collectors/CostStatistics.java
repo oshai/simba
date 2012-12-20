@@ -1,12 +1,13 @@
 package sim.collectors;
 
+import static utils.assertions.Asserter.*;
+
 import java.util.Map;
 import java.util.Map.Entry;
 
 import sim.model.Cluster;
 import sim.model.Host;
 import sim.model.Job;
-import utils.assertions.Asserter;
 
 import com.google.common.collect.Maps;
 
@@ -21,10 +22,8 @@ public class CostStatistics
 		this.configuration = configuration;
 	}
 
-	@SuppressWarnings("null")
 	public Map<String, Qslot> apply()
 	{
-
 		Map<String, Qslot> $ = Maps.newHashMap();
 		for (Entry<String, QslotConfiguration> e : configuration.entrySet())
 		{
@@ -35,7 +34,7 @@ public class CostStatistics
 			for (Job j : h.jobs())
 			{
 				Qslot qslot = $.get(j.qslot());
-				Asserter.asserter().assertFalse(qslot == null, "didnt find qslot " + j.qslot());
+				asserter().assertNotNull(qslot, "didnt find qslot " + j.qslot());
 				qslot.addCost(j.cost());
 			}
 		}
