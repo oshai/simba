@@ -131,11 +131,11 @@ public class JobParser
 
 			private String parseQslot(List<String> cols)
 			{
-				String[] qslots = (cols.get(index_queue) + cols.get(index_qslot)).split("/");
+				Iterator<String> qslots1 = MySplitter.splitSlash(cols.get(index_queue) + cols.get(index_qslot)).iterator();
 				String $ = "";
-				for (int i = 0; i < 2; i++)
+				for (int i = 0; i < 2 && qslots1.hasNext(); i++)
 				{
-					$ += "/" + qslots[i];
+					$ += "/" + qslots1.next();
 				}
 				return $;
 			}
