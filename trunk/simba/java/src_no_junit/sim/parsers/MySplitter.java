@@ -11,6 +11,7 @@ public class MySplitter
 	private static Splitter splitterComma = Splitter.on(",");
 	private static Splitter splitterEquals = Splitter.on("=");
 	private static Splitter splitterSemicolon = Splitter.on(";");
+	private static Splitter splitterSlash = Splitter.on("/");
 
 	public static List<String> splitComma(String value)
 	{
@@ -25,6 +26,11 @@ public class MySplitter
 	public static Iterable<String> splitEquals(String value)
 	{
 		return splitterEquals.split(value);
+	}
+
+	public static Iterable<String> splitSlash(String value)
+	{
+		return splitterSlash.split(value);
 	}
 
 	public static Iterable<String> splitSemicolon(String value)
