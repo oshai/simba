@@ -6,6 +6,7 @@ import java.util.Map.Entry;
 import sim.model.Cluster;
 import sim.model.Host;
 import sim.model.Job;
+import utils.assertions.Asserter;
 
 import com.google.common.collect.Maps;
 
@@ -20,6 +21,7 @@ public class CostStatistics
 		this.configuration = configuration;
 	}
 
+	@SuppressWarnings("null")
 	public Map<String, Qslot> apply()
 	{
 
@@ -32,7 +34,9 @@ public class CostStatistics
 		{
 			for (Job j : h.jobs())
 			{
-				$.get(j.qslot()).addCost(j.cost());
+				Qslot qslot = $.get(j.qslot());
+				Asserter.asserter().assertFalse(qslot == null, "didnt find qslot " + j.qslot());
+				qslot.addCost(j.cost());
 			}
 		}
 		return $;
