@@ -31,32 +31,32 @@ public class CostCollector extends Collector implements IntervalCollector
 		conf.put("/iil_1base/umg", new QslotConfiguration("/iil_1base/umg", 6444.4));
 		conf.put("/iil_1base/avl_hsw_core_or", new QslotConfiguration("/iil_1base/avl_hsw_core_or", 200.0));
 		conf.put("/iil_1base/jer_cdj", new QslotConfiguration("/iil_1base/jer_cdj", 1978.0));
-		conf.put("/iil_1base/admin", new QslotConfiguration("/iil_1base/admin", 0.0));
+		conf.put("/iil_1base/admin", new QslotConfiguration("/iil_1base/admin", Double.MAX_VALUE));
 		conf.put("/iil_1base/dhg", new QslotConfiguration("/iil_1base/dhg", 349.4));
 		conf.put("/iil_1base/lad", new QslotConfiguration("/iil_1base/lad", 8000.0));
 		conf.put("/iil_1base/HIP", new QslotConfiguration("/iil_1base/HIP", 1978.0));
 		conf.put("/iil_1base/VPG", new QslotConfiguration("/iil_1base/VPG", 400.0));
 		conf.put("/iil_1base/mmg", new QslotConfiguration("/iil_1base/mmg", 19920.8));
 		conf.put("/iil_1base/ssgi", new QslotConfiguration("/iil_1base/ssgi", 2519.3));
-		conf.put("/iil_1base/itec", new QslotConfiguration("/iil_1base/itec", 0.0));
+		conf.put("/iil_1base/itec", new QslotConfiguration("/iil_1base/itec", Double.MAX_VALUE));
 		conf.put("/iil_1base/CGDG", new QslotConfiguration("/iil_1base/CGDG", 400.0));
 		conf.put("/iil_1fast/dhg", new QslotConfiguration("/iil_1fast/dhg", 91.8));
-		conf.put("/iil_1fast/training", new QslotConfiguration("/iil_1fast/training", 0.0));
+		conf.put("/iil_1fast/training", new QslotConfiguration("/iil_1fast/training", Double.MAX_VALUE));
 		conf.put("/iil_1fast/dt", new QslotConfiguration("/iil_1fast/dt", 402.0));
 		conf.put("/iil_1fast/lad", new QslotConfiguration("/iil_1fast/lad", 244.8));
 		conf.put("/iil_1fast/umg", new QslotConfiguration("/iil_1fast/umg", 1531.4));
-		conf.put("/iil_1fast/mmg", new QslotConfiguration("/iil_1fast/mmg", 0.0));
+		conf.put("/iil_1fast/mmg", new QslotConfiguration("/iil_1fast/mmg", Double.MAX_VALUE));
 		conf.put("/iil_1fast/perc", new QslotConfiguration("/iil_1fast/perc", 70.0));
 		conf.put("/iil_1fast/dt_delta", new QslotConfiguration("/iil_1fast/dt_delta", 81.6));
-		conf.put("/iil_1fast/tmp_test_ppv", new QslotConfiguration("/iil_1fast/tmp_test_ppv", 0.0));
-		conf.put("/iil_1fast/admin", new QslotConfiguration("/iil_1fast/admin", 0.0));
-		conf.put("/iil_1_s/arch_benchmark", new QslotConfiguration("/iil_1_s/arch_benchmark", 0.0));
-		conf.put("/iil_1_s/arch_or", new QslotConfiguration("/iil_1_s/arch_or", 0.0));
-		conf.put("/iil_1_s/ppa", new QslotConfiguration("/iil_1_s/ppa", 0.0));
+		conf.put("/iil_1fast/tmp_test_ppv", new QslotConfiguration("/iil_1fast/tmp_test_ppv", Double.MAX_VALUE));
+		conf.put("/iil_1fast/admin", new QslotConfiguration("/iil_1fast/admin", Double.MAX_VALUE));
+		conf.put("/iil_1_s/arch_benchmark", new QslotConfiguration("/iil_1_s/arch_benchmark", Double.MAX_VALUE));
+		conf.put("/iil_1_s/arch_or", new QslotConfiguration("/iil_1_s/arch_or", Double.MAX_VALUE));
+		conf.put("/iil_1_s/ppa", new QslotConfiguration("/iil_1_s/ppa", Double.MAX_VALUE));
 		conf.put("/iil_1_s/arch", new QslotConfiguration("/iil_1_s/arch", 3000.0));
-		conf.put("/iil_1_s/avl_hsw_core_or", new QslotConfiguration("/iil_1_s/avl_hsw_core_or", 0.0));
-		conf.put("/iil_1_s/pdx_vpool", new QslotConfiguration("/iil_1_s/pdx_vpool", 0.0));
-		conf.put("/iil_1_s/admin", new QslotConfiguration("/iil_1_s/admin", 0.0));
+		conf.put("/iil_1_s/avl_hsw_core_or", new QslotConfiguration("/iil_1_s/avl_hsw_core_or", Double.MAX_VALUE));
+		conf.put("/iil_1_s/pdx_vpool", new QslotConfiguration("/iil_1_s/pdx_vpool", Double.MAX_VALUE));
+		conf.put("/iil_1_s/admin", new QslotConfiguration("/iil_1_s/admin", Double.MAX_VALUE));
 
 	}
 
