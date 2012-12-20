@@ -196,7 +196,7 @@ public class HostSchedulerTest
 		return createHostScheduler(host, dispatcher, waitingQueue, distributedWaitingJobs, new HigestMemoryFirst());
 	}
 
-	private HostScheduler createHostScheduler(Host host, JobDispatcher dispatcher, AbstractWaitingQueue waitingQueue, SetWaitingQueue distributedWaitingJobs, Comparator<? super Job> jobGrader)
+	private HostScheduler createHostScheduler(Host host, JobDispatcher dispatcher, AbstractWaitingQueue waitingQueue, SetWaitingQueue distributedWaitingJobs, Comparator<Job> jobGrader)
 	{
 		return new HostScheduler(host, dispatcher, waitingQueue, distributedWaitingJobs, jobGrader);
 	}

@@ -23,9 +23,9 @@ public class HostScheduler
 	private Set<Job> jobs;
 	private final JobDispatcher dispatcher;
 	private final SetWaitingQueue distributedWaitingJobs;
-	private Comparator<? super Job> jobsGrader;
+	private Comparator<Job> jobsGrader;
 
-	public HostScheduler(Host host, JobDispatcher dispatcher, AbstractWaitingQueue waitingQueue, SetWaitingQueue distributedWaitingJobs, Comparator<? super Job> jobGrader)
+	public HostScheduler(Host host, JobDispatcher dispatcher, AbstractWaitingQueue waitingQueue, SetWaitingQueue distributedWaitingJobs, Comparator<Job> jobGrader)
 	{
 		super();
 		this.host = host;

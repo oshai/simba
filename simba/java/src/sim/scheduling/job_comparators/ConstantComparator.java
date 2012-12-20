@@ -2,10 +2,10 @@ package sim.scheduling.job_comparators;
 
 import java.util.Comparator;
 
-public class ConstantComparator implements Comparator<Object>
+public class ConstantComparator<T> implements Comparator<T>
 {
 	@Override
-	public int compare(Object o1, Object o2)
+	public int compare(T o1, T o2)
 	{
 		return 0;
 	}

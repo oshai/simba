@@ -284,7 +284,7 @@ public class Simulator
 		return "distributed".equals(getSchedulerProperty());
 	}
 
-	private Comparator<? super Job> createJobComparator()
+	private Comparator<Job> createJobComparator()
 	{
 		String comparator = getJobComparatorProperty();
 		if (comparator.equals("memory"))
@@ -295,7 +295,7 @@ public class Simulator
 		{
 			return new OldestJobFirst();
 		}
-		return new ConstantComparator();
+		return new ConstantComparator<Job>();
 	}
 
 	private String getJobComparatorProperty()
