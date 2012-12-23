@@ -176,7 +176,7 @@ public class HostSchedulerTest
 		SetWaitingQueue distributedWaitingJobs = new SetWaitingQueue();
 		Job job = createAndAddJobToQueues(waitingQueue, distributedWaitingJobs, 1.0);
 		Job largerJob = createAndAddJobToQueues(waitingQueue, distributedWaitingJobs, 2.0);
-		HostScheduler tested = createHostScheduler(host, new JobDispatcher(mock(EventQueue.class)), waitingQueue, distributedWaitingJobs, new ConstantComparator());
+		HostScheduler tested = createHostScheduler(host, new JobDispatcher(mock(EventQueue.class)), waitingQueue, distributedWaitingJobs, new ConstantComparator<Job>());
 		assertEquals(1, tested.schedule(1));
 		assertTrue(waitingQueue.getQueue().contains(largerJob));
 		assertFalse(waitingQueue.getQueue().contains(job));
