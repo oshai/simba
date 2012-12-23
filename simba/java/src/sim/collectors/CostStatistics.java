@@ -61,7 +61,9 @@ public class CostStatistics
 	{
 		for (Job job : waitingQueue)
 		{
-			$.get(job.qslot()).hasWaitingJobs(true);
+			Qslot qslot = $.get(job.qslot());
+			asserter().assertNotNull(qslot, "didnt find qslot " + job.qslot() + " for job " + job);
+			qslot.hasWaitingJobs(true);
 		}
 	}
 
