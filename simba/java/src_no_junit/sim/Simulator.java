@@ -219,7 +219,7 @@ public class Simulator
 		jobCollector.init();
 		JobFinisher jobFinisher = new JobFinisher(jobCollector);
 		int collectTime = getConfiguration().isBucketSimulation() ? (int) getConfiguration().bucketSize() : 300;
-		List<IntervalCollector> collectors = Lists.<IntervalCollector> newArrayList(new MiscStatisticsCollector(cluster, collectTime, waitingQueueStatistics, jobFinisher), new CostCollector(cluster, collectTime));
+		List<IntervalCollector> collectors = Lists.<IntervalCollector> newArrayList(new MiscStatisticsCollector(cluster, collectTime, waitingQueueStatistics, jobFinisher), new CostCollector(cluster, collectTime, waitingQueueForStatistics));
 		IntervalCollector intervalCollector = new CompositeCollector(collectors);
 		intervalCollector.init();
 		Looper looper = injector.getInstance(LooperFactory.class).create(clock, eventQueue, waitingQueue, scheduler, intervalCollector, jobFinisher);
