@@ -231,6 +231,7 @@ public class CostStatisticsTest
 		assertEquals(0.25, getQslot(qslot).relativeRunningShouldGetError(), 0.0);
 		assertEquals(-0.25, getQslot(noWaitingJobs).relativeRunningShouldGetDelta(), 0.0);
 		assertEquals(0.0, getQslot(noWaitingJobs).relativeRunningShouldGetError(), 0.0);
+		assertEquals(0.0, getQslot(noWaitingJobs).relativeWaitingShouldGetError(), 0.0);
 		assertEquals(0.5, getQslot(noRunningJobs).absoluteShouldGet(), 0.0);
 		assertEquals(0.5, getQslot(noRunningJobs).absoluteShouldGetError(), 0.0);
 		assertEquals(0.0, getQslot(noRunningJobs).relativeRunningShouldGet(), 0.0);
