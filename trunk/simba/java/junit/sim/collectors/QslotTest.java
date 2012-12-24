@@ -26,4 +26,10 @@ public class QslotTest
 	{
 		assertEquals(0.0, qslot.absoluteShouldGet(), 0.0);
 	}
+
+	@Test
+	public void testEnumCoverage() throws Exception
+	{
+		Qslot.SHOULD_GET.valueOf(Qslot.SHOULD_GET.ABSOLUTE.name());
+	}
 }
