@@ -132,11 +132,6 @@ public class Qslot
 		return getShouldGetError(SHOULD_GET.RELATIVE_WAITING);
 	}
 
-	public double relativeWaitingShouldGetDelta()
-	{
-		return getShouldGetDelta(SHOULD_GET.RELATIVE_WAITING);
-	}
-
 	public boolean hasWaitingJobs()
 	{
 		return hasWaitingJobs;
