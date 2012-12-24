@@ -5,7 +5,7 @@ import java.util.Map;
 
 public class Qslot
 {
-	private enum SHOULD_GET
+	public static enum SHOULD_GET
 	{
 		ABSOLUTE, RELATIVE, RELATIVE_RUNNING, RELATIVE_WAITING,
 	}
