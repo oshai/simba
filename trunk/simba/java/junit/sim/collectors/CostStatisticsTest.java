@@ -238,6 +238,7 @@ public class CostStatisticsTest
 		assertEquals(0.0, getQslot(noRunningJobs).relativeRunningShouldGetError(), 0.0);
 		assertEquals(4.0 / 7.0, getQslot(noRunningJobs).relativeWaitingShouldGet(), 0.01);
 		assertEquals(4.0 / 7.0, getQslot(noRunningJobs).relativeWaitingShouldGetError(), 0.01);
+		assertEquals(0.5, getQslot(noRunningJobs).relativeShouldGetError(), 0.01);
 	}
 
 	@Test
@@ -256,6 +257,8 @@ public class CostStatisticsTest
 		assertEquals(0.75, getQslot(noWaitingJobs).relativeRunningShouldGet(), 0.0);
 		assertEquals(0.25, getQslot(noWaitingJobs).relativeRunningShouldGetDelta(), 0.0);
 		assertEquals(0.0, getQslot(noWaitingJobs).relativeRunningShouldGetError(), 0.0);
+		assertEquals(0.25, getQslot(noWaitingJobs).relativeShouldGetDelta(), 0.0);
+		assertEquals(0.0, getQslot(noWaitingJobs).relativeShouldGetError(), 0.0);
 	}
 
 	private Qslot getQslot(String noWaitingJobs)

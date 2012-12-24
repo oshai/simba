@@ -1,21 +1,30 @@
 package sim.collectors;
 
+import java.util.EnumMap;
+import java.util.Map;
+
 public class Qslot
 {
+	private enum SHOULD_GET
+	{
+		ABSOLUTE, RELATIVE, RELATIVE_RUNNING, RELATIVE_WAITING,
+	}
 
 	private final QslotConfiguration configuration;
 	private double runningCost;
 	private double gettingNow;
-	private double absoluteShouldGet;
 	private boolean hasWaitingJobs;
 	private boolean hasRunningJobs;
-	private double relativeRunningShouldGet;
-	private double relativeWaitingShouldGet;
+	private Map<SHOULD_GET, Double> shouldGet = new EnumMap<Qslot.SHOULD_GET, Double>(SHOULD_GET.class);
 
 	public Qslot(QslotConfiguration conf)
 	{
 		super();
 		this.configuration = conf;
+		for (SHOULD_GET t : SHOULD_GET.values())
+		{
+			shouldGet.put(t, 0.0);
+		}
 	}
 
 	public void addCost(double cost)
@@ -55,7 +64,7 @@ public class Qslot
 
 	public double absoluteShouldGet()
 	{
-		return absoluteShouldGet;
+		return shouldGet.get(SHOULD_GET.ABSOLUTE);
 	}
 
 	public QslotConfiguration configuration()
@@ -65,17 +74,17 @@ public class Qslot
 
 	public void absoluteShouldGet(double d)
 	{
-		absoluteShouldGet = d;
+		shouldGet.put(SHOULD_GET.ABSOLUTE, d);
 	}
 
 	public double absoluteShouldGetDelta()
 	{
-		return absoluteShouldGet - gettingNow;
+		return getShouldGetDelta(SHOULD_GET.ABSOLUTE);
 	}
 
 	public double absoluteShouldGetError()
 	{
-		return hasWaitingJobs ? Math.max(0.0, absoluteShouldGetDelta()) : 0.0;
+		return getShouldGetError(SHOULD_GET.ABSOLUTE);
 	}
 
 	public void hasWaitingJobs(boolean b)
@@ -85,17 +94,17 @@ public class Qslot
 
 	public double relativeRunningShouldGet()
 	{
-		return relativeRunningShouldGet;
+		return shouldGet.get(SHOULD_GET.RELATIVE_RUNNING);
 	}
 
 	public double relativeRunningShouldGetDelta()
 	{
-		return relativeRunningShouldGet - gettingNow;
+		return getShouldGetDelta(SHOULD_GET.RELATIVE_RUNNING);
 	}
 
 	public double relativeRunningShouldGetError()
 	{
-		return hasWaitingJobs ? Math.max(0.0, relativeRunningShouldGetDelta()) : 0.0;
+		return getShouldGetError(SHOULD_GET.RELATIVE_RUNNING);
 	}
 
 	public void hasRunningJobs(boolean b)
@@ -108,24 +117,24 @@ public class Qslot
 		return hasRunningJobs;
 	}
 
-	public void relativeShouldGet(double d)
+	public void relativeRunningShouldGet(double d)
 	{
-		relativeRunningShouldGet = d;
+		shouldGet.put(SHOULD_GET.RELATIVE_RUNNING, d);
 	}
 
 	public double relativeWaitingShouldGet()
 	{
-		return relativeWaitingShouldGet;
+		return shouldGet.get(SHOULD_GET.RELATIVE_WAITING);
 	}
 
 	public double relativeWaitingShouldGetError()
 	{
-		return hasWaitingJobs ? Math.max(0.0, relativeWaitingShouldGetDelta()) : 0.0;
+		return getShouldGetError(SHOULD_GET.RELATIVE_WAITING);
 	}
 
-	private double relativeWaitingShouldGetDelta()
+	public double relativeWaitingShouldGetDelta()
 	{
-		return relativeWaitingShouldGet - gettingNow;
+		return getShouldGetDelta(SHOULD_GET.RELATIVE_WAITING);
 	}
 
 	public boolean hasWaitingJobs()
@@ -135,7 +144,33 @@ public class Qslot
 
 	public void relativeWaitingShouldGet(double d)
 	{
-		relativeWaitingShouldGet = d;
+		shouldGet.put(SHOULD_GET.RELATIVE_WAITING, d);
+	}
+
+	public double relativeShouldGetError()
+	{
+		return getShouldGetError(SHOULD_GET.RELATIVE);
+	}
+
+	private double getShouldGetError(SHOULD_GET type)
+	{
+		return hasWaitingJobs ? Math.max(0.0, getShouldGetDelta(type)) : 0.0;
+	}
+
+	public void relativeShouldGet(double d)
+	{
+		this.shouldGet.put(SHOULD_GET.RELATIVE, d);
+
+	}
+
+	public double relativeShouldGetDelta()
+	{
+		return getShouldGetDelta(SHOULD_GET.RELATIVE);
+	}
+
+	private double getShouldGetDelta(SHOULD_GET type)
+	{
+		return shouldGet.get(type) - gettingNow;
 	}
 
 }

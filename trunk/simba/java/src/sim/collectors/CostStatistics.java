@@ -33,6 +33,7 @@ public class CostStatistics
 		double sumAllocations = 0.0;
 		double sumRunningAllocations = 0.0;
 		double sumWaitingAllocations = 0.0;
+		double sumWaitingRunningAllocations = 0.0;
 		for (Entry<String, Qslot> e : $.entrySet())
 		{
 			if (e.getValue().hasRunningJobs())
@@ -43,6 +44,10 @@ public class CostStatistics
 			{
 				sumWaitingAllocations += e.getValue().configuration().allocation();
 			}
+			if (e.getValue().hasWaitingJobs() || e.getValue().hasRunningJobs())
+			{
+				sumWaitingRunningAllocations += e.getValue().configuration().allocation();
+			}
 		}
 		for (QslotConfiguration c : configuration.values())
 		{
@@ -51,8 +56,9 @@ public class CostStatistics
 		for (Qslot q : $.values())
 		{
 			q.absoluteShouldGet(q.configuration().allocation() / sumAllocations);
-			q.relativeShouldGet(q.hasRunningJobs() ? q.configuration().allocation() / sumRunningAllocations : 0.0);
+			q.relativeRunningShouldGet(q.hasRunningJobs() ? q.configuration().allocation() / sumRunningAllocations : 0.0);
 			q.relativeWaitingShouldGet(q.hasWaitingJobs() ? q.configuration().allocation() / sumWaitingAllocations : 0.0);
+			q.relativeShouldGet(q.hasWaitingJobs() || q.hasRunningJobs() ? q.configuration().allocation() / sumWaitingRunningAllocations : 0.0);
 		}
 		return $;
 	}
