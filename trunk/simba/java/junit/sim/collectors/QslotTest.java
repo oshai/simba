@@ -63,6 +63,18 @@ public class QslotTest
 	}
 
 	@Test
+	public void testLongestJobShouldBeReplaced() throws Exception
+	{
+		Job j = mock(Job.class);
+		when(j.submitTime()).thenReturn(2L);
+		Job oldJob = mock(Job.class);
+		when(oldJob.submitTime()).thenReturn(1L);
+		qslot.updateLongestWaitingJob(j);
+		qslot.updateLongestWaitingJob(oldJob);
+		assertEquals(oldJob, qslot.longestWaitingJob());
+	}
+
+	@Test
 	public void testShouldDisplayErrorWhenRelativeShouldGetError() throws Exception
 	{
 		Job j = mock(Job.class);
