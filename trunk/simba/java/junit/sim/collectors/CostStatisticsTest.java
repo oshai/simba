@@ -336,6 +336,27 @@ public class CostStatisticsTest
 		assertEquals(2.5, getQslot(qslot).cost(), 0.0);
 	}
 
+	@Test
+	public void testQslotMaxCost() throws Exception
+	{
+		String qslotName = "qslot";
+		double maxCost = 15.4;
+		QslotConfiguration qslotConf = createQslot(qslotName, maxCost);
+		conf.put(qslotName, qslotConf);
+		assertEquals(maxCost, getQslot(qslotName).maxCost(), 0.0);
+	}
+
+	@Test
+	public void testLongestWaitingJob() throws Exception
+	{
+		String qslot = "qslot";
+		createQslotConf(qslot, 3);
+		Job job = createJob(qslot, 1.0);
+		waitingQueue.add(job);
+		costStatistics.apply();
+		assertEquals(job, getQslot(qslot).longestWaitingJob());
+	}
+
 	private QslotConfiguration createQslot(String qslot)
 	{
 		return createQslot(qslot, 0.0);
@@ -351,13 +372,4 @@ public class CostStatisticsTest
 		return new QslotConfiguration(qslot, maxCost, allocation);
 	}
 
-	@Test
-	public void testQslotMaxCost() throws Exception
-	{
-		String qslotName = "qslot";
-		double maxCost = 15.4;
-		QslotConfiguration qslotConf = createQslot(qslotName, maxCost);
-		conf.put(qslotName, qslotConf);
-		assertEquals(maxCost, getQslot(qslotName).maxCost(), 0.0);
-	}
 }

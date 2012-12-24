@@ -85,13 +85,16 @@ public class CostStatistics
 		}
 	}
 
-	private void updateWaitingJobs(Map<String, Qslot> $)
+	private void updateWaitingJobs(Map<String, Qslot> qs)
 	{
 		for (Job job : waitingQueue)
 		{
-			Qslot qslot = $.get(job.qslot());
-			asserter().assertNotNull(qslot, "didnt find qslot " + job.qslot() + " for job " + job);
-			qslot.hasWaitingJobs(true);
+			Qslot qslot = qs.get(job.qslot());
+			if (asserter().assertNotNull(qslot, "didnt find qslot " + job.qslot() + " for job " + job))
+			{
+				qslot.hasWaitingJobs(true);
+				qslot.updateLongestWaitingJob(job);
+			}
 		}
 	}
 
@@ -125,11 +128,11 @@ public class CostStatistics
 		return sumRunning;
 	}
 
-	private void updateGettingNow(Collection<Qslot> qslots, double sumRunning)
+	private void updateGettingNow(Collection<Qslot> qs, double sumRunning)
 	{
 		if (!Double.valueOf(0.0).equals(sumRunning))
 		{
-			for (Qslot q : qslots)
+			for (Qslot q : qs)
 			{
 				q.gettingNow(q.cost() / sumRunning);
 			}
