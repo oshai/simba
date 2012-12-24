@@ -168,4 +168,9 @@ public class Qslot
 		return shouldGet.get(type) - gettingNow;
 	}
 
+	public double allocation()
+	{
+		return configuration().allocation();
+	}
+
 }
