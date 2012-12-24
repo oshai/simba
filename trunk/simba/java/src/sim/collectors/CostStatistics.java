@@ -15,6 +15,31 @@ import com.google.common.collect.Maps;
 
 public class CostStatistics
 {
+	public static class SumAllocations
+	{
+		public double sumAllocations;
+		public double sumRunningAllocations;
+		public double sumWaitingAllocations;
+		public double sumWaitingRunningAllocations;
+
+		public void update(Qslot value)
+		{
+			sumAllocations += value.allocation();
+			if (value.hasWaitingJobs() || value.hasRunningJobs())
+			{
+				sumWaitingRunningAllocations += value.allocation();
+			}
+			if (value.hasRunningJobs())
+			{
+				sumRunningAllocations += value.allocation();
+			}
+			if (value.hasWaitingJobs())
+			{
+				sumWaitingAllocations += value.allocation();
+			}
+		}
+	}
+
 	private final Cluster cluster;
 	private final Map<String, QslotConfiguration> configuration;
 	private final WaitingQueueForStatistics waitingQueue;
@@ -30,37 +55,34 @@ public class CostStatistics
 	{
 		Map<String, Qslot> $ = updateQslotsCost();
 		updateWaitingJobs($);
-		double sumAllocations = 0.0;
-		double sumRunningAllocations = 0.0;
-		double sumWaitingAllocations = 0.0;
-		double sumWaitingRunningAllocations = 0.0;
-		for (Entry<String, Qslot> e : $.entrySet())
-		{
-			if (e.getValue().hasRunningJobs())
-			{
-				sumRunningAllocations += e.getValue().configuration().allocation();
-			}
-			if (e.getValue().hasWaitingJobs())
-			{
-				sumWaitingAllocations += e.getValue().configuration().allocation();
-			}
-			if (e.getValue().hasWaitingJobs() || e.getValue().hasRunningJobs())
-			{
-				sumWaitingRunningAllocations += e.getValue().configuration().allocation();
-			}
-		}
-		for (QslotConfiguration c : configuration.values())
-		{
-			sumAllocations += c.allocation();
-		}
-		for (Qslot q : $.values())
-		{
-			q.absoluteShouldGet(q.configuration().allocation() / sumAllocations);
-			q.relativeRunningShouldGet(q.hasRunningJobs() ? q.configuration().allocation() / sumRunningAllocations : 0.0);
-			q.relativeWaitingShouldGet(q.hasWaitingJobs() ? q.configuration().allocation() / sumWaitingAllocations : 0.0);
-			q.relativeShouldGet(q.hasWaitingJobs() || q.hasRunningJobs() ? q.configuration().allocation() / sumWaitingRunningAllocations : 0.0);
-		}
+		updateQslotShouldGet($.values());
 		return $;
+	}
+
+	private void updateQslotShouldGet(Collection<Qslot> qs)
+	{
+		updateQslotShouldGet(createSumAllocations(qs), qs);
+	}
+
+	private SumAllocations createSumAllocations(Collection<Qslot> values)
+	{
+		SumAllocations sum = new SumAllocations();
+		for (Qslot value : values)
+		{
+			sum.update(value);
+		}
+		return sum;
+	}
+
+	private void updateQslotShouldGet(SumAllocations sum, Collection<Qslot> values)
+	{
+		for (Qslot q : values)
+		{
+			q.absoluteShouldGet(q.allocation() / sum.sumAllocations);
+			q.relativeRunningShouldGet(q.hasRunningJobs() ? q.allocation() / sum.sumRunningAllocations : 0.0);
+			q.relativeWaitingShouldGet(q.hasWaitingJobs() ? q.allocation() / sum.sumWaitingAllocations : 0.0);
+			q.relativeShouldGet(q.hasWaitingJobs() || q.hasRunningJobs() ? q.allocation() / sum.sumWaitingRunningAllocations : 0.0);
+		}
 	}
 
 	private void updateWaitingJobs(Map<String, Qslot> $)
