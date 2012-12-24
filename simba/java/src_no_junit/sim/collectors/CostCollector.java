@@ -70,6 +70,7 @@ public class CostCollector extends Collector implements IntervalCollector
 		double totalRelativeShouldGetError = 0.0;
 		double totalRelativeRunningShouldGetError = 0.0;
 		double totalRelativeWaitingShouldGetError = 0.0;
+		double totalJobErrorByRelativeShouldGet = 0.0;
 		for (String qslotName : orderedQslots)
 		{
 			double cost = statistics.get(qslotName).cost();
@@ -79,7 +80,10 @@ public class CostCollector extends Collector implements IntervalCollector
 			double relativeShouldGetError = statistics.get(qslotName).relativeShouldGetError();
 			double relativeRunningShouldGetError = statistics.get(qslotName).relativeRunningShouldGetError();
 			double relativeWaitingShouldGetError = statistics.get(qslotName).relativeWaitingShouldGetError();
+			double jobErrorByRelativeShouldGet = statistics.get(qslotName).jobError(time);
+			// cost)
 			line += SEPERATOR + cost;
+			line += SEPERATOR + jobErrorByRelativeShouldGet;
 			line += SEPERATOR + absoluteShouldGetError;
 			line += SEPERATOR + relativeShouldGetError;
 			line += SEPERATOR + relativeRunningShouldGetError;
@@ -89,8 +93,9 @@ public class CostCollector extends Collector implements IntervalCollector
 			totalRelativeShouldGetError += relativeShouldGetError;
 			totalRelativeRunningShouldGetError += relativeRunningShouldGetError;
 			totalRelativeWaitingShouldGetError += relativeWaitingShouldGetError;
+			totalJobErrorByRelativeShouldGet += jobErrorByRelativeShouldGet;
 		}
-		line = String.valueOf(time) + SEPERATOR + totalCost + SEPERATOR + totalAbsoluteShouldGetError + SEPERATOR + totalRelativeShouldGetError + SEPERATOR + totalRelativeRunningShouldGetError + SEPERATOR + totalRelativeWaitingShouldGetError + SEPERATOR + line;
+		line = String.valueOf(time) + SEPERATOR + totalCost + SEPERATOR + totalJobErrorByRelativeShouldGet + SEPERATOR + totalAbsoluteShouldGetError + SEPERATOR + totalRelativeShouldGetError + SEPERATOR + totalRelativeRunningShouldGetError + SEPERATOR + totalRelativeWaitingShouldGetError + SEPERATOR + line;
 		if (log.isDebugEnabled())
 		{
 			log.debug("collectLine() - " + line.replace(' ', ','));
@@ -104,10 +109,11 @@ public class CostCollector extends Collector implements IntervalCollector
 		Map<String, Qslot> statistics = costStatistics.apply();
 		orderedQslots.addAll(statistics.keySet());
 		Collections.sort(orderedQslots);
-		String line = "#time" + SEPERATOR + "totalCost" + SEPERATOR + "totalAbsoluteShouldGetError" + SEPERATOR + "totalRelativeShouldGetError" + SEPERATOR + "totalRelativeRunningShouldGetError" + SEPERATOR + "totalRelativeWaitingShouldGetError";
+		String line = "#time" + SEPERATOR + "totalCost" + SEPERATOR + "totalJobErrorByRelativeShouldGet" + SEPERATOR + "totalAbsoluteShouldGetError" + SEPERATOR + "totalRelativeShouldGetError" + SEPERATOR + "totalRelativeRunningShouldGetError" + SEPERATOR + "totalRelativeWaitingShouldGetError";
 		for (String qslotName : orderedQslots)
 		{
 			line += SEPERATOR + "running-cost_of_" + qslotName;
+			line += SEPERATOR + "job-error_of_" + qslotName;
 			line += SEPERATOR + "absoluteShouldGetError_of_" + qslotName;
 			line += SEPERATOR + "relativeShouldGetErrorr_of_" + qslotName;
 			line += SEPERATOR + "relativeRunningShouldGetError_of_" + qslotName;

@@ -3,6 +3,8 @@ package sim.collectors;
 import java.util.EnumMap;
 import java.util.Map;
 
+import sim.model.Job;
+
 public class Qslot
 {
 	public static enum SHOULD_GET
@@ -16,6 +18,7 @@ public class Qslot
 	private boolean hasWaitingJobs;
 	private boolean hasRunningJobs;
 	private Map<SHOULD_GET, Double> shouldGet = new EnumMap<Qslot.SHOULD_GET, Double>(SHOULD_GET.class);
+	private Job longestWaitingJob;
 
 	public Qslot(QslotConfiguration conf)
 	{
@@ -173,4 +176,30 @@ public class Qslot
 		return configuration().allocation();
 	}
 
+	public Job longestWaitingJob()
+	{
+		return longestWaitingJob;
+	}
+
+	public void updateLongestWaitingJob(Job j)
+	{
+		longestWaitingJob = shouldUpdate(j) ? j : longestWaitingJob;
+	}
+
+	private boolean shouldUpdate(Job j)
+	{
+		return longestWaitingJob == null || isOlderFromLongestWaitingJob(j);
+	}
+
+	private boolean isOlderFromLongestWaitingJob(Job j)
+	{
+		return longestWaitingJob.submitTime() > j.submitTime();
+	}
+
+	public double jobError(long time)
+	{
+		if (longestWaitingJob == null)
+			return 0.0;
+		return (relativeShouldGetError() * (time - longestWaitingJob.submitTime())) / longestWaitingJob.cost();
+	}
 }
