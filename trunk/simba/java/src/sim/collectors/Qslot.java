@@ -7,17 +7,12 @@ import sim.model.Job;
 
 public class Qslot
 {
-	public static enum EShouldGet
-	{
-		ABSOLUTE, RELATIVE, RELATIVE_RUNNING, RELATIVE_WAITING,
-	}
-
 	private final QslotConfiguration configuration;
 	private double runningCost;
 	private double gettingNow;
 	private boolean hasWaitingJobs;
 	private boolean hasRunningJobs;
-	private Map<EShouldGet, Double> shouldGet = new EnumMap<Qslot.EShouldGet, Double>(EShouldGet.class);
+	private Map<EShouldGet, Double> shouldGet = new EnumMap<EShouldGet, Double>(EShouldGet.class);
 	private Job longestWaitingJob;
 
 	public Qslot(QslotConfiguration conf)
