@@ -39,7 +39,7 @@ public class QslotTest
 	@Test
 	public void testEnumCoverage() throws Exception
 	{
-		Qslot.SHOULD_GET.valueOf(Qslot.SHOULD_GET.ABSOLUTE.name());
+		Qslot.EShouldGet.valueOf(Qslot.EShouldGet.ABSOLUTE.name());
 	}
 
 	@Test
