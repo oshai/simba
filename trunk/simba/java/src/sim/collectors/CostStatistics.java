@@ -18,6 +18,7 @@ public class CostStatistics
 	private final Cluster cluster;
 	private final WaitingQueueForStatistics waitingQueue;
 	private final AllocationConfiguration configuration;
+	private Map<String, Qslot> qslotsMap;
 
 	public CostStatistics(Cluster cluster, WaitingQueueForStatistics queue, AllocationConfiguration configuration)
 	{
@@ -26,12 +27,16 @@ public class CostStatistics
 		this.waitingQueue = queue;
 	}
 
-	public Map<String, Qslot> apply()
+	public Map<String, Qslot> qslots()
 	{
-		Map<String, Qslot> $ = updateQslotsCost();
-		updateWaitingJobs($);
-		updateQslotShouldGet($.values());
-		return $;
+		return qslotsMap;
+	}
+
+	public void calculate()
+	{
+		qslotsMap = updateQslotsCost();
+		updateWaitingJobs(qslotsMap);
+		updateQslotShouldGet(qslotsMap.values());
 	}
 
 	private void updateQslotShouldGet(Collection<Qslot> qs)

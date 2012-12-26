@@ -7,6 +7,7 @@ import static org.mockito.Mockito.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -46,7 +47,7 @@ public class CostStatisticsTest
 	@Test
 	public void testEmpty() throws Exception
 	{
-		assertEquals(Maps.newHashMap(), costStatistics.apply());
+		assertEquals(Maps.newHashMap(), apply());
 	}
 
 	@Test
@@ -265,7 +266,14 @@ public class CostStatisticsTest
 
 	private Qslot getQslot(String noWaitingJobs)
 	{
-		return costStatistics.apply().get(noWaitingJobs);
+		return apply().get(noWaitingJobs);
+	}
+
+	public Map<String, Qslot> apply()
+	{
+		costStatistics.calculate();
+		Map<String, Qslot> qslots = costStatistics.qslots();
+		return qslots;
 	}
 
 	private Job createJob(String qslot, double runningCost)
@@ -355,7 +363,7 @@ public class CostStatisticsTest
 		createQslotConf(qslot, 3);
 		Job job = createJob(qslot, 1.0);
 		waitingQueue.add(job);
-		costStatistics.apply();
+		apply();
 		assertEquals(job, getQslot(qslot).longestWaitingJob());
 	}
 

@@ -28,7 +28,9 @@ public class CostCollector extends Collector implements IntervalCollector
 
 	private String collectLine(long time)
 	{
-		Map<String, Qslot> statistics = costStatistics.apply();
+		costStatistics.calculate();
+		Map<String, Qslot> qslots = costStatistics.qslots();
+		Map<String, Qslot> statistics = qslots;
 		String line = "";
 		double totalCost = 0.0;
 		double totalAbsoluteShouldGetError = 0.0;
@@ -71,7 +73,9 @@ public class CostCollector extends Collector implements IntervalCollector
 	@Override
 	protected String collectHeader()
 	{
-		Map<String, Qslot> statistics = costStatistics.apply();
+		costStatistics.calculate();
+		Map<String, Qslot> qslots = costStatistics.qslots();
+		Map<String, Qslot> statistics = qslots;
 		orderedQslots.addAll(statistics.keySet());
 		Collections.sort(orderedQslots);
 		String line = "#time" + SEPERATOR + "totalCost" + SEPERATOR + "totalJobErrorByRelativeShouldGet" + SEPERATOR + "totalAbsoluteShouldGetError" + SEPERATOR + "totalRelativeShouldGetError" + SEPERATOR + "totalRelativeRunningShouldGetError" + SEPERATOR + "totalRelativeWaitingShouldGetError";

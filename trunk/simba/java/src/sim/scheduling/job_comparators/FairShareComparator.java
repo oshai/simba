@@ -19,7 +19,7 @@ public class FairShareComparator implements JobComparator
 	@Override
 	public int compare(Job j1, Job j2)
 	{
-		Map<String, Qslot> qs = statistics.apply();
+		Map<String, Qslot> qs = statistics.qslots();
 		return Double.compare(getJobShouldGet(qs, j1), getJobShouldGet(qs, j2));
 	}
 

@@ -37,7 +37,7 @@ public class FairShareComparatorTest
 		Map<String, Qslot> m = Maps.newHashMap();
 		Job j1 = createJob(m, "qslot1", 5.0);
 		Job j2 = createJob(m, "qslot2", 3.0);
-		when(stats.apply()).thenReturn(m);
+		when(stats.qslots()).thenReturn(m);
 		Assert.assertEquals(1, tested.compare(j1, j2));
 		Assert.assertEquals(-1, tested.compare(j2, j1));
 	}
