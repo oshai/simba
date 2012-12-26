@@ -9,7 +9,7 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 
 import sim.model.Cluster;
-import sim.scheduling.WaitingQueueForStatistics;
+import sim.scheduling.waiting_queue.WaitingQueueForStatistics;
 
 public class CostCollector extends Collector implements IntervalCollector
 {

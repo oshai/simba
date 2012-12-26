@@ -15,12 +15,12 @@ import sim.events.Submit;
 import sim.model.Cluster;
 import sim.model.Host;
 import sim.model.Job;
-import sim.scheduling.AbstractWaitingQueue;
 import sim.scheduling.ByTraceScheduler;
 import sim.scheduling.JobDispatcher;
-import sim.scheduling.LinkedListWaitingQueue;
 import sim.scheduling.Scheduler;
 import sim.scheduling.SimpleScheduler;
+import sim.scheduling.waiting_queue.AbstractWaitingQueue;
+import sim.scheduling.waiting_queue.LinkedListWaitingQueue;
 
 public class LooperTest
 {

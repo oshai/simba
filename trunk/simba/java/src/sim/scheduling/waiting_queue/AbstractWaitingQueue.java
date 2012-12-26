@@ -1,4 +1,4 @@
-package sim.scheduling;
+package sim.scheduling.waiting_queue;
 
 import java.util.Iterator;
 import java.util.Queue;
@@ -7,7 +7,7 @@ import sim.model.Job;
 
 import com.google.common.collect.ForwardingIterator;
 
-public abstract class AbstractWaitingQueue implements WaitingQueueForStatistics
+public abstract class AbstractWaitingQueue implements WaitingQueueForStatistics, WaitingQueue
 {
 
 	private int added;
@@ -20,33 +20,39 @@ public abstract class AbstractWaitingQueue implements WaitingQueueForStatistics
 
 	public abstract Queue<Job> getQueue();
 
+	@Override
 	public boolean isEmpty()
 	{
 		return getQueue().isEmpty();
 	}
 
+	@Override
 	public int size()
 	{
 		return getQueue().size();
 	}
 
+	@Override
 	public Job peek()
 	{
 		return getQueue().peek();
 	}
 
+	@Override
 	public void add(Job job)
 	{
 		getQueue().add(job);
 		added++;
 	}
 
+	@Override
 	public Job remove()
 	{
 		removed++;
 		return getQueue().remove();
 	}
 
+	@Override
 	public Iterator<Job> iterator()
 	{
 		return new ForwardingIterator<Job>()

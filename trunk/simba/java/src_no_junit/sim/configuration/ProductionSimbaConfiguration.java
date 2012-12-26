@@ -9,8 +9,8 @@ import sim.event_handling.EventQueue;
 import sim.model.Cluster;
 import sim.parsers.HostParser;
 import sim.parsers.JobParser;
-import sim.scheduling.AbstractWaitingQueue;
 import sim.scheduling.Scheduler;
+import sim.scheduling.waiting_queue.WaitingQueue;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Module;
@@ -44,7 +44,7 @@ public class ProductionSimbaConfiguration extends AbstractModule implements Modu
 
 	public interface LooperFactory
 	{
-		Looper create(Clock clock, EventQueue eventQueue, AbstractWaitingQueue waitingQueue, Scheduler scheduler, IntervalCollector hostCollector, JobFinisher jobFinisher);
+		Looper create(Clock clock, EventQueue eventQueue, WaitingQueue waitingQueue, Scheduler scheduler, IntervalCollector hostCollector, JobFinisher jobFinisher);
 	}
 
 	@Override

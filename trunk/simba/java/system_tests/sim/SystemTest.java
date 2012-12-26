@@ -18,13 +18,13 @@ import sim.events.Submit;
 import sim.model.Cluster;
 import sim.model.Host;
 import sim.model.Job;
-import sim.scheduling.AbstractWaitingQueue;
 import sim.scheduling.JobDispatcher;
-import sim.scheduling.LinkedListWaitingQueue;
 import sim.scheduling.Scheduler;
 import sim.scheduling.SimpleScheduler;
 import sim.scheduling.matchers.FirstFit;
 import sim.scheduling.matchers.Matcher;
+import sim.scheduling.waiting_queue.AbstractWaitingQueue;
+import sim.scheduling.waiting_queue.LinkedListWaitingQueue;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;

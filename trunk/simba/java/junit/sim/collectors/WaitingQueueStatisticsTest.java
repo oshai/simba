@@ -6,8 +6,8 @@ import org.junit.Test;
 
 import sim.Clock;
 import sim.model.Job;
-import sim.scheduling.AbstractWaitingQueue;
-import sim.scheduling.LinkedListWaitingQueue;
+import sim.scheduling.waiting_queue.AbstractWaitingQueue;
+import sim.scheduling.waiting_queue.LinkedListWaitingQueue;
 
 public class WaitingQueueStatisticsTest
 {

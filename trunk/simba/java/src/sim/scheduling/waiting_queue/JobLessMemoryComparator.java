@@ -1,4 +1,4 @@
-package sim.scheduling;
+package sim.scheduling.waiting_queue;
 
 import java.util.Comparator;
 

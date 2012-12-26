@@ -16,8 +16,8 @@ import org.apache.commons.math3.stat.descriptive.rank.Percentile;
 import org.apache.log4j.Logger;
 
 import sim.model.Job;
-import sim.scheduling.AbstractWaitingQueue;
-import sim.scheduling.SetWaitingQueue;
+import sim.scheduling.waiting_queue.AbstractWaitingQueue;
+import sim.scheduling.waiting_queue.SetWaitingQueue;
 
 import com.google.common.base.Function;
 import com.google.common.collect.HashMultimap;

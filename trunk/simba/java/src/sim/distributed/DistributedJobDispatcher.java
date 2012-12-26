@@ -3,6 +3,7 @@ package sim.distributed;
 import sim.event_handling.*;
 import sim.model.*;
 import sim.scheduling.*;
+import sim.scheduling.waiting_queue.SetWaitingQueue;
 
 public class DistributedJobDispatcher extends JobDispatcher
 {

@@ -1,4 +1,4 @@
-package sim.scheduling;
+package sim.scheduling.waiting_queue;
 
 import static org.junit.Assert.*;
 
@@ -16,7 +16,7 @@ public class WaitingQueueTest
 	{
 		Job job1 = Job.builder(1).priority(0).build();
 		Job job2 = Job.builder(1).priority(1).build();
-		AbstractWaitingQueue waitingQueue = new LinkedListWaitingQueue();
+		WaitingQueue waitingQueue = new LinkedListWaitingQueue();
 		waitingQueue.add(job1);
 		waitingQueue.add(job2);
 		assertEquals(job1, waitingQueue.peek());

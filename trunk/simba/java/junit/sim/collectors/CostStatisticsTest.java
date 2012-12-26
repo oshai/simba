@@ -18,7 +18,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import sim.model.Cluster;
 import sim.model.Host;
 import sim.model.Job;
-import sim.scheduling.SetWaitingQueue;
+import sim.scheduling.waiting_queue.SetWaitingQueue;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;

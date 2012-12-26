@@ -12,9 +12,9 @@ public class AllocationConfiguration
 	public AllocationConfiguration()
 	{
 		super();
-		createBaseQslots(conf);
-		createFastQslots(conf);
-		createSoftQslots(conf);
+		createBaseQslots();
+		createFastQslots();
+		createSoftQslots();
 	}
 
 	public Map<String, QslotConfiguration> getAll()
@@ -22,7 +22,7 @@ public class AllocationConfiguration
 		return conf;
 	}
 
-	private void createBaseQslots(Map<String, QslotConfiguration> conf)
+	private void createBaseQslots()
 	{
 		conf.put("/iil_1base/sdm", new QslotConfiguration("/iil_1base/sdm", 3730.1, 0.0));
 		conf.put("/iil_1base/dt", new QslotConfiguration("/iil_1base/dt", 1866.6, 543.6));
@@ -41,7 +41,7 @@ public class AllocationConfiguration
 		conf.put("/iil_1base/CGDG", new QslotConfiguration("/iil_1base/CGDG", 400.0, 0.0));
 	}
 
-	private void createSoftQslots(Map<String, QslotConfiguration> conf)
+	private void createSoftQslots()
 	{
 		conf.put("/iil_1_s/arch_benchmark", new QslotConfiguration("/iil_1_s/arch_benchmark", Double.MAX_VALUE, 0.0 / PRIORITY_FACTOR));
 		conf.put("/iil_1_s/arch_or", new QslotConfiguration("/iil_1_s/arch_or", Double.MAX_VALUE, 1 / PRIORITY_FACTOR));
@@ -52,7 +52,7 @@ public class AllocationConfiguration
 		conf.put("/iil_1_s/admin", new QslotConfiguration("/iil_1_s/admin", Double.MAX_VALUE, 1000.0 / PRIORITY_FACTOR));
 	}
 
-	private void createFastQslots(Map<String, QslotConfiguration> conf)
+	private void createFastQslots()
 	{
 		conf.put("/iil_1fast/dhg", new QslotConfiguration("/iil_1fast/dhg", 91.8, 1 * PRIORITY_FACTOR));
 		conf.put("/iil_1fast/training", new QslotConfiguration("/iil_1fast/training", Double.MAX_VALUE, 1000.0 * PRIORITY_FACTOR));

@@ -1,17 +1,17 @@
 package sim.distributed;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import sim.model.Host;
 import sim.model.Job;
-import sim.scheduling.AbstractWaitingQueue;
 import sim.scheduling.JobDispatcher;
-import sim.scheduling.SetWaitingQueue;
-import sim.scheduling.WaitingQueueForStatistics;
 import sim.scheduling.job_comparators.JobComparator;
+import sim.scheduling.waiting_queue.AbstractWaitingQueue;
+import sim.scheduling.waiting_queue.SetWaitingQueue;
+import sim.scheduling.waiting_queue.WaitingQueueForStatistics;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -46,9 +46,9 @@ public class HostScheduler
 	{
 
 		int $ = 0;
-		ArrayList<Job> newArrayList = Lists.newArrayList(waitingJobs);
-		sort(newArrayList);
-		Iterator<Job> iterator = newArrayList.iterator();
+		List<Job> sortedWaitingJobs = Lists.newArrayList(waitingJobs);
+		sort(sortedWaitingJobs);
+		Iterator<Job> iterator = sortedWaitingJobs.iterator();
 		while (iterator.hasNext())
 		{
 			Job job = iterator.next();
@@ -67,9 +67,9 @@ public class HostScheduler
 		return $;
 	}
 
-	private void sort(ArrayList<Job> newArrayList)
+	private void sort(List<Job> jobsList)
 	{
-		Collections.sort(newArrayList, jobsGrader);
+		Collections.sort(jobsList, jobsGrader);
 	}
 
 	private void removeJob(Job job)

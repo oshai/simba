@@ -1,4 +1,4 @@
-package sim.scheduling;
+package sim.scheduling.waiting_queue;
 
 import static junit.framework.Assert.*;
 import static org.mockito.Mockito.*;
@@ -8,6 +8,7 @@ import java.util.Iterator;
 import org.junit.Test;
 
 import sim.model.Job;
+import sim.scheduling.waiting_queue.SetWaitingQueue;
 
 public class SetWaitingQueueTest
 {
