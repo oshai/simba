@@ -10,9 +10,8 @@ public class LinkedListWaitingQueue extends AbstractWaitingQueue
 	private final Queue<Job> queue = new LinkedList<Job>();
 
 	@Override
-	public Queue<Job> getQueue()
+	protected Queue<Job> getQueue()
 	{
 		return queue;
 	}
-
 }

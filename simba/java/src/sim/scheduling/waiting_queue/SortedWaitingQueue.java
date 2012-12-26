@@ -14,7 +14,7 @@ public class SortedWaitingQueue extends AbstractWaitingQueue
 	private final Queue<Job> queue = MinMaxPriorityQueue.orderedBy(c).create();
 
 	@Override
-	public Queue<Job> getQueue()
+	protected Queue<Job> getQueue()
 	{
 		return queue;
 	}

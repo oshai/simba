@@ -162,8 +162,8 @@ public class HostSchedulerTest
 		Job largerJob = createAndAddJobToQueues(waitingQueue, distributedWaitingJobs, 2.0);
 		HostScheduler tested = createHostScheduler(host, new JobDispatcher(mock(EventQueue.class)), waitingQueue, distributedWaitingJobs, new HighestMemoryFirst());
 		assertEquals(1, tested.schedule(1));
-		assertFalse(waitingQueue.getQueue().contains(largerJob));
-		assertTrue(waitingQueue.getQueue().contains(job));
+		assertFalse(waitingQueue.contains(largerJob));
+		assertTrue(waitingQueue.contains(job));
 	}
 
 	@Test
@@ -177,8 +177,8 @@ public class HostSchedulerTest
 		Job largerJob = createAndAddJobToQueues(waitingQueue, distributedWaitingJobs, 2.0);
 		HostScheduler tested = createHostScheduler(host, new JobDispatcher(mock(EventQueue.class)), waitingQueue, distributedWaitingJobs, new ConstantJobComparator());
 		assertEquals(1, tested.schedule(1));
-		assertTrue(waitingQueue.getQueue().contains(largerJob));
-		assertFalse(waitingQueue.getQueue().contains(job));
+		assertTrue(waitingQueue.contains(largerJob));
+		assertFalse(waitingQueue.contains(job));
 	}
 
 	private Job createAndAddJobToQueues(LinkedListWaitingQueue waitingQueue, SetWaitingQueue distributedWaitingJobs, double memory)

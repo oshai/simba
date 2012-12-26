@@ -18,7 +18,7 @@ public abstract class AbstractWaitingQueue implements WaitingQueueForStatistics,
 		super();
 	}
 
-	public abstract Queue<Job> getQueue();
+	protected abstract Queue<Job> getQueue();
 
 	@Override
 	public boolean isEmpty()
@@ -94,4 +94,8 @@ public abstract class AbstractWaitingQueue implements WaitingQueueForStatistics,
 		getQueue().remove(job);
 	}
 
+	public boolean contains(Job job)
+	{
+		return getQueue().contains(job);
+	}
 }
