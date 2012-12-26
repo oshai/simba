@@ -75,7 +75,7 @@ public class HostScheduler
 	private void removeJob(Job job)
 	{
 		jobs.remove(job);
-		waitingJobs.getQueue().remove(job);
+		waitingJobs.remove(job);
 	}
 
 	public boolean isAllowedToAddJob(Job job)
