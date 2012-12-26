@@ -3,7 +3,6 @@ package sim;
 import static com.google.common.collect.Lists.*;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -13,8 +12,10 @@ import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
+import sim.collectors.AllocationConfiguration;
 import sim.collectors.CompositeCollector;
 import sim.collectors.CostCollector;
+import sim.collectors.CostStatistics;
 import sim.collectors.IntervalCollector;
 import sim.collectors.JobCollector;
 import sim.collectors.MaxCostCollector;
@@ -33,7 +34,6 @@ import sim.event_handling.EventQueue;
 import sim.events.Event;
 import sim.model.Cluster;
 import sim.model.Host;
-import sim.model.Job;
 import sim.parsers.HostParser;
 import sim.parsers.JobParser;
 import sim.scheduling.AbstractWaitingQueue;
@@ -50,8 +50,10 @@ import sim.scheduling.graders.Constant;
 import sim.scheduling.graders.Grader;
 import sim.scheduling.graders.RandomGrader;
 import sim.scheduling.graders.ThrowingExceptionGrader;
-import sim.scheduling.job_comparators.ConstantComparator;
-import sim.scheduling.job_comparators.HigestMemoryFirst;
+import sim.scheduling.job_comparators.ConstantJobComparator;
+import sim.scheduling.job_comparators.FairShareComparator;
+import sim.scheduling.job_comparators.HighestMemoryFirst;
+import sim.scheduling.job_comparators.JobComparator;
 import sim.scheduling.job_comparators.OldestJobFirst;
 import sim.scheduling.matchers.GradeMatcher;
 import sim.scheduling.matchers.GradeMatcherProvider;
@@ -232,12 +234,14 @@ public class Simulator
 
 	private ArrayList<HostScheduler> createHostSchedulers(Cluster cluster, final JobDispatcher dispatcher, final SetWaitingQueue distributedWaitingJobs)
 	{
+		final AllocationConfiguration allocationConfiguration = new AllocationConfiguration();
 		return newArrayList(Collections2.transform(cluster.hosts(), new Function<Host, HostScheduler>()
 		{
 			@Override
 			public HostScheduler apply(Host host)
 			{
-				return new HostScheduler(host, dispatcher, new LinkedListWaitingQueue(), distributedWaitingJobs, createJobComparator());
+				LinkedListWaitingQueue waitingQueue = new LinkedListWaitingQueue();
+				return new HostScheduler(host, dispatcher, waitingQueue, distributedWaitingJobs, createJobComparator(new CostStatistics(new Cluster().add(host), waitingQueue, allocationConfiguration)));
 			}
 		}));
 	}
@@ -293,18 +297,22 @@ public class Simulator
 		return "distributed".equals(getSchedulerProperty());
 	}
 
-	private Comparator<Job> createJobComparator()
+	private JobComparator createJobComparator(CostStatistics statistics)
 	{
 		String comparator = getJobComparatorProperty();
 		if (comparator.equals("memory"))
 		{
-			return new HigestMemoryFirst();
+			return new HighestMemoryFirst();
+		}
+		if (comparator.equals("fairshare"))
+		{
+			return new FairShareComparator(statistics);
 		}
 		if (comparator.equals("submitTime"))
 		{
 			return new OldestJobFirst();
 		}
-		return new ConstantComparator<Job>();
+		return new ConstantJobComparator();
 	}
 
 	private String getJobComparatorProperty()

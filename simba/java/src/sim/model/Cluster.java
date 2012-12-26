@@ -1,6 +1,6 @@
 package sim.model;
 
-import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Lists.*;
 
 import java.util.List;
 
@@ -8,14 +8,14 @@ public class Cluster
 {
 	private List<Host> hosts = newArrayList();
 
-	public boolean add(Host host)
+	public Cluster add(Host host)
 	{
-		return hosts.add(host);
+		hosts.add(host);
+		return this;
 	}
 
 	public List<Host> hosts()
 	{
 		return hosts;
 	}
-
 }

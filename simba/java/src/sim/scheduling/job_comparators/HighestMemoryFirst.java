@@ -1,10 +1,8 @@
 package sim.scheduling.job_comparators;
 
-import java.util.Comparator;
-
 import sim.model.Job;
 
-public final class HigestMemoryFirst implements Comparator<Job>
+public final class HighestMemoryFirst implements JobComparator
 {
 	@Override
 	public int compare(Job o1, Job o2)

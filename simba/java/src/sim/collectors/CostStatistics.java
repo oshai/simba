@@ -15,36 +15,11 @@ import com.google.common.collect.Maps;
 
 public class CostStatistics
 {
-	public static class SumAllocations
-	{
-		public double sumAllocations;
-		public double sumRunningAllocations;
-		public double sumWaitingAllocations;
-		public double sumWaitingRunningAllocations;
-
-		public void update(Qslot value)
-		{
-			sumAllocations += value.allocation();
-			if (value.hasWaitingJobs() || value.hasRunningJobs())
-			{
-				sumWaitingRunningAllocations += value.allocation();
-			}
-			if (value.hasRunningJobs())
-			{
-				sumRunningAllocations += value.allocation();
-			}
-			if (value.hasWaitingJobs())
-			{
-				sumWaitingAllocations += value.allocation();
-			}
-		}
-	}
-
 	private final Cluster cluster;
-	private final Map<String, QslotConfiguration> configuration;
 	private final WaitingQueueForStatistics waitingQueue;
+	private final AllocationConfiguration configuration;
 
-	public CostStatistics(Cluster cluster, Map<String, QslotConfiguration> configuration, WaitingQueueForStatistics queue)
+	public CostStatistics(Cluster cluster, WaitingQueueForStatistics queue, AllocationConfiguration configuration)
 	{
 		this.cluster = cluster;
 		this.configuration = configuration;
@@ -108,7 +83,7 @@ public class CostStatistics
 
 	private double updateQslotRunningCost(Map<String, Qslot> $)
 	{
-		for (Entry<String, QslotConfiguration> e : configuration.entrySet())
+		for (Entry<String, QslotConfiguration> e : configuration.getAll().entrySet())
 		{
 			Qslot qslot = new Qslot(e.getValue());
 			$.put(e.getKey(), qslot);
