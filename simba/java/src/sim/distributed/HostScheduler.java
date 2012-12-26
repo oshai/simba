@@ -47,7 +47,7 @@ public class HostScheduler
 
 		int $ = 0;
 		ArrayList<Job> newArrayList = Lists.newArrayList(waitingJobs);
-		Collections.sort(newArrayList, jobsGrader);
+		sort(newArrayList);
 		Iterator<Job> iterator = newArrayList.iterator();
 		while (iterator.hasNext())
 		{
@@ -65,6 +65,11 @@ public class HostScheduler
 			}
 		}
 		return $;
+	}
+
+	private void sort(ArrayList<Job> newArrayList)
+	{
+		Collections.sort(newArrayList, jobsGrader);
 	}
 
 	private void removeJob(Job job)

@@ -107,7 +107,7 @@ public class JobParser
 						drop = true;
 					}
 					String qslot = parseQslot(cols);
-					if (qslot.startsWith("/iil_1base"))
+					if (!qslot.startsWith("/iil_1base"))
 					{
 						drop = true;
 					}

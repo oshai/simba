@@ -26,7 +26,7 @@ import sim.configuration.ProductionSimbaConfiguration;
 import sim.configuration.ProductionSimbaConfiguration.LooperFactory;
 import sim.distributed.ByStrategyHostSelector;
 import sim.distributed.DistributedJobDispatcher;
-import sim.distributed.ExpandingDistributedScheduler;
+import sim.distributed.DistributedScheduler;
 import sim.distributed.HostScheduler;
 import sim.distributed.RandomListSelector;
 import sim.distributed.expanding_strategy.ConstantExpandingStrategy;
@@ -207,15 +207,16 @@ public class Simulator
 		}
 		ArrayList<HostScheduler> hostSchedulers = null;
 		SetWaitingQueue distributedWaitingJobs = new SetWaitingQueue();
+		CostStatistics costStatistics = new CostStatistics(cluster, distributedWaitingJobs, new AllocationConfiguration());
 		if (isDistributed())
 		{
 			dispatcher = new DistributedJobDispatcher(eventQueue, distributedWaitingJobs);
-			hostSchedulers = createHostSchedulers(cluster, dispatcher, distributedWaitingJobs);
+			hostSchedulers = createHostSchedulers(cluster, dispatcher, distributedWaitingJobs, costStatistics);
 		}
 		WaitingQueueForStatistics waitingQueueForStatistics = isDistributed() ? distributedWaitingJobs : waitingQueue;
 		log.info("wait queue is " + waitingQueueForStatistics.getClass().getSimpleName());
 		WaitingQueueStatistics waitingQueueStatistics = new WaitingQueueStatistics(waitingQueueForStatistics, Integer.MAX_VALUE, clock);
-		Scheduler scheduler = createSchduler(cluster, grader, dispatcher, waitingQueue, hostSchedulers, distributedWaitingJobs);
+		Scheduler scheduler = createSchduler(cluster, grader, dispatcher, waitingQueue, hostSchedulers, distributedWaitingJobs, costStatistics);
 		log.info("createLooper() - scheduler is " + scheduler.getClass().getSimpleName());
 		JobCollector jobCollector = new JobCollector();
 		jobCollector.init();
@@ -232,16 +233,15 @@ public class Simulator
 		return looper;
 	}
 
-	private ArrayList<HostScheduler> createHostSchedulers(Cluster cluster, final JobDispatcher dispatcher, final SetWaitingQueue distributedWaitingJobs)
+	private ArrayList<HostScheduler> createHostSchedulers(Cluster cluster, final JobDispatcher dispatcher, final SetWaitingQueue distributedWaitingJobs, final CostStatistics costStatistics)
 	{
-		final AllocationConfiguration allocationConfiguration = new AllocationConfiguration();
 		return newArrayList(Collections2.transform(cluster.hosts(), new Function<Host, HostScheduler>()
 		{
 			@Override
 			public HostScheduler apply(Host host)
 			{
 				LinkedListWaitingQueue waitingQueue = new LinkedListWaitingQueue();
-				return new HostScheduler(host, dispatcher, waitingQueue, distributedWaitingJobs, createJobComparator(new CostStatistics(new Cluster().add(host), waitingQueue, allocationConfiguration)));
+				return new HostScheduler(host, dispatcher, waitingQueue, distributedWaitingJobs, createJobComparator(costStatistics));
 			}
 		}));
 	}
@@ -256,7 +256,7 @@ public class Simulator
 		return "sorted".equals(getWaitingQueueProperty());
 	}
 
-	private Scheduler createSchduler(Cluster cluster, Grader grader, final JobDispatcher dispatcher, AbstractWaitingQueue waitingQueue, ArrayList<HostScheduler> hostSchedulers, SetWaitingQueue distributedWaitingJobs)
+	private Scheduler createSchduler(Cluster cluster, Grader grader, final JobDispatcher dispatcher, AbstractWaitingQueue waitingQueue, ArrayList<HostScheduler> hostSchedulers, SetWaitingQueue distributedWaitingJobs, CostStatistics costStatistics)
 	{
 		if (isSortedWaitingQueue())
 		{
@@ -283,11 +283,7 @@ public class Simulator
 		}
 		if (isDistributed())
 		{
-			// ArrayList<HostScheduler> hostsSched = hostSchedulers;
-			// HostSelector hostSelector1 = new HostSelector(hostsSched);
-			// return new WaitOnAllHostsDistributedScheduler(waitingQueue,
-			// hostsSched, distributedWaitingJobs);
-			return new ExpandingDistributedScheduler(waitingQueue, hostSchedulers, new ByStrategyHostSelector(hostSchedulers, new RandomListSelector()), distributedWaitingJobs, (DistributedSimbaConfiguration) getConfiguration(), new ConstantExpandingStrategy((DistributedSimbaConfiguration) getConfiguration()));
+			return new DistributedScheduler(waitingQueue, hostSchedulers, new ByStrategyHostSelector(hostSchedulers, new RandomListSelector()), distributedWaitingJobs, (DistributedSimbaConfiguration) getConfiguration(), new ConstantExpandingStrategy((DistributedSimbaConfiguration) getConfiguration()), costStatistics);
 		}
 		throw new RuntimeException("no scheduler " + getSchedulerProperty());
 	}
