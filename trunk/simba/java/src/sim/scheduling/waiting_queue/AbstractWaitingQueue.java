@@ -88,4 +88,10 @@ public abstract class AbstractWaitingQueue implements WaitingQueueForStatistics,
 		return $;
 	}
 
+	public void remove(Job job)
+	{
+		removed++;
+		getQueue().remove(job);
+	}
+
 }
