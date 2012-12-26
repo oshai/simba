@@ -10,9 +10,9 @@ import sim.DistributedSimbaConfiguration;
 import sim.collectors.CostStatistics;
 import sim.distributed.expanding_strategy.ExpandingStrategy;
 import sim.model.Job;
-import sim.scheduling.AbstractWaitingQueue;
 import sim.scheduling.Scheduler;
-import sim.scheduling.SetWaitingQueue;
+import sim.scheduling.waiting_queue.AbstractWaitingQueue;
+import sim.scheduling.waiting_queue.SetWaitingQueue;
 
 public class DistributedScheduler implements Scheduler
 {

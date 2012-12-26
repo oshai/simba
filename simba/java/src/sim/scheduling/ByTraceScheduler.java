@@ -5,6 +5,7 @@ import java.util.Iterator;
 import sim.model.Cluster;
 import sim.model.Host;
 import sim.model.Job;
+import sim.scheduling.waiting_queue.AbstractWaitingQueue;
 
 public class ByTraceScheduler implements Scheduler
 {

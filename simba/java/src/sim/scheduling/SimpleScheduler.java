@@ -5,15 +5,16 @@ import sim.model.Cluster;
 import sim.model.Host;
 import sim.model.Job;
 import sim.scheduling.matchers.Matcher;
+import sim.scheduling.waiting_queue.WaitingQueue;
 
 public class SimpleScheduler implements Scheduler
 {
-	private final AbstractWaitingQueue waitingQueue;
+	private final WaitingQueue waitingQueue;
 	private final Cluster cluster;
 	private final Matcher matcher;
 	private final JobDispatcher dispatcher;
 
-	public SimpleScheduler(AbstractWaitingQueue waitingQueue, Cluster cluster, Matcher matcher, JobDispatcher dispatcher)
+	public SimpleScheduler(WaitingQueue waitingQueue, Cluster cluster, Matcher matcher, JobDispatcher dispatcher)
 	{
 		this.cluster = cluster;
 		this.waitingQueue = waitingQueue;

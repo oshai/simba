@@ -14,6 +14,8 @@ import sim.model.Host;
 import sim.model.Job;
 import sim.scheduling.graders.Grader;
 import sim.scheduling.reserving.ReservingScheduler;
+import sim.scheduling.waiting_queue.AbstractWaitingQueue;
+import sim.scheduling.waiting_queue.LinkedListWaitingQueue;
 
 public class ReservingSchedulerTest
 {

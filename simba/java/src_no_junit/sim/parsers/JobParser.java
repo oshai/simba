@@ -11,6 +11,7 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 import sim.SimbaConfiguration;
+import sim.collectors.AllocationConfiguration;
 import sim.event_handling.EventQueue;
 import sim.events.Submit;
 import sim.model.Cluster;
@@ -51,14 +52,16 @@ public class JobParser
 	private final SimbaConfiguration simbaConfiguration;
 	private final Cluster cluster;
 	private final EventQueue eventQueue;
+	private final AllocationConfiguration allocationConfiguration;
 
 	@Inject
-	public JobParser(SimbaConfiguration simbaConfiguration, Cluster cluster, EventQueue eventQueue)
+	public JobParser(SimbaConfiguration simbaConfiguration, Cluster cluster, EventQueue eventQueue, AllocationConfiguration allocationConfiguration)
 	{
 		super();
 		this.simbaConfiguration = simbaConfiguration;
 		this.cluster = cluster;
 		this.eventQueue = eventQueue;
+		this.allocationConfiguration = allocationConfiguration;
 	}
 
 	public void parse()
@@ -107,7 +110,7 @@ public class JobParser
 						drop = true;
 					}
 					String qslot = parseQslot(cols);
-					if (!qslot.startsWith("/iil_1base"))
+					if (!qslot.startsWith("/iil_1base") || !allocationConfiguration.getAll().containsKey(qslot))
 					{
 						drop = true;
 					}

@@ -9,7 +9,7 @@ import java.util.Map.Entry;
 import sim.model.Cluster;
 import sim.model.Host;
 import sim.model.Job;
-import sim.scheduling.WaitingQueueForStatistics;
+import sim.scheduling.waiting_queue.WaitingQueueForStatistics;
 
 import com.google.common.collect.Maps;
 

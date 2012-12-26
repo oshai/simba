@@ -15,8 +15,8 @@ import sim.events.Finish;
 import sim.events.NoOp;
 import sim.events.Submit;
 import sim.model.Job;
-import sim.scheduling.AbstractWaitingQueue;
 import sim.scheduling.Scheduler;
+import sim.scheduling.waiting_queue.AbstractWaitingQueue;
 
 import com.google.inject.assistedinject.Assisted;
 

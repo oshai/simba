@@ -9,6 +9,8 @@ import org.junit.Test;
 import sim.model.Cluster;
 import sim.model.Host;
 import sim.model.Job;
+import sim.scheduling.waiting_queue.AbstractWaitingQueue;
+import sim.scheduling.waiting_queue.LinkedListWaitingQueue;
 
 public class ByTraceSchedulerTest
 {

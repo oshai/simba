@@ -12,10 +12,10 @@ import sim.SimbaConfiguration;
 import sim.model.Cluster;
 import sim.model.Host;
 import sim.model.Job;
-import sim.scheduling.AbstractWaitingQueue;
 import sim.scheduling.JobDispatcher;
 import sim.scheduling.Scheduler;
 import sim.scheduling.graders.Grader;
+import sim.scheduling.waiting_queue.AbstractWaitingQueue;
 
 public class MaxCostScheduler extends ReservingScheduler implements Scheduler
 {

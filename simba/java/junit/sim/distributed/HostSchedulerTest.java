@@ -8,13 +8,13 @@ import org.junit.Test;
 import sim.event_handling.EventQueue;
 import sim.model.Host;
 import sim.model.Job;
-import sim.scheduling.AbstractWaitingQueue;
 import sim.scheduling.JobDispatcher;
-import sim.scheduling.LinkedListWaitingQueue;
-import sim.scheduling.SetWaitingQueue;
 import sim.scheduling.job_comparators.ConstantJobComparator;
 import sim.scheduling.job_comparators.HighestMemoryFirst;
 import sim.scheduling.job_comparators.JobComparator;
+import sim.scheduling.waiting_queue.AbstractWaitingQueue;
+import sim.scheduling.waiting_queue.LinkedListWaitingQueue;
+import sim.scheduling.waiting_queue.SetWaitingQueue;
 
 import com.google.common.collect.Lists;
 

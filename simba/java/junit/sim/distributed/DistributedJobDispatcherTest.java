@@ -4,12 +4,13 @@ import static org.junit.Assert.*;
 import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.*;
 
-import org.junit.*;
+import org.junit.Test;
 
-import sim.event_handling.*;
-import sim.events.*;
-import sim.model.*;
-import sim.scheduling.*;
+import sim.event_handling.EventQueue;
+import sim.events.Event;
+import sim.model.Host;
+import sim.model.Job;
+import sim.scheduling.waiting_queue.SetWaitingQueue;
 
 public class DistributedJobDispatcherTest
 {

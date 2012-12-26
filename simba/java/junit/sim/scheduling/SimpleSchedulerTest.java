@@ -12,6 +12,9 @@ import sim.model.Cluster;
 import sim.model.Host;
 import sim.model.Job;
 import sim.scheduling.matchers.Matcher;
+import sim.scheduling.waiting_queue.AbstractWaitingQueue;
+import sim.scheduling.waiting_queue.LinkedListWaitingQueue;
+import sim.scheduling.waiting_queue.WaitingQueue;
 
 public class SimpleSchedulerTest
 {
@@ -19,7 +22,7 @@ public class SimpleSchedulerTest
 	@Test
 	public void testJobMatchHost()
 	{
-		AbstractWaitingQueue waitingQueue = new LinkedListWaitingQueue();
+		WaitingQueue waitingQueue = new LinkedListWaitingQueue();
 		Job job = mock(Job.class);
 		waitingQueue.add(job);
 		Cluster cluster = new Cluster();

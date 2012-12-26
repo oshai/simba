@@ -1,10 +1,11 @@
-package sim.scheduling;
+package sim.scheduling.waiting_queue;
 
 import static org.junit.Assert.*;
 
 import org.junit.Test;
 
 import sim.model.Job;
+import sim.scheduling.waiting_queue.SortedWaitingQueue;
 
 public class SortedWaitingQueueTest
 {
