@@ -38,7 +38,9 @@ public class CostStatisticsTest
 	{
 		waitingQueue = new SetWaitingQueue();
 		conf = Maps.newHashMap();
-		costStatistics = new CostStatistics(cluster, conf, waitingQueue);
+		AllocationConfiguration c = mock(AllocationConfiguration.class);
+		when(c.getAll()).thenReturn(conf);
+		costStatistics = new CostStatistics(cluster, waitingQueue, c);
 	}
 
 	@Test

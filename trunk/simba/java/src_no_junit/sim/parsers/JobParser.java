@@ -106,7 +106,12 @@ public class JobParser
 						parallel++;
 						drop = true;
 					}
-					Job job = Job.builder(length).id(id).qslot(parseQslot(cols)).cost(d(cols.get(index_cost))).priority(submitTime).submitTime(submitTime).cores(cores).memory(memory).startTime(l(cols.get(index_startttime))).build();
+					String qslot = parseQslot(cols);
+					if (qslot.startsWith("/iil_1base"))
+					{
+						drop = true;
+					}
+					Job job = Job.builder(length).id(id).qslot(qslot).cost(d(cols.get(index_cost))).priority(submitTime).submitTime(submitTime).cores(cores).memory(memory).startTime(l(cols.get(index_startttime))).build();
 					if (canRun(job) && !drop)
 					{
 						eventQueue.add(new Submit(job));

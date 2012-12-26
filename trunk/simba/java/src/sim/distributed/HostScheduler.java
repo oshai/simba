@@ -2,7 +2,6 @@ package sim.distributed;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -12,6 +11,7 @@ import sim.scheduling.AbstractWaitingQueue;
 import sim.scheduling.JobDispatcher;
 import sim.scheduling.SetWaitingQueue;
 import sim.scheduling.WaitingQueueForStatistics;
+import sim.scheduling.job_comparators.JobComparator;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -23,9 +23,9 @@ public class HostScheduler
 	private Set<Job> jobs;
 	private final JobDispatcher dispatcher;
 	private final SetWaitingQueue distributedWaitingJobs;
-	private Comparator<Job> jobsGrader;
+	private JobComparator jobsGrader;
 
-	public HostScheduler(Host host, JobDispatcher dispatcher, AbstractWaitingQueue waitingQueue, SetWaitingQueue distributedWaitingJobs, Comparator<Job> jobGrader)
+	public HostScheduler(Host host, JobDispatcher dispatcher, AbstractWaitingQueue waitingQueue, SetWaitingQueue distributedWaitingJobs, JobComparator jobGrader)
 	{
 		super();
 		this.host = host;
