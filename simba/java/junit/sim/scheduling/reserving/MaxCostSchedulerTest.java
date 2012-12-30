@@ -39,15 +39,7 @@ public class MaxCostSchedulerTest
 
 	private MaxCostScheduler createSchduler(List<ReservingScheduler> schedulers)
 	{
-		MaxCostScheduler tested = new MaxCostScheduler(null, null, null, null, mock(SimbaConfiguration.class), schedulers, new SimpleScheduleCalculator(), new IMaxCostCollector()
-		{
-
-			@Override
-			public void collect(long time, Iterable<ScheduleCostResult> results, List<ScheduleCostResult> winner)
-			{
-			}
-
-		});
+		MaxCostScheduler tested = new MaxCostScheduler(null, null, null, null, mock(SimbaConfiguration.class), schedulers, new SimpleScheduleCalculator(), IMaxCostCollector.NO_OP);
 		return tested;
 	}
 

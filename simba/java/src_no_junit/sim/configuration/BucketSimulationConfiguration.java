@@ -7,4 +7,10 @@ public class BucketSimulationConfiguration extends ProductionSimbaConfiguration
 	{
 		return true;
 	}
+
+	@Override
+	public long collectTime()
+	{
+		return bucketSize();
+	}
 }

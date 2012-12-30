@@ -19,14 +19,14 @@ import sim.model.Job;
 import sim.scheduling.JobDispatcher;
 import sim.scheduling.Scheduler;
 import sim.scheduling.graders.Grader;
-import sim.scheduling.waiting_queue.AbstractWaitingQueue;
+import sim.scheduling.waiting_queue.WaitingQueue;
 
 public class ReservingScheduler implements Scheduler
 {
 	private static final Logger log = Logger.getLogger(ReservingScheduler.class);
 	private final Job DUMMY_JOB;
 	public static final Host DUMMY_HOST = Host.builder().id("dummy").cores(0).memory(0).build();
-	private final AbstractWaitingQueue waitingQueue;
+	private final WaitingQueue waitingQueue;
 	private final Cluster cluster;
 	private final Grader grader;
 	private final JobDispatcher dispatcher;
@@ -45,7 +45,7 @@ public class ReservingScheduler implements Scheduler
 	private int startingJobsCount;
 
 	@Inject
-	public ReservingScheduler(AbstractWaitingQueue waitingQueue, Cluster cluster, Grader grader, JobDispatcher dispatcher, SimbaConfiguration simbaConfiguration)
+	public ReservingScheduler(WaitingQueue waitingQueue, Cluster cluster, Grader grader, JobDispatcher dispatcher, SimbaConfiguration simbaConfiguration)
 	{
 		this.cluster = cluster;
 		this.waitingQueue = waitingQueue;

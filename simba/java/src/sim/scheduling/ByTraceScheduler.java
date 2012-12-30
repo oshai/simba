@@ -2,18 +2,21 @@ package sim.scheduling;
 
 import java.util.Iterator;
 
+import javax.inject.Inject;
+
 import sim.model.Cluster;
 import sim.model.Host;
 import sim.model.Job;
-import sim.scheduling.waiting_queue.AbstractWaitingQueue;
+import sim.scheduling.waiting_queue.WaitingQueue;
 
 public class ByTraceScheduler implements Scheduler
 {
-	private final AbstractWaitingQueue waitingQueue;
+	private final WaitingQueue waitingQueue;
 	private final JobDispatcher dispatcher;
 	private Host host;
 
-	public ByTraceScheduler(AbstractWaitingQueue waitingQueue, Cluster cluster, JobDispatcher dispatcher)
+	@Inject
+	public ByTraceScheduler(WaitingQueue waitingQueue, Cluster cluster, JobDispatcher dispatcher)
 	{
 		this.waitingQueue = waitingQueue;
 		this.dispatcher = dispatcher;

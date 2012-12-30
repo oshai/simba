@@ -2,6 +2,8 @@ package sim.collectors;
 
 import java.util.Iterator;
 
+import javax.inject.Inject;
+
 import org.apache.log4j.Logger;
 
 import sim.Clock;
@@ -20,9 +22,10 @@ public class WaitingQueueStatistics
 	private int dispatchedJobs;
 	private int submittedJobs;
 
-	public WaitingQueueStatistics(WaitingQueueForStatistics waitingQueue, int front, Clock clock)
+	@Inject
+	public WaitingQueueStatistics(WaitingQueueForStatistics waitingQueue, Clock clock)
 	{
-		this.front = front;
+		this.front = Integer.MAX_VALUE;
 		this.waitingQueue = waitingQueue;
 		this.clock = clock;
 	}
