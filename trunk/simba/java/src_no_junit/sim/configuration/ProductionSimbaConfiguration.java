@@ -1,21 +1,28 @@
 package sim.configuration;
 
 import sim.Clock;
-import sim.JobFinisher;
 import sim.Looper;
 import sim.SimbaConfiguration;
+import sim.collectors.IJobCollector;
 import sim.collectors.IntervalCollector;
+import sim.collectors.JobCollector;
+import sim.collectors.MiscStatisticsCollector;
 import sim.event_handling.EventQueue;
 import sim.model.Cluster;
 import sim.parsers.HostParser;
 import sim.parsers.JobParser;
+import sim.scheduling.JobDispatcher;
 import sim.scheduling.Scheduler;
-import sim.scheduling.waiting_queue.AbstractWaitingQueue;
+import sim.scheduling.graders.Grader;
+import sim.scheduling.graders.ThrowingExceptionGrader;
+import sim.scheduling.reserving.ReservingScheduler;
+import sim.scheduling.waiting_queue.LinkedListWaitingQueue;
+import sim.scheduling.waiting_queue.WaitingQueue;
+import sim.scheduling.waiting_queue.WaitingQueueForStatistics;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Module;
 import com.google.inject.Scopes;
-import com.google.inject.assistedinject.FactoryModuleBuilder;
 
 public class ProductionSimbaConfiguration extends AbstractModule implements Module, SimbaConfiguration
 {
@@ -39,12 +46,30 @@ public class ProductionSimbaConfiguration extends AbstractModule implements Modu
 		bind(JobParser.class).in(Scopes.SINGLETON);
 		bind(EventQueue.class).in(Scopes.SINGLETON);
 		bind(Cluster.class).in(Scopes.SINGLETON);
-		install(new FactoryModuleBuilder().implement(Looper.class, Looper.class).build(LooperFactory.class));
+		bind(Grader.class).toInstance(getGrader());
+		bind(JobDispatcher.class).in(Scopes.SINGLETON);
+		bind(Looper.class).in(Scopes.SINGLETON);
+		bind(LinkedListWaitingQueue.class).in(Scopes.SINGLETON);
+		bind(WaitingQueue.class).to(LinkedListWaitingQueue.class);
+		bind(WaitingQueueForStatistics.class).to(LinkedListWaitingQueue.class);
+		bind(Scheduler.class).to(getScheduler());
+		bindCollectors();
 	}
 
-	public interface LooperFactory
+	protected void bindCollectors()
 	{
-		Looper create(Clock clock, EventQueue eventQueue, AbstractWaitingQueue waitingQueue, Scheduler scheduler, IntervalCollector hostCollector, JobFinisher jobFinisher);
+		bind(IntervalCollector.class).to(MiscStatisticsCollector.class).in(Scopes.SINGLETON);
+		bind(IJobCollector.class).to(JobCollector.class).in(Scopes.SINGLETON);
+	}
+
+	protected Class<? extends Scheduler> getScheduler()
+	{
+		return ReservingScheduler.class;
+	}
+
+	protected Grader getGrader()
+	{
+		return new ThrowingExceptionGrader();
 	}
 
 	@Override
@@ -115,7 +140,13 @@ public class ProductionSimbaConfiguration extends AbstractModule implements Modu
 	@Override
 	public String toString()
 	{
-		return "ProductionSimbaConfiguration [timeToSchedule()=" + timeToSchedule() + ", timeToLog()=" + timeToLog() + ", hostCoreRatio()=" + hostCoreRatio() + ", machineDropRatio()=" + machineDropRatio() + ", hostMemoryRatio()=" + hostMemoryRatio() + ", reservationsLimit()=" + reservationsLimit() + ", isActualCoreUsageSimulation()=" + isActualCoreUsageSimulation() + ", jobsCheckedBySchduler()=" + jobsCheckedBySchduler() + ", submitRatio()=" + submitRatio() + ", isBucketSimulation()=" + isBucketSimulation() + ", bucketSize()=" + bucketSize() + "]";
+		return getClass().getSimpleName() + " [timeToSchedule()=" + timeToSchedule() + ", timeToLog()=" + timeToLog() + ", hostCoreRatio()=" + hostCoreRatio() + ", machineDropRatio()=" + machineDropRatio() + ", hostMemoryRatio()=" + hostMemoryRatio() + ", reservationsLimit()=" + reservationsLimit() + ", isActualCoreUsageSimulation()=" + isActualCoreUsageSimulation() + ", jobsCheckedBySchduler()=" + jobsCheckedBySchduler() + ", submitRatio()=" + submitRatio() + ", isBucketSimulation()=" + isBucketSimulation() + ", bucketSize()=" + bucketSize() + "]";
+	}
+
+	@Override
+	public long collectTime()
+	{
+		return 300;
 	}
 
 }

@@ -16,9 +16,7 @@ import sim.events.NoOp;
 import sim.events.Submit;
 import sim.model.Job;
 import sim.scheduling.Scheduler;
-import sim.scheduling.waiting_queue.AbstractWaitingQueue;
-
-import com.google.inject.assistedinject.Assisted;
+import sim.scheduling.waiting_queue.WaitingQueue;
 
 public class Looper
 {
@@ -32,11 +30,11 @@ public class Looper
 	private boolean firstCycle = true;
 	private boolean hasEventsNotScheduleYet = true;
 	private final SimbaConfiguration simbaConfiguration;
-	private AbstractWaitingQueue waitingQueue;
+	private WaitingQueue waitingQueue;
 	private final Scheduler scheduler;
 
 	@Inject
-	public Looper(@Assisted Clock clock, @Assisted EventQueue eventQueue, @Assisted AbstractWaitingQueue waitingQueue, @Assisted Scheduler scheduler, @Assisted IntervalCollector hostCollector, @Assisted JobFinisher jobFinisher, SimbaConfiguration simbaConsts)
+	public Looper(Clock clock, EventQueue eventQueue, WaitingQueue waitingQueue, Scheduler scheduler, IntervalCollector hostCollector, JobFinisher jobFinisher, SimbaConfiguration simbaConsts)
 	{
 		this.waitingQueue = waitingQueue;
 		this.scheduler = scheduler;

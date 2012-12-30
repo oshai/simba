@@ -67,4 +67,10 @@ public class ForTestingSimbaConfiguration implements SimbaConfiguration
 	{
 		return 1;
 	}
+
+	@Override
+	public long collectTime()
+	{
+		return 300;
+	}
 }

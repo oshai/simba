@@ -4,17 +4,20 @@ import static com.google.common.collect.Lists.*;
 
 import java.util.List;
 
-import sim.collectors.JobCollector;
+import javax.inject.Inject;
+
+import sim.collectors.IJobCollector;
 import sim.events.Finish;
 import sim.model.Host;
 import sim.model.Job;
 
 public class JobFinisher
 {
-	private final JobCollector jobCollector;
+	private final IJobCollector jobCollector;
 	private List<Job> finishedJobs = newArrayList();
 
-	public JobFinisher(JobCollector jobCollector)
+	@Inject
+	public JobFinisher(IJobCollector jobCollector)
 	{
 		super();
 		this.jobCollector = jobCollector;

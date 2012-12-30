@@ -1,6 +1,9 @@
 package sim.scheduling;
 
 import static utils.assertions.Asserter.*;
+
+import javax.inject.Inject;
+
 import sim.model.Cluster;
 import sim.model.Host;
 import sim.model.Job;
@@ -14,6 +17,7 @@ public class SimpleScheduler implements Scheduler
 	private final Matcher matcher;
 	private final JobDispatcher dispatcher;
 
+	@Inject
 	public SimpleScheduler(WaitingQueue waitingQueue, Cluster cluster, Matcher matcher, JobDispatcher dispatcher)
 	{
 		this.cluster = cluster;

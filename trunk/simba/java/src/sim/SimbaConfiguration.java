@@ -24,4 +24,6 @@ public interface SimbaConfiguration
 
 	double submitRatio();
 
+	public long collectTime();
+
 }

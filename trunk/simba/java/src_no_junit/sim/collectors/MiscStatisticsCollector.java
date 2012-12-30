@@ -1,37 +1,37 @@
 package sim.collectors;
 
+import javax.inject.Inject;
+
 import org.apache.log4j.Logger;
 
 import sim.JobFinisher;
+import sim.SimbaConfiguration;
 import sim.model.Cluster;
 
 public class MiscStatisticsCollector extends Collector implements IntervalCollector
 {
 	private static final Logger log = Logger.getLogger(MiscStatisticsCollector.class);
 	private static final String MACHINES_UTILIZATION_FILE = "machines_utilization";
-	private Cluster cluster;
-	private long modulo;
+	private final Cluster cluster;
 	private final WaitingQueueStatistics waitingQueueStatistics;
 	private final JobFinisher jobFinisher;
+	private final SimbaConfiguration simbaConfiguration;
 
-	public MiscStatisticsCollector(Cluster cluster, long modulo, WaitingQueueStatistics waitingQueueStatistics, JobFinisher jobFinisher)
+	@Inject
+	public MiscStatisticsCollector(Cluster cluster, WaitingQueueStatistics waitingQueueStatistics, JobFinisher jobFinisher, SimbaConfiguration simbaConfiguration)
 	{
 		super();
 		this.cluster = cluster;
-		this.modulo = modulo;
 		this.waitingQueueStatistics = waitingQueueStatistics;
 		this.jobFinisher = jobFinisher;
+		this.simbaConfiguration = simbaConfiguration;
 	}
 
 	private String collectLine(long time, boolean handeledEvents, int scheduledJobs)
 	{
 		HostStatistics hostStatistics = new HostStatistics(cluster);
 		waitingQueueStatistics.updateStatistics();
-		String line = time + SEPERATOR + hostStatistics.cores() + SEPERATOR + hostStatistics.usedCores() + SEPERATOR + hostStatistics.memory() + SEPERATOR
-				+ hostStatistics.usedMemory() + SEPERATOR + waitingQueueStatistics.waitingJobs() + SEPERATOR + hostStatistics.usedCost() + SEPERATOR
-				+ waitingQueueStatistics.avgMemoryFront() + SEPERATOR + waitingQueueStatistics.avgWaitTimeFront() + SEPERATOR
-				+ jobFinisher.collectFinishedJobs() + SEPERATOR + waitingQueueStatistics.dispatchedJobs() + SEPERATOR + waitingQueueStatistics.submittedJobs()
-				+ SEPERATOR + scheduledJobs;
+		String line = time + SEPERATOR + hostStatistics.cores() + SEPERATOR + hostStatistics.usedCores() + SEPERATOR + hostStatistics.memory() + SEPERATOR + hostStatistics.usedMemory() + SEPERATOR + waitingQueueStatistics.waitingJobs() + SEPERATOR + hostStatistics.usedCost() + SEPERATOR + waitingQueueStatistics.avgMemoryFront() + SEPERATOR + waitingQueueStatistics.avgWaitTimeFront() + SEPERATOR + jobFinisher.collectFinishedJobs() + SEPERATOR + waitingQueueStatistics.dispatchedJobs() + SEPERATOR + waitingQueueStatistics.submittedJobs() + SEPERATOR + scheduledJobs;
 		if (log.isDebugEnabled())
 		{
 			log.debug("collectLine() - " + line.replace(' ', ','));
@@ -42,9 +42,7 @@ public class MiscStatisticsCollector extends Collector implements IntervalCollec
 	@Override
 	protected String collectHeader()
 	{
-		String line = "#time" + SEPERATOR + "cores" + SEPERATOR + "usedCores" + SEPERATOR + "memory" + SEPERATOR + "usedMemory" + SEPERATOR + "waitingJobs"
-				+ SEPERATOR + "usedCost" + SEPERATOR + "avgMemoryWaitingJobs" + SEPERATOR + "avgWaitTimeWaitingJobs" + SEPERATOR + "finishedJobs" + SEPERATOR
-				+ "dispatchedJobs" + SEPERATOR + "submittedJobs" + SEPERATOR + "scheduledJobs";
+		String line = "#time" + SEPERATOR + "cores" + SEPERATOR + "usedCores" + SEPERATOR + "memory" + SEPERATOR + "usedMemory" + SEPERATOR + "waitingJobs" + SEPERATOR + "usedCost" + SEPERATOR + "avgMemoryWaitingJobs" + SEPERATOR + "avgWaitTimeWaitingJobs" + SEPERATOR + "finishedJobs" + SEPERATOR + "dispatchedJobs" + SEPERATOR + "submittedJobs" + SEPERATOR + "scheduledJobs";
 		return line;
 	}
 
@@ -66,6 +64,6 @@ public class MiscStatisticsCollector extends Collector implements IntervalCollec
 
 	private boolean shouldCollect(long time)
 	{
-		return time % modulo == 0;
+		return time % simbaConfiguration.collectTime() == 0;
 	}
 }

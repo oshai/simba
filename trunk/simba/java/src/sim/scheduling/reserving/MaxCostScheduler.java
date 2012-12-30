@@ -6,6 +6,8 @@ import static com.google.common.collect.Maps.*;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.apache.log4j.Logger;
 
 import sim.SimbaConfiguration;
@@ -15,7 +17,7 @@ import sim.model.Job;
 import sim.scheduling.JobDispatcher;
 import sim.scheduling.Scheduler;
 import sim.scheduling.graders.Grader;
-import sim.scheduling.waiting_queue.AbstractWaitingQueue;
+import sim.scheduling.waiting_queue.WaitingQueue;
 
 public class MaxCostScheduler extends ReservingScheduler implements Scheduler
 {
@@ -27,7 +29,8 @@ public class MaxCostScheduler extends ReservingScheduler implements Scheduler
 	private final ScheduleCalculator scheduleCalculator;
 	private final IMaxCostCollector maxCostCollector;
 
-	public MaxCostScheduler(AbstractWaitingQueue waitingQueue, Cluster cluster, Grader grader, JobDispatcher dispatcher, SimbaConfiguration simbaConfiguration, List<ReservingScheduler> schedulers, ScheduleCalculator scheduleCalculator, IMaxCostCollector maxCostCollector)
+	@Inject
+	public MaxCostScheduler(WaitingQueue waitingQueue, Cluster cluster, Grader grader, JobDispatcher dispatcher, SimbaConfiguration simbaConfiguration, List<ReservingScheduler> schedulers, ScheduleCalculator scheduleCalculator, IMaxCostCollector maxCostCollector)
 	{
 		super(waitingQueue, cluster, grader, dispatcher, simbaConfiguration);
 		this.schedulers = schedulers;

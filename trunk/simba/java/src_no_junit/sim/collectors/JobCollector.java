@@ -3,7 +3,7 @@ package sim.collectors;
 import sim.model.Host;
 import sim.model.Job;
 
-public class JobCollector extends Collector
+public class JobCollector extends Collector implements IJobCollector
 {
 
 	private static final String JOBS_FILE_NAME = "jobs_trace";
@@ -15,6 +15,7 @@ public class JobCollector extends Collector
 				+ "priority" + SEPERATOR + "host" + SEPERATOR + "qslot";
 	}
 
+	@Override
 	public void collect(Host host, Job job)
 	{
 		appendLine(collectLine(host, job));
