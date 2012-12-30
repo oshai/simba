@@ -110,10 +110,11 @@ public class JobParser
 						drop = true;
 					}
 					String qslot = parseQslot(cols);
-					if (!qslot.startsWith("/iil_1base") || !allocationConfiguration.getAll().containsKey(qslot))
-					{
-						drop = true;
-					}
+					// if (!qslot.startsWith("/iil_1base") ||
+					// !allocationConfiguration.getAll().containsKey(qslot))
+					// {
+					// drop = true;
+					// }
 					Job job = Job.builder(length).id(id).qslot(qslot).cost(d(cols.get(index_cost))).priority(submitTime).submitTime(submitTime).cores(cores).memory(memory).startTime(l(cols.get(index_startttime))).build();
 					if (canRun(job) && !drop)
 					{
