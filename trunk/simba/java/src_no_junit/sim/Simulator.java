@@ -14,7 +14,6 @@ import org.apache.log4j.Logger;
 
 import sim.collectors.AllocationConfiguration;
 import sim.collectors.CompositeCollector;
-import sim.collectors.CostCollector;
 import sim.collectors.CostStatistics;
 import sim.collectors.IntervalCollector;
 import sim.collectors.JobCollector;
@@ -165,31 +164,32 @@ public class Simulator
 		graders.put("MF6", GradeMatcherProvider.createGraderMf6());
 		graders.put("SMF", GradeMatcherProvider.createGraderSmf());
 		graders.put("BFI", GradeMatcherProvider.createGraderBfi());
-		graders.put("BF", GradeMatcherProvider.createGraderBf2());
+		graders.put("BEST-FIT", GradeMatcherProvider.createGraderBf2());
 		graders.put("NF", GradeMatcherProvider.createProductionGrader());
 		// graders.put("BF", new BestFit()); // specific grader
 		graders.put("FF", new Constant(0)); // constant grader
 		graders.put("RF", new RandomGrader(100000)); // random grader
 		graders.put("WF", new AvailableMemoryGrader()); // specific grader
-		graders.put("BT", new ThrowingExceptionGrader());
+		graders.put("BY-TRACE", new ThrowingExceptionGrader());
+		graders.put("MAX-COST", new ThrowingExceptionGrader());
 		graders.put("DISTRIBUTED", new ThrowingExceptionGrader());
 
 		Grader $ = graders.get(graderName);
 		if (null == $)
 		{
-			throw new RuntimeException("no matcher for " + getGraderProperty() + " from: " + graders.keySet());
+			throw new RuntimeException("no matcher for " + graderName + " from: " + graders.keySet());
 		}
 		return $;
 	}
 
 	private String getGraderProperty()
 	{
-		return System.getProperty("grader");
+		return System.getProperty("scenario");
 	}
 
 	private String getSchedulerProperty()
 	{
-		return System.getProperty("scheduler");
+		return System.getProperty("scenario");
 	}
 
 	private String getWaitingQueueProperty()
@@ -222,7 +222,9 @@ public class Simulator
 		jobCollector.init();
 		JobFinisher jobFinisher = new JobFinisher(jobCollector);
 		int collectTime = getConfiguration().isBucketSimulation() ? (int) getConfiguration().bucketSize() : 300;
-		List<IntervalCollector> collectors = Lists.<IntervalCollector> newArrayList(new MiscStatisticsCollector(cluster, collectTime, waitingQueueStatistics, jobFinisher), new CostCollector(cluster, collectTime, waitingQueueForStatistics));
+		List<IntervalCollector> collectors = Lists.<IntervalCollector> newArrayList(new MiscStatisticsCollector(cluster, collectTime, waitingQueueStatistics, jobFinisher)
+		// ,new CostCollector(cluster, collectTime, waitingQueueForStatistics)
+		);
 		IntervalCollector intervalCollector = new CompositeCollector(collectors);
 		intervalCollector.init();
 		Looper looper = injector.getInstance(LooperFactory.class).create(clock, eventQueue, waitingQueue, scheduler, intervalCollector, jobFinisher);
@@ -266,17 +268,22 @@ public class Simulator
 		{
 			return new SimpleScheduler(waitingQueue, cluster, new GradeMatcher(grader), dispatcher);
 		}
-		if ("reservation".equals(getSchedulerProperty()))
+		// if ("reservation".equals(getSchedulerProperty()))
+		// {
+		// return new ReservingScheduler(waitingQueue, cluster, grader,
+		// dispatcher, getConfiguration());
+		// }
+		if ("best-fit".equalsIgnoreCase(getSchedulerProperty()))
 		{
 			return new ReservingScheduler(waitingQueue, cluster, grader, dispatcher, getConfiguration());
 		}
-		if ("by-trace".equals(getSchedulerProperty()))
+		if ("by-trace".equalsIgnoreCase(getSchedulerProperty()))
 		{
 			return new ByTraceScheduler(waitingQueue, cluster, dispatcher);
 		}
-		if ("max-cost".equals(getSchedulerProperty()))
+		if ("max-cost".equalsIgnoreCase(getSchedulerProperty()))
 		{
-			List<ReservingScheduler> l = newArrayList(new ReservingScheduler(waitingQueue, cluster, getGraderForName("BF"), dispatcher, getConfiguration()), new ReservingScheduler(waitingQueue, cluster, getGraderForName("WF"), dispatcher, getConfiguration()), new ReservingScheduler(waitingQueue, cluster, getGraderForName("MF"), dispatcher, getConfiguration()), new ReservingScheduler(waitingQueue, cluster, getGraderForName("FF"), dispatcher, getConfiguration()), new ReservingScheduler(waitingQueue, cluster, getGraderForName("NF"), dispatcher, getConfiguration()), new ReservingScheduler(waitingQueue, cluster, getGraderForName("MF3"), dispatcher, getConfiguration()), new ReservingScheduler(waitingQueue, cluster, getGraderForName("MF4"), dispatcher, getConfiguration()), new ReservingScheduler(waitingQueue, cluster, getGraderForName("MF6"), dispatcher, getConfiguration()), new ReservingScheduler(waitingQueue, cluster, getGraderForName("SMF"), dispatcher, getConfiguration()), new ReservingScheduler(waitingQueue, cluster, getGraderForName("RF"), dispatcher, getConfiguration()));
+			List<ReservingScheduler> l = newArrayList(new ReservingScheduler(waitingQueue, cluster, getGraderForName("BEST-FIT"), dispatcher, getConfiguration()), new ReservingScheduler(waitingQueue, cluster, getGraderForName("WF"), dispatcher, getConfiguration()), new ReservingScheduler(waitingQueue, cluster, getGraderForName("MF"), dispatcher, getConfiguration()), new ReservingScheduler(waitingQueue, cluster, getGraderForName("FF"), dispatcher, getConfiguration()), new ReservingScheduler(waitingQueue, cluster, getGraderForName("NF"), dispatcher, getConfiguration()), new ReservingScheduler(waitingQueue, cluster, getGraderForName("MF3"), dispatcher, getConfiguration()), new ReservingScheduler(waitingQueue, cluster, getGraderForName("MF4"), dispatcher, getConfiguration()), new ReservingScheduler(waitingQueue, cluster, getGraderForName("MF6"), dispatcher, getConfiguration()), new ReservingScheduler(waitingQueue, cluster, getGraderForName("SMF"), dispatcher, getConfiguration()), new ReservingScheduler(waitingQueue, cluster, getGraderForName("RF"), dispatcher, getConfiguration()));
 			MaxCostCollector maxCostCollector = new MaxCostCollector();
 			maxCostCollector.init();
 			return new MaxCostScheduler(waitingQueue, cluster, grader, dispatcher, getConfiguration(), l, new ParallelScheduleCalculator(), maxCostCollector);
