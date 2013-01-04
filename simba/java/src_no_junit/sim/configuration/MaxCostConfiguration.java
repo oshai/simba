@@ -42,9 +42,8 @@ public class MaxCostConfiguration extends ProductionSimbaConfiguration
 	}
 
 	@Override
-	protected void bindCollectors()
+	protected void bindMaxCostCollector()
 	{
-		super.bindCollectors();
 		bind(IMaxCostCollector.class).to(MaxCostCollector.class).in(Scopes.SINGLETON);
 	}
 

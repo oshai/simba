@@ -22,15 +22,15 @@ public class MaxCostCollector extends Collector implements IMaxCostCollector
 	{
 		if (first)
 		{
-			String line = "#time";
+			String line = "#time" + SEPERATOR + "winner";
 			for (ScheduleCostResult scheduleCostResult : results)
 			{
 				line += SEPERATOR + scheduleCostResult.algorithmName;
 			}
-			appendLine(line + SEPERATOR + "winner");
+			appendLine(line);
 			first = false;
 		}
-		String line = String.valueOf(time);
+		String line = "";
 		for (ScheduleCostResult scheduleCostResult : results)
 		{
 			line += SEPERATOR + scheduleCostResult.cost;
@@ -38,9 +38,9 @@ public class MaxCostCollector extends Collector implements IMaxCostCollector
 		String winners = "";
 		for (ScheduleCostResult w : winner)
 		{
-			winners += w.algorithmName.replace(' ', '_');
+			winners += w.algorithmName.replace(' ', '_') + ',';
 		}
-		appendLine(line + SEPERATOR + winners);
+		appendLine(String.valueOf(time) + SEPERATOR + winners + SEPERATOR + line);
 	}
 
 	@Override
