@@ -15,6 +15,7 @@ import sim.scheduling.JobDispatcher;
 import sim.scheduling.Scheduler;
 import sim.scheduling.graders.Grader;
 import sim.scheduling.graders.ThrowingExceptionGrader;
+import sim.scheduling.reserving.IMaxCostCollector;
 import sim.scheduling.reserving.ReservingScheduler;
 import sim.scheduling.waiting_queue.LinkedListWaitingQueue;
 import sim.scheduling.waiting_queue.WaitingQueue;
@@ -60,6 +61,12 @@ public class ProductionSimbaConfiguration extends AbstractModule implements Modu
 	{
 		bind(IntervalCollector.class).to(MiscStatisticsCollector.class).in(Scopes.SINGLETON);
 		bind(IJobCollector.class).to(JobCollector.class).in(Scopes.SINGLETON);
+		bindMaxCostCollector();
+	}
+
+	protected void bindMaxCostCollector()
+	{
+		bind(IMaxCostCollector.class).toInstance(IMaxCostCollector.NO_OP);
 	}
 
 	protected Class<? extends Scheduler> getScheduler()

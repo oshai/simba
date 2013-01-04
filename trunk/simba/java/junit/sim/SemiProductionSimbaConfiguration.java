@@ -7,6 +7,7 @@ import sim.scheduling.Scheduler;
 import sim.scheduling.SimpleScheduler;
 import sim.scheduling.matchers.FirstFit;
 import sim.scheduling.matchers.Matcher;
+import sim.scheduling.reserving.IMaxCostCollector;
 
 public class SemiProductionSimbaConfiguration extends ProductionSimbaConfiguration
 {
@@ -22,6 +23,7 @@ public class SemiProductionSimbaConfiguration extends ProductionSimbaConfigurati
 	{
 		bind(IntervalCollector.class).toInstance(IntervalCollector.NO_OP);
 		bind(IJobCollector.class).toInstance(IJobCollector.NO_OP);
+		bind(IMaxCostCollector.class).toInstance(IMaxCostCollector.NO_OP);
 	}
 
 	@Override
