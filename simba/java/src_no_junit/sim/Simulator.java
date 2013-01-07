@@ -14,6 +14,7 @@ import sim.configuration.ByTraceConfiguration;
 import sim.configuration.DistributedSimulationConfiguration;
 import sim.configuration.MaxCostConfiguration;
 import sim.configuration.ProductionSimbaConfiguration;
+import sim.configuration.WorseFitConfiguration;
 import sim.event_handling.EventQueue;
 import sim.events.Event;
 import sim.model.Cluster;
@@ -54,11 +55,15 @@ public class Simulator
 		{
 			return new BestFitConfiguration();
 		}
+		if ("worse-fit".equals(System.getProperty("simulation")))
+		{
+			return new WorseFitConfiguration();
+		}
 		if ("max-cost".equals(System.getProperty("simulation")))
 		{
 			return new MaxCostConfiguration();
 		}
-		throw new RuntimeException("please set -Dsimulation");
+		throw new RuntimeException("please set -Dsimulation properly, it is now: " + System.getProperty("simulation"));
 	}
 
 	public static void main(String[] args)
