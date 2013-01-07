@@ -45,10 +45,12 @@ public class HostParser
 			try
 			{
 				String[] cols = line.split(",");
-				double memory = Math.round(simbaConfiguration.hostMemoryRatio() * Double.valueOf(cols[index_memory]) / HOST_MEMORY_UNIT_NORMILIZER);
+				double configuredMemory = Double.valueOf(cols[index_memory]) / HOST_MEMORY_UNIT_NORMILIZER;
+				double memory = Math.round(simbaConfiguration.hostMemoryRatio() * configuredMemory);
 				if (shouldAdd(hosts))
 				{
-					double core = simbaConfiguration.hostCoreRatio() * Double.valueOf(cols[index_cores]);
+					double configuredCores = Double.valueOf(cols[index_cores]);
+					double core = simbaConfiguration.hostCoreRatio() * configuredCores;
 					cluster.add(Host.builder().id(cols[index_hostid]).cores(core).memory(memory).build());
 				}
 				else
