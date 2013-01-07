@@ -33,7 +33,7 @@ public class ProductionSimbaConfiguration extends AbstractModule implements Modu
 	private final double submitRatio = Double.valueOf(System.getProperty("submit-ratio", "1.0"));
 	private int bucketSize = 10800;
 	private long timeToLog = 60 * 60 * 24;// 1 day
-	private int timeToSchedule = 10;
+	private int timeToSchedule = Integer.valueOf(System.getProperty("scheduling-interval", "10"));
 	private final int reservationsLimit = Integer.valueOf(System.getProperty("reservations", "1"));
 	private int jobsCheckedBySchduler = 10000;
 	private boolean actualCoreUsageSimulation = Boolean.valueOf(System.getProperty("real-core", "false"));
