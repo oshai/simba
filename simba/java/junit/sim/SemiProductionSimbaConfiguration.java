@@ -33,7 +33,7 @@ public class SemiProductionSimbaConfiguration extends ProductionSimbaConfigurati
 	}
 
 	@Override
-	protected Class<? extends Scheduler> getScheduler()
+	protected Class<? extends Scheduler> scheduler()
 	{
 		return SimpleScheduler.class;
 	}

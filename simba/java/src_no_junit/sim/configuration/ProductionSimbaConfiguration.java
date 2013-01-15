@@ -37,6 +37,13 @@ public class ProductionSimbaConfiguration extends AbstractModule implements Modu
 	private final int reservationsLimit = Integer.valueOf(System.getProperty("reservations", "1"));
 	private int jobsCheckedBySchduler = 10000;
 	private boolean actualCoreUsageSimulation = Boolean.valueOf(System.getProperty("real-core", "false"));
+	private Double fixedMemory = getDoubleProperty("fixed-memory");
+	private Double fixedCores = getDoubleProperty("fixed-cores");
+
+	private Double getDoubleProperty(String key)
+	{
+		return System.getProperty(key) == null ? null : Double.valueOf(System.getProperty(key));
+	}
 
 	@Override
 	protected void configure()
@@ -47,13 +54,13 @@ public class ProductionSimbaConfiguration extends AbstractModule implements Modu
 		bind(JobParser.class).in(Scopes.SINGLETON);
 		bind(EventQueue.class).in(Scopes.SINGLETON);
 		bind(Cluster.class).in(Scopes.SINGLETON);
-		bind(Grader.class).toInstance(getGrader());
+		bind(Grader.class).toInstance(grader());
 		bind(JobDispatcher.class).in(Scopes.SINGLETON);
 		bind(Looper.class).in(Scopes.SINGLETON);
 		bind(LinkedListWaitingQueue.class).in(Scopes.SINGLETON);
 		bind(WaitingQueue.class).to(LinkedListWaitingQueue.class);
 		bind(WaitingQueueForStatistics.class).to(LinkedListWaitingQueue.class);
-		bind(Scheduler.class).to(getScheduler());
+		bind(Scheduler.class).to(scheduler());
 		bindCollectors();
 	}
 
@@ -69,12 +76,12 @@ public class ProductionSimbaConfiguration extends AbstractModule implements Modu
 		bind(IMaxCostCollector.class).toInstance(IMaxCostCollector.NO_OP);
 	}
 
-	protected Class<? extends Scheduler> getScheduler()
+	protected Class<? extends Scheduler> scheduler()
 	{
 		return ReservingScheduler.class;
 	}
 
-	protected Grader getGrader()
+	protected Grader grader()
 	{
 		return new ThrowingExceptionGrader();
 	}
@@ -147,13 +154,25 @@ public class ProductionSimbaConfiguration extends AbstractModule implements Modu
 	@Override
 	public String toString()
 	{
-		return getClass().getSimpleName() + " [timeToSchedule()=" + timeToSchedule() + ", timeToLog()=" + timeToLog() + ", hostCoreRatio()=" + hostCoreRatio() + ", machineDropRatio()=" + machineDropRatio() + ", hostMemoryRatio()=" + hostMemoryRatio() + ", reservationsLimit()=" + reservationsLimit() + ", isActualCoreUsageSimulation()=" + isActualCoreUsageSimulation() + ", jobsCheckedBySchduler()=" + jobsCheckedBySchduler() + ", submitRatio()=" + submitRatio() + ", isBucketSimulation()=" + isBucketSimulation() + ", bucketSize()=" + bucketSize() + "]";
+		return getClass().getSimpleName() + "[scheduler()=" + scheduler() + ", grader()=" + grader() + ", timeToSchedule()=" + timeToSchedule() + ", timeToLog()=" + timeToLog() + ", hostCoreRatio()=" + hostCoreRatio() + ", machineDropRatio()=" + machineDropRatio() + ", hostMemoryRatio()=" + hostMemoryRatio() + ", reservationsLimit()=" + reservationsLimit() + ", isActualCoreUsageSimulation()=" + isActualCoreUsageSimulation() + ", jobsCheckedBySchduler()=" + jobsCheckedBySchduler() + ", submitRatio()=" + submitRatio() + ", isBucketSimulation()=" + isBucketSimulation() + ", bucketSize()=" + bucketSize() + ", collectTime()=" + collectTime() + ", fixedMemory()=" + fixedMemory() + ", fixedCores()=" + fixedCores() + "]";
 	}
 
 	@Override
 	public long collectTime()
 	{
 		return 300;
+	}
+
+	@Override
+	public Double fixedMemory()
+	{
+		return fixedMemory;
+	}
+
+	@Override
+	public Double fixedCores()
+	{
+		return fixedCores;
 	}
 
 }

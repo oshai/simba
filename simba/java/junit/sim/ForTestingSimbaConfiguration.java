@@ -73,4 +73,16 @@ public class ForTestingSimbaConfiguration implements SimbaConfiguration
 	{
 		return 300;
 	}
+
+	@Override
+	public Double fixedMemory()
+	{
+		return null;
+	}
+
+	@Override
+	public Double fixedCores()
+	{
+		return null;
+	}
 }

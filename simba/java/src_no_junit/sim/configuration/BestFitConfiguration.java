@@ -6,7 +6,7 @@ import sim.scheduling.matchers.GradeMatcherProvider;
 public class BestFitConfiguration extends ProductionSimbaConfiguration
 {
 	@Override
-	protected Grader getGrader()
+	protected Grader grader()
 	{
 		return GradeMatcherProvider.createGraderBf2();
 	}

@@ -6,7 +6,7 @@ import sim.scheduling.graders.Grader;
 public class WorseFitConfiguration extends ProductionSimbaConfiguration
 {
 	@Override
-	protected Grader getGrader()
+	protected Grader grader()
 	{
 		return new AvailableMemoryGrader();
 	}

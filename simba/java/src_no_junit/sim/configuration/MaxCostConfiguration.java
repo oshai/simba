@@ -48,7 +48,7 @@ public class MaxCostConfiguration extends ProductionSimbaConfiguration
 	}
 
 	@Override
-	protected Class<? extends Scheduler> getScheduler()
+	protected Class<? extends Scheduler> scheduler()
 	{
 		return MaxCostScheduler.class;
 	}

@@ -26,4 +26,8 @@ public interface SimbaConfiguration
 
 	public long collectTime();
 
+	public Double fixedMemory();
+
+	public Double fixedCores();
+
 }
