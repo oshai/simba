@@ -6,7 +6,7 @@ import sim.scheduling.Scheduler;
 public class ByTraceConfiguration extends ProductionSimbaConfiguration
 {
 	@Override
-	protected Class<? extends Scheduler> getScheduler()
+	protected Class<? extends Scheduler> scheduler()
 	{
 		return ByTraceScheduler.class;
 	}
