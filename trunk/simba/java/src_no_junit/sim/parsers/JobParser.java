@@ -115,7 +115,11 @@ public class JobParser
 					// {
 					// drop = true;
 					// }
-					double cost = simbaConfiguration.fixedMemory() == null ? d(cols.get(index_cost)) : Math.max(cores / simbaConfiguration.fixedCores(), memory / simbaConfiguration.fixedMemory() * simbaConfiguration.hostMemoryRatio());
+					double cost = 1;// simbaConfiguration.fixedMemory() == null
+									// ? d(cols.get(index_cost)) : cores /
+									// simbaConfiguration.fixedCores() * memory
+									// / simbaConfiguration.fixedMemory() *
+									// simbaConfiguration.hostMemoryRatio();
 					Job job = Job.builder(length).id(id).qslot(qslot).cost(cost).priority(submitTime).submitTime(submitTime).cores(cores).memory(memory).startTime(l(cols.get(index_startttime))).build();
 					if (canRun(job) && !drop)
 					{
