@@ -1,6 +1,8 @@
-package sim.scheduling.reserving;
+package sim.scheduling.max_cost;
 
 import java.util.List;
+
+import sim.scheduling.reserving.ScheduleCostResult;
 
 public interface IMaxCostCollector
 {

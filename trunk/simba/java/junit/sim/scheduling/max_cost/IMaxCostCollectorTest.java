@@ -1,6 +1,8 @@
-package sim.scheduling.reserving;
+package sim.scheduling.max_cost;
 
 import org.junit.Test;
+
+import sim.scheduling.max_cost.IMaxCostCollector;
 
 public class IMaxCostCollectorTest
 {

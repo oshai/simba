@@ -2,7 +2,7 @@ package sim.collectors;
 
 import java.util.List;
 
-import sim.scheduling.reserving.IMaxCostCollector;
+import sim.scheduling.max_cost.IMaxCostCollector;
 import sim.scheduling.reserving.ScheduleCostResult;
 
 public class MaxCostCollector extends Collector implements IMaxCostCollector

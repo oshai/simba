@@ -7,7 +7,7 @@ import sim.scheduling.Scheduler;
 import sim.scheduling.SimpleScheduler;
 import sim.scheduling.matchers.FirstFit;
 import sim.scheduling.matchers.Matcher;
-import sim.scheduling.reserving.IMaxCostCollector;
+import sim.scheduling.max_cost.IMaxCostCollector;
 
 public class SemiProductionSimbaConfiguration extends ProductionSimbaConfiguration
 {

@@ -8,9 +8,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import sim.scheduling.reserving.CalculateScheduleFunction;
+import sim.scheduling.max_cost.CalculateScheduleFunction;
+import sim.scheduling.max_cost.ScheduleCalculator;
 import sim.scheduling.reserving.ReservingScheduler;
-import sim.scheduling.reserving.ScheduleCalculator;
 import sim.scheduling.reserving.ScheduleCostResult;
 
 public class ParallelScheduleCalculator implements ScheduleCalculator

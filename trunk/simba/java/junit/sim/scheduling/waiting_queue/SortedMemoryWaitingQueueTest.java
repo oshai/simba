@@ -5,15 +5,15 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 
 import sim.model.Job;
-import sim.scheduling.waiting_queue.SortedWaitingQueue;
+import sim.scheduling.waiting_queue.SortedMemoryWaitingQueue;
 
-public class SortedWaitingQueueTest
+public class SortedMemoryWaitingQueueTest
 {
 
 	@Test
 	public void test()
 	{
-		SortedWaitingQueue tested = new SortedWaitingQueue();
+		SortedMemoryWaitingQueue tested = new SortedMemoryWaitingQueue();
 		Job job1 = Job.builder(1).memory(2).build();
 		tested.add(job1);
 		Job job2 = Job.builder(1).memory(1).build();
@@ -24,7 +24,7 @@ public class SortedWaitingQueueTest
 	@Test
 	public void testEquals()
 	{
-		SortedWaitingQueue tested = new SortedWaitingQueue();
+		SortedMemoryWaitingQueue tested = new SortedMemoryWaitingQueue();
 		Job job1 = Job.builder(1).memory(1).build();
 		tested.add(job1);
 		Job job2 = Job.builder(1).memory(1).build();

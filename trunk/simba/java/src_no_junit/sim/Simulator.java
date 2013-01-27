@@ -21,7 +21,7 @@ import sim.events.Event;
 import sim.model.Cluster;
 import sim.parsers.HostParser;
 import sim.parsers.JobParser;
-import sim.scheduling.reserving.IMaxCostCollector;
+import sim.scheduling.max_cost.IMaxCostCollector;
 
 import com.google.common.base.Stopwatch;
 import com.google.inject.Guice;

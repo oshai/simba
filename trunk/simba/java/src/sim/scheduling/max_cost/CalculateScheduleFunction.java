@@ -1,9 +1,11 @@
-package sim.scheduling.reserving;
+package sim.scheduling.max_cost;
 
 import java.util.Map;
 
 import sim.model.Host;
 import sim.model.Job;
+import sim.scheduling.reserving.ReservingScheduler;
+import sim.scheduling.reserving.ScheduleCostResult;
 
 import com.google.common.base.Function;
 

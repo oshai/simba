@@ -15,7 +15,7 @@ import sim.scheduling.JobDispatcher;
 import sim.scheduling.Scheduler;
 import sim.scheduling.graders.Grader;
 import sim.scheduling.graders.ThrowingExceptionGrader;
-import sim.scheduling.reserving.IMaxCostCollector;
+import sim.scheduling.max_cost.IMaxCostCollector;
 import sim.scheduling.reserving.ReservingScheduler;
 import sim.scheduling.waiting_queue.LinkedListWaitingQueue;
 import sim.scheduling.waiting_queue.WaitingQueue;

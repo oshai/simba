@@ -7,7 +7,7 @@ import sim.model.Job;
 
 import com.google.common.collect.MinMaxPriorityQueue;
 
-public class SortedWaitingQueue extends AbstractWaitingQueue
+public class SortedMemoryWaitingQueue extends AbstractWaitingQueue
 {
 	private Comparator<Job> c = new JobLessMemoryComparator();
 
