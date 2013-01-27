@@ -1,4 +1,4 @@
-package sim.scheduling.reserving;
+package sim.scheduling.max_cost;
 
 import static com.google.common.collect.Lists.*;
 import static com.google.common.collect.Maps.*;
@@ -17,6 +17,8 @@ import sim.model.Job;
 import sim.scheduling.JobDispatcher;
 import sim.scheduling.Scheduler;
 import sim.scheduling.graders.Grader;
+import sim.scheduling.reserving.ReservingScheduler;
+import sim.scheduling.reserving.ScheduleCostResult;
 import sim.scheduling.waiting_queue.WaitingQueue;
 
 public class MaxCostScheduler extends ReservingScheduler implements Scheduler

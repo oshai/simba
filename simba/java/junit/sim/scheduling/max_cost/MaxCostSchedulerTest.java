@@ -1,4 +1,4 @@
-package sim.scheduling.reserving;
+package sim.scheduling.max_cost;
 
 import static com.google.common.collect.Lists.*;
 import static com.google.common.collect.Maps.*;
@@ -15,6 +15,7 @@ import sim.model.Host;
 import sim.model.Job;
 import sim.scheduling.graders.Grader;
 import sim.scheduling.graders.ThrowingExceptionGrader;
+import sim.scheduling.reserving.ReservingScheduler;
 
 import com.google.common.collect.Lists;
 
@@ -71,7 +72,7 @@ public class MaxCostSchedulerTest
 		ReservingScheduler s = new ReservingScheduler(null, null, null, null, mock(SimbaConfiguration.class))
 		{
 			@Override
-			protected Map<Job, Host> scheduleWithoutDispatch(long time)
+			public Map<Job, Host> scheduleWithoutDispatch(long time)
 			{
 				return map;
 			}

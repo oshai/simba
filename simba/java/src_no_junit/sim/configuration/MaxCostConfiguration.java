@@ -5,10 +5,10 @@ import java.util.List;
 import sim.ParallelScheduleCalculator;
 import sim.collectors.MaxCostCollector;
 import sim.scheduling.Scheduler;
-import sim.scheduling.reserving.IMaxCostCollector;
-import sim.scheduling.reserving.MaxCostScheduler;
+import sim.scheduling.max_cost.IMaxCostCollector;
+import sim.scheduling.max_cost.MaxCostScheduler;
+import sim.scheduling.max_cost.ScheduleCalculator;
 import sim.scheduling.reserving.ReservingScheduler;
-import sim.scheduling.reserving.ScheduleCalculator;
 
 import com.google.inject.Scopes;
 import com.google.inject.TypeLiteral;
