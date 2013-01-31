@@ -175,4 +175,10 @@ public class ProductionSimbaConfiguration extends AbstractModule implements Modu
 		return fixedCores;
 	}
 
+	@Override
+	public boolean isFixedCost()
+	{
+		return false;
+	}
+
 }

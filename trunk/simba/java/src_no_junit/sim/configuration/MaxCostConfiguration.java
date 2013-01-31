@@ -41,4 +41,10 @@ public class MaxCostConfiguration extends ProductionSimbaConfiguration
 	{
 		return MaxCostScheduler.class;
 	}
+
+	@Override
+	public boolean isFixedCost()
+	{
+		return true;
+	}
 }

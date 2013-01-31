@@ -85,4 +85,10 @@ public class ForTestingSimbaConfiguration implements SimbaConfiguration
 	{
 		return null;
 	}
+
+	@Override
+	public boolean isFixedCost()
+	{
+		return false;
+	}
 }
