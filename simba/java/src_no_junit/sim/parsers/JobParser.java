@@ -115,11 +115,7 @@ public class JobParser
 					// {
 					// drop = true;
 					// }
-					double cost = 1;// simbaConfiguration.fixedMemory() == null
-									// ? d(cols.get(index_cost)) : cores /
-									// simbaConfiguration.fixedCores() * memory
-									// / simbaConfiguration.fixedMemory() *
-									// simbaConfiguration.hostMemoryRatio();
+					double cost = getCost(cols, cores, memory);
 					Job job = Job.builder(length).id(id).qslot(qslot).cost(cost).priority(submitTime).submitTime(submitTime).cores(cores).memory(memory).startTime(l(cols.get(index_startttime))).build();
 					if (canRun(job) && !drop)
 					{
@@ -262,5 +258,14 @@ public class JobParser
 			return (stime + utime + 0.001) / (wtime + 0.001);
 		}
 		return getMapValue("cores", cols.get(index_actualclassreservation));
+	}
+
+	private double getCost(List<String> cols, double cores, double memory)
+	{
+		if (simbaConfiguration.isFixedCost())
+		{
+			return 1;
+		}
+		return simbaConfiguration.fixedMemory() == null ? d(cols.get(index_cost)) : cores / simbaConfiguration.fixedCores() * memory / simbaConfiguration.fixedMemory() * simbaConfiguration.hostMemoryRatio();
 	}
 }

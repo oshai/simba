@@ -30,4 +30,6 @@ public interface SimbaConfiguration
 
 	public Double fixedCores();
 
+	public boolean isFixedCost();
+
 }
