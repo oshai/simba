@@ -12,6 +12,7 @@ import sim.event_handling.EventQueue;
 import sim.model.Cluster;
 import sim.model.Host;
 import sim.model.Job;
+import sim.scheduling.graders.AvailableMemoryGrader;
 import sim.scheduling.graders.Grader;
 import sim.scheduling.reserving.ReservingScheduler;
 import sim.scheduling.waiting_queue.AbstractWaitingQueue;
@@ -104,9 +105,15 @@ public class ReservingSchedulerTest
 
 	private Host createHost(Job job)
 	{
+		double memory = 1.0;
+		return createHost(job, memory);
+	}
+
+	private Host createHost(Job job, double memory)
+	{
 		Host host = mock(Host.class);
 		when(host.id()).thenReturn("id");
-		when(host.availableMemory()).thenReturn(1.0);
+		when(host.availableMemory()).thenReturn(memory);
 		when(host.availableCores()).thenReturn(1.0);
 		when(host.hasAvailableResourcesFor(job)).thenReturn(true);
 		when(host.hasPotentialResourceFor(job)).thenReturn(true);
@@ -223,12 +230,10 @@ public class ReservingSchedulerTest
 		waitingQueue.add(job);
 		Cluster cluster = new Cluster();
 		Host host1 = createHost(job);
-		Host host2 = createHost(job);
+		Host host2 = createHost(job, 2.0);
 		cluster.add(host1);
 		cluster.add(host2);
-		Grader grader = mock(Grader.class);
-		when(grader.getGrade(host1, job)).thenReturn(0.0);
-		when(grader.getGrade(host2, job)).thenReturn(1.0);
+		Grader grader = new AvailableMemoryGrader();
 		JobDispatcher dispatcher = mock(JobDispatcher.class);
 		Scheduler scheduler = createScheduler(waitingQueue, cluster, grader, dispatcher);
 		scheduler.schedule(0);
@@ -259,5 +264,12 @@ public class ReservingSchedulerTest
 		scheduler.schedule(0);
 		assertEquals(1, waitingQueue.size());
 		assertEquals(job2, waitingQueue.remove());
+	}
+
+	@Test
+	public void testToString() throws Exception
+	{
+		ReservingScheduler tested = createScheduler(null, null, null, null, mock(ForTestingSimbaConfiguration.class));
+		assertFalse(tested.toString().contains("@"));
 	}
 }

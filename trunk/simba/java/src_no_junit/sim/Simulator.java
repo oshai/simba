@@ -12,6 +12,7 @@ import sim.collectors.IntervalCollector;
 import sim.configuration.BestFitConfiguration;
 import sim.configuration.ByTraceConfiguration;
 import sim.configuration.DistributedSimulationConfiguration;
+import sim.configuration.FirstFitConfiguration;
 import sim.configuration.MaxCostConfiguration;
 import sim.configuration.ProductionSimbaConfiguration;
 import sim.configuration.SimpleMaxCostConfiguration;
@@ -59,6 +60,10 @@ public class Simulator
 		if ("worse-fit".equals(System.getProperty("simulation")))
 		{
 			return new WorseFitConfiguration();
+		}
+		if ("first-fit".equals(System.getProperty("simulation")))
+		{
+			return new FirstFitConfiguration();
 		}
 		if ("max-cost".equals(System.getProperty("simulation")))
 		{

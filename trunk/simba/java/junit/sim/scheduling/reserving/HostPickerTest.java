@@ -2,6 +2,7 @@ package sim.scheduling.reserving;
 
 import static com.google.common.collect.Lists.*;
 import static org.junit.Assert.*;
+import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.*;
 
 import java.util.List;
@@ -32,6 +33,21 @@ public class HostPickerTest
 		Job job = Job.builder(100).cores(1).build();
 		HostPicker tested = createHostPicker(hosts);
 		assertEquals(host, tested.getBestHost(job));
+	}
+
+	@Test
+	public void testPreferredHostApplyByReservedMemory() throws Exception
+	{
+		Host host = Host.builder().id("1").cores(1).memory(2).build();
+		List<Host> hosts = newArrayList(host);
+		Job job = Job.builder(100).cores(1).build();
+		ReservationsHolder reservations = new ReservationsHolder();
+		ReservingSchedulerUtils r = new ReservingSchedulerUtils(reservations);
+		reservations.put("1", new Reservation(0, 1));
+		Grader g = mock(Grader.class);
+		HostPicker tested = new HostPicker(r, hosts, g);
+		assertEquals(host, tested.getBestHost(job));
+		verify(g).getGrade((Host) any(), (Job) any());// TODO how to test that?
 	}
 
 	private HostPicker createHostPicker(List<Host> hosts)

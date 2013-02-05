@@ -32,10 +32,11 @@ public class ProductionSimbaConfiguration extends AbstractModule implements Modu
 	private final double machineDropRatio = Double.valueOf(System.getProperty("machine-drop-ratio", "1.0"));
 	private final double submitRatio = Double.valueOf(System.getProperty("submit-ratio", "1.0"));
 	private int bucketSize = 10800;
+	private boolean isBucketSimulation = Boolean.getBoolean("bucket-simulation");
 	private long timeToLog = 60 * 60 * 24;// 1 day
 	private int timeToSchedule = Integer.valueOf(System.getProperty("scheduling-interval", "10"));
 	private final int reservationsLimit = Integer.valueOf(System.getProperty("reservations", "1"));
-	private int jobsCheckedBySchduler = 10000;
+	private int jobsCheckedBySchduler = 100000;
 	private boolean actualCoreUsageSimulation = Boolean.valueOf(System.getProperty("real-core", "false"));
 	private Double fixedMemory = getDoubleProperty("fixed-memory");
 	private Double fixedCores = getDoubleProperty("fixed-cores");
@@ -142,7 +143,7 @@ public class ProductionSimbaConfiguration extends AbstractModule implements Modu
 
 	public boolean isBucketSimulation()
 	{
-		return false;
+		return isBucketSimulation;
 	}
 
 	@Override
@@ -160,7 +161,7 @@ public class ProductionSimbaConfiguration extends AbstractModule implements Modu
 	@Override
 	public long collectTime()
 	{
-		return 300;
+		return isBucketSimulation() ? bucketSize() : 300;
 	}
 
 	@Override

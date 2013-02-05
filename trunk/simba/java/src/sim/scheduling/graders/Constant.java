@@ -1,6 +1,6 @@
 package sim.scheduling.graders;
 
-import sim.model.Host;
+import sim.model.GradeableHost;
 import sim.model.Job;
 
 public class Constant implements Grader
@@ -14,7 +14,7 @@ public class Constant implements Grader
 	}
 
 	@Override
-	public double getGrade(Host host, Job job)
+	public double getGrade(GradeableHost host, Job job)
 	{
 		return grade;
 	}

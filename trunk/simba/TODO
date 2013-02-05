@@ -20,6 +20,7 @@ if not found - make reservation: take the best host (more resources) and put res
 
 
 TODO:
+HostPickerTest - missing check over there
 change configuration of each scheduler to be optimal for runtime (ff)
 make configuration more simple
 optimize run
@@ -33,7 +34,6 @@ increase gap between scheduling cycles
 reserve for all jobs
 counts reservations in machine_utilization
 coverage in jenkins
-		
 		
 		
 more comments (old bugs)		

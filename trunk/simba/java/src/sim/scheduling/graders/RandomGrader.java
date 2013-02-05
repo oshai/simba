@@ -2,7 +2,7 @@ package sim.scheduling.graders;
 
 import java.util.Random;
 
-import sim.model.Host;
+import sim.model.GradeableHost;
 import sim.model.Job;
 
 public class RandomGrader implements Grader
@@ -16,7 +16,7 @@ public class RandomGrader implements Grader
 	}
 
 	@Override
-	public double getGrade(Host host, Job job)
+	public double getGrade(GradeableHost host, Job job)
 	{
 		return random.nextInt(limit);
 	}
