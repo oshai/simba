@@ -19,4 +19,10 @@ public class ScheduleCostResult
 		this.shceduledJobsToHost = shceduledJobsToHost;
 	}
 
+	@Override
+	public String toString()
+	{
+		return "ScheduleCostResult [algorithmName=" + algorithmName + ", cost=" + cost + "]";
+	}
+
 }

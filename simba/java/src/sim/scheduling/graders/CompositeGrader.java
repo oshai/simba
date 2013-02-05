@@ -2,7 +2,7 @@ package sim.scheduling.graders;
 
 import java.util.List;
 
-import sim.model.Host;
+import sim.model.GradeableHost;
 import sim.model.Job;
 
 public class CompositeGrader implements Grader
@@ -25,7 +25,7 @@ public class CompositeGrader implements Grader
 	}
 
 	@Override
-	public double getGrade(Host host, Job job)
+	public double getGrade(GradeableHost host, Job job)
 	{
 		double $ = 0;
 		for (Grader grader : graders)

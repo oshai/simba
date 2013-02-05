@@ -7,7 +7,7 @@ import static utils.assertions.Asserter.*;
 import java.util.Collections;
 import java.util.List;
 
-public class Host
+public class Host implements GradeableHost
 {
 	private String id;
 	private double cores;

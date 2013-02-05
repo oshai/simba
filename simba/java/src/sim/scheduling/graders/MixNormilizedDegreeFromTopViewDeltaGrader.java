@@ -1,6 +1,6 @@
 package sim.scheduling.graders;
 
-import sim.model.Host;
+import sim.model.GradeableHost;
 import sim.model.Job;
 import utils.GlobalUtils;
 
@@ -11,7 +11,7 @@ public class MixNormilizedDegreeFromTopViewDeltaGrader implements Grader
 	private static final double NORMALIZER = 1.01;
 
 	@Override
-	public double getGrade(Host host, Job job)
+	public double getGrade(GradeableHost host, Job job)
 	{
 		double usedCores = host.usedCores() + job.cores();
 		double usedMemory = host.usedMemory() + job.memory();

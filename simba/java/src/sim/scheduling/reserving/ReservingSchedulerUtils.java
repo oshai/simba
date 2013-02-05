@@ -27,18 +27,18 @@ public class ReservingSchedulerUtils
 		return maxAvailableMemory;
 	}
 
-	double availableMemory(Host host)
+	public double availableMemory(Host host)
 	{
 		return host.availableMemory() - getReservation(host).memory();
 	}
 
-	boolean isAvailable(Host host, Job job)
+	public boolean isAvailable(Host host, Job job)
 	{
 		Reservation r = getReservation(host);
 		return greaterOrEquals(host.availableCores(), r.cores() + job.cores()) && greaterOrEquals(host.availableMemory(), r.memory() + job.memory());
 	}
 
-	private double availableCores(Host host)
+	public double availableCores(Host host)
 	{
 		return host.availableCores() - getReservation(host).cores();
 	}

@@ -66,14 +66,15 @@ public class Looper
 	boolean tick()
 	{
 		long time = clock.tick();
-		if (simbaConfiguration.isBucketSimulation() && time % simbaConfiguration.bucketSize() == 0)
+		if (isBucketTime(time))
 		{
 			removeAllRunningJobs();
 		}
 		boolean handeledEvents = handleEvents(time);
 		int scheduledJobs = 0;
 		hasEventsNotScheduleYet = hasEventsNotScheduleYet || handeledEvents;
-		if ((time % simbaConfiguration.timeToSchedule() == 0 && hasEventsNotScheduleYet) || (time % simbaConfiguration.timeToSchedule() == 1 && firstCycle))
+		if (((time % simbaConfiguration.timeToSchedule() == 0 && hasEventsNotScheduleYet) || (time % simbaConfiguration.timeToSchedule() == 1 && firstCycle))
+				&& (!simbaConfiguration.isBucketSimulation() || isBucketTime(time)))
 		{
 			scheduledJobs = schedule(time);
 			if (scheduledJobs == 0)
@@ -81,11 +82,12 @@ public class Looper
 				hasEventsNotScheduleYet = false;
 			}
 		}
-		if (time % simbaConfiguration.bucketSize() == 0)
+		intervalCollector.collect(time, handeledEvents, scheduledJobs);
+		if (isBucketTime(time))
 		{
 			log.info("schduled jobs " + scheduledJobs);
+			removeAllWaitingJobs();
 		}
-		intervalCollector.collect(time, handeledEvents, scheduledJobs);
 		if (time % simbaConfiguration.timeToLog() == 0 || firstCycle)
 		{
 			timeToLogPassed++;
@@ -96,6 +98,11 @@ public class Looper
 		return shouldContinue;
 	}
 
+	private boolean isBucketTime(long time)
+	{
+		return simbaConfiguration.isBucketSimulation() && time % simbaConfiguration.bucketSize() == 0;
+	}
+	
 	private void removeAllRunningJobs()
 	{
 		int i = 0;
@@ -111,7 +118,20 @@ public class Looper
 				it.remove();
 			}
 		}
-		log.info("removed jobs " + i);
+		log.info("removed running jobs " + i);
+	}
+
+	private void removeAllWaitingJobs()
+	{
+		int i = 0;
+		Iterator<Job> it = waitingQueue.iterator();
+		while (it.hasNext())
+		{
+			it.next();
+			it.remove();
+			i++;
+		}
+		log.info("removed waiting jobs " + i);
 	}
 
 	private boolean handleEvents(long time)

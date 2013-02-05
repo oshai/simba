@@ -4,6 +4,7 @@ import java.util.List;
 
 import sim.model.Host;
 import sim.model.Job;
+import sim.model.ReservingHost;
 import sim.scheduling.graders.Grader;
 
 public class HostPicker
@@ -33,10 +34,12 @@ public class HostPicker
 			{
 				continue;
 			}
-			double grade = grader.getGrade(host, job);
+			ReservingHost reservingHost = new ReservingHost(host, reservingSchedulerUtils);
+			double grade = grader.getGrade(reservingHost, job);
 			if (reservingSchedulerUtils.isAvailable(host, job))
 			{
-				if (!isAvailable || grade > grader.getGrade(selectedHost, job))
+				ReservingHost reservingSelectedHost = new ReservingHost(selectedHost, reservingSchedulerUtils);
+				if (!isAvailable || grade > grader.getGrade(reservingSelectedHost, job))
 				{
 					selectedHost = host;
 					isAvailable = true;

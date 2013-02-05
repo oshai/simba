@@ -23,13 +23,13 @@ public class WhoWins
 	public static void main(String[] args)
 	{
 		WhoWins.cmdArgs = args;
-		runOnCol(Integer.valueOf(args[1]));
+		runOnCol(Integer.valueOf(args[0]));
 	}
 
 	private static void runOnCol(int col)
 	{
 		Map<String, Pair<Integer, String>> whoWinsMemory = newHashMap();
-		ArrayList<String> list = newArrayList("bf", "ff", "rf", "wf", "mf");
+		ArrayList<String> list = newArrayList("best-fit", "first-fit", "worse-fit");
 		for (String test : list)
 		{
 			calc(whoWinsMemory, test, col);
@@ -37,13 +37,13 @@ public class WhoWins
 		System.out.println("col " + col);
 		for (Entry<String, Pair<Integer, String>> e : whoWinsMemory.entrySet())
 		{
-			System.out.println(e.getValue().getValue());
+			System.out.println(e.getKey() + "=>" + e.getValue().getKey() + "," + e.getValue().getValue());
 		}
 	}
 
 	private static void calc(Map<String, Pair<Integer, String>> whoWinsMemory, String test, int col)
 	{
-		String file = "/tmp/simba/iil_1_aug_traces_reservation_" + cmdArgs[0] + "xMemory_submit_buckets/" + test + "/machines_utilization";
+		String file = "/tmp/simba/iil_1_Nov/coreratio-1.00_mem-1.00_submitratio-1.00_r-100000_schedInterval-1_fixed10-95_homogenous_buckets/" + test + "/machines_utilization";
 		String lines = TextFileUtils.getContents(new File(file));
 		for (String line : lines.split("\n"))
 		{
@@ -51,11 +51,15 @@ public class WhoWins
 			{
 				String[] split = line.split(" ");
 				int memory = Integer.valueOf(split[col]);
-				if (memory > 0 && Integer.valueOf(split[0]) > 1343671200)
+				if (memory > 0)// && Integer.valueOf(split[0]) > 1343671200)
 				{
 					if (whoWinsMemory.get(split[0]) == null || whoWinsMemory.get(split[0]).getKey() < memory)
 					{
 						whoWinsMemory.put(split[0], new Pair<Integer, String>(memory, test));
+					}
+					else if (memory == whoWinsMemory.get(split[0]).getKey())
+					{
+						whoWinsMemory.put(split[0], new Pair<Integer, String>(memory, whoWinsMemory.get(split[0]).getValue() + " " + test));
 					}
 				}
 			}
