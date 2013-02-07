@@ -24,7 +24,7 @@ public class SimpleSchedulersProvider extends SchedulersProvider
 	@Override
 	public List<ReservingScheduler> get()
 	{
-		List<ReservingScheduler> l = Lists.newArrayList(createScheduler("BEST-FIT"), createScheduler("WF"), createScheduler("FF"), createScheduler("RF"));
+		List<ReservingScheduler> l = Lists.newArrayList(createScheduler("BEST-FIT"), createScheduler("WF"), createScheduler("FF"));
 		return l;
 	}
 

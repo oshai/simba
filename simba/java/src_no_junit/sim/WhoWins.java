@@ -29,7 +29,7 @@ public class WhoWins
 	private static void runOnCol(int col)
 	{
 		Map<String, Pair<Integer, String>> whoWinsMemory = newHashMap();
-		ArrayList<String> list = newArrayList("best-fit", "first-fit", "worse-fit");
+		ArrayList<String> list = newArrayList("best-fit", "worse-fit");
 		for (String test : list)
 		{
 			calc(whoWinsMemory, test, col);
@@ -43,7 +43,7 @@ public class WhoWins
 
 	private static void calc(Map<String, Pair<Integer, String>> whoWinsMemory, String test, int col)
 	{
-		String file = "/tmp/simba/iil_1_Nov/coreratio-1.00_mem-1.00_submitratio-1.00_r-100000_schedInterval-1_fixed10-95_homogenous_buckets/" + test + "/machines_utilization";
+		String file = "/tmp/simba/iil_1_Nov/coreratio-1.00_mem-1.00_submitratio-1.00_r-100000_schedInterval-1_fixed10-" + cmdArgs[1] + "_homogenous_buckets/" + test + "/machines_utilization";
 		String lines = TextFileUtils.getContents(new File(file));
 		for (String line : lines.split("\n"))
 		{
