@@ -6,7 +6,7 @@ import sim.scheduling.reserving.ReservingScheduler;
 
 import com.google.inject.TypeLiteral;
 
-public class SimpleMaxCostConfiguration extends MaxCostConfiguration
+public class SimpleMaxJobsConfiguration extends MaxJobsConfiguration
 {
 	@Override
 	protected void bindSchedulerList()
