@@ -42,13 +42,17 @@ public class GradeMatcherProvider
 
 	public static Grader createGraderBfi()
 	{
-		return new CompositeGrader(newArrayList(invert(new ConfiguredMemoryGrader()), invert(new AvailableMemoryGrader()), invert(new AvailableCoresGrader())),
-				1000, "best-fit-improved");
+		return new CompositeGrader(newArrayList(invert(new ConfiguredMemoryGrader()), invert(new AvailableMemoryGrader()), invert(new AvailableCoresGrader())), 1000, "best-fit-improved");
 	}
 
 	public static Grader createGraderBf2()
 	{
 		return invert(new AvailableMemoryGrader(), "best-fit");
+	}
+
+	public static Grader createGraderBfCores()
+	{
+		return invert(new AvailableCoresGrader(), "best-fit-cores");
 	}
 
 	public static Grader createProductionGrader()

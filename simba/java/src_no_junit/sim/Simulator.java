@@ -10,6 +10,7 @@ import org.apache.log4j.Logger;
 import sim.collectors.IJobCollector;
 import sim.collectors.IntervalCollector;
 import sim.configuration.BestFitConfiguration;
+import sim.configuration.BestFitCoresConfiguration;
 import sim.configuration.ByTraceConfiguration;
 import sim.configuration.DistributedSimulationConfiguration;
 import sim.configuration.FirstFitConfiguration;
@@ -19,6 +20,7 @@ import sim.configuration.MixFitConfiguration;
 import sim.configuration.ProductionSimbaConfiguration;
 import sim.configuration.SimpleMaxJobsConfiguration;
 import sim.configuration.WorseFitConfiguration;
+import sim.configuration.WorseFitCoresConfiguration;
 import sim.event_handling.EventQueue;
 import sim.events.Event;
 import sim.model.Cluster;
@@ -62,6 +64,14 @@ public class Simulator
 		if ("worse-fit".equals(System.getProperty("simulation")))
 		{
 			return new WorseFitConfiguration();
+		}
+		if ("best-fit-cores".equals(System.getProperty("simulation")))
+		{
+			return new BestFitCoresConfiguration();
+		}
+		if ("worse-fit-cores".equals(System.getProperty("simulation")))
+		{
+			return new WorseFitCoresConfiguration();
 		}
 		if ("first-fit".equals(System.getProperty("simulation")))
 		{
