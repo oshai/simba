@@ -42,7 +42,7 @@ public class SchedulersProvider implements Provider<List<ReservingScheduler>>
 	@Override
 	public List<ReservingScheduler> get()
 	{
-		List<ReservingScheduler> l = Lists.newArrayList(createScheduler("BEST-FIT"), createScheduler("WF"), createScheduler("FF"), createScheduler("MF4"));
+		List<ReservingScheduler> l = Lists.newArrayList(createScheduler("BEST-FIT"), createScheduler("WF"), createScheduler("FF"), createScheduler("MF4"), createScheduler("BFC"), createScheduler("WFC"));
 		return l;
 	}
 
@@ -63,6 +63,8 @@ public class SchedulersProvider implements Provider<List<ReservingScheduler>>
 		graders.put("SMF", GradeMatcherProvider.createGraderSmf());
 		graders.put("BFI", GradeMatcherProvider.createGraderBfi());
 		graders.put("BEST-FIT", GradeMatcherProvider.createGraderBf2());
+		graders.put("BFC", GradeMatcherProvider.createGraderBfCores());
+		graders.put("WFC", GradeMatcherProvider.createGraderWfCores());
 		graders.put("NF", GradeMatcherProvider.createProductionGrader());
 		// graders.put("BF", new BestFit()); // specific grader
 		graders.put("FF", new Constant(0)); // constant grader

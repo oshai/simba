@@ -36,7 +36,7 @@ public class ProductionSimbaConfiguration extends AbstractModule implements Modu
 	private long timeToLog = 60 * 60 * 24;// 1 day
 	private int timeToSchedule = Integer.valueOf(System.getProperty("scheduling-interval", "10"));
 	private final int reservationsLimit = Integer.valueOf(System.getProperty("reservations", "1"));
-	private int jobsCheckedBySchduler = 10000;
+	private int jobsCheckedBySchduler = 100000;
 	private boolean actualCoreUsageSimulation = Boolean.valueOf(System.getProperty("real-core", "false"));
 	private Double fixedMemory = getDoubleProperty("fixed-memory");
 	private Double fixedCores = getDoubleProperty("fixed-cores");
