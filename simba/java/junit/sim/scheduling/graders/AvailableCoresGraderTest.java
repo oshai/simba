@@ -18,4 +18,10 @@ public class AvailableCoresGraderTest
 		assertEquals(8.0, new AvailableCoresGrader().getGrade(host, null), 0.1);
 	}
 
+	@Test
+	public void testToString()
+	{
+		assertFalse(new AvailableCoresGrader().toString().contains("@"));
+	}
+
 }
