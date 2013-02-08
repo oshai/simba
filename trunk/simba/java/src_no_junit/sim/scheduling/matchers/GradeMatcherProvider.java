@@ -55,6 +55,11 @@ public class GradeMatcherProvider
 		return invert(new AvailableCoresGrader(), "best-fit-cores");
 	}
 
+	public static Grader createGraderWfCores()
+	{
+		return new AvailableCoresGrader();
+	}
+
 	public static Grader createProductionGrader()
 	{
 		return new CompositeGrader(newArrayList(invert(new ConfiguredMemoryGrader()), invert(new AvailableMemoryGrader())), 1000, "netbatch-fit");

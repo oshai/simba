@@ -12,4 +12,9 @@ public class AvailableCoresGrader implements Grader
 		return host.availableCores();
 	}
 
+	@Override
+	public String toString()
+	{
+		return "worse-fit-cores";
+	}
 }

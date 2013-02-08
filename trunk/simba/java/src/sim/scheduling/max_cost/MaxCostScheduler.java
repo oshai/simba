@@ -42,6 +42,7 @@ public class MaxCostScheduler extends ReservingScheduler implements Scheduler
 		{
 			throw new IllegalArgumentException("must have at least one scheduler");
 		}
+		// TODO need to assert best fit is first
 		sumOfCostGainInWinsOverBestFit = newHashMap();
 		numOfWinsOverBestFit = newHashMap();
 		numOfWins = newHashMap();

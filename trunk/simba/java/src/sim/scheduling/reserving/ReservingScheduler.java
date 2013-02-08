@@ -131,7 +131,7 @@ public class ReservingScheduler implements Scheduler
 
 	protected final boolean shouldReport(long time)
 	{
-		return time % 10800 == 0;
+		return time % 10800 == 0 || simbaConfiguration.isBucketSimulation();
 	}
 
 	private void logScheduler(long time)

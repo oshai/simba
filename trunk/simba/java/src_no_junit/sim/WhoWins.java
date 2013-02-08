@@ -29,7 +29,7 @@ public class WhoWins
 	private static void runOnCol(int col)
 	{
 		Map<String, Pair<Integer, String>> whoWinsMemory = newHashMap();
-		ArrayList<String> list = newArrayList("best-fit", "worse-fit");
+		ArrayList<String> list = newArrayList("best-fit", "mix-fit", "worse-fit", "worse-fit-cores", "best-fit-cores");
 		for (String test : list)
 		{
 			calc(whoWinsMemory, test, col);
@@ -43,7 +43,7 @@ public class WhoWins
 
 	private static void calc(Map<String, Pair<Integer, String>> whoWinsMemory, String test, int col)
 	{
-		String file = "/tmp/simba/iil_1_Nov/coreratio-1.00_mem-1.00_submitratio-1.00_r-100000_schedInterval-1_fixed10-" + cmdArgs[1] + "_homogenous_buckets/" + test + "/machines_utilization";
+		String file = cmdArgs[1] + "/" + test + "/machines_utilization";
 		String lines = TextFileUtils.getContents(new File(file));
 		for (String line : lines.split("\n"))
 		{
@@ -53,13 +53,14 @@ public class WhoWins
 				int memory = Integer.valueOf(split[col]);
 				if (memory > 0)// && Integer.valueOf(split[0]) > 1343671200)
 				{
-					if (whoWinsMemory.get(split[0]) == null || whoWinsMemory.get(split[0]).getKey() < memory)
+					String time = split[0];
+					if (whoWinsMemory.get(time) == null || whoWinsMemory.get(time).getKey() < memory)
 					{
-						whoWinsMemory.put(split[0], new Pair<Integer, String>(memory, test));
+						whoWinsMemory.put(time, new Pair<Integer, String>(memory, test));
 					}
-					else if (memory == whoWinsMemory.get(split[0]).getKey())
+					else if (memory == whoWinsMemory.get(time).getKey())
 					{
-						whoWinsMemory.put(split[0], new Pair<Integer, String>(memory, whoWinsMemory.get(split[0]).getValue() + " " + test));
+						whoWinsMemory.put(time, new Pair<Integer, String>(memory, whoWinsMemory.get(time).getValue() + " " + test));
 					}
 				}
 			}

@@ -8,6 +8,6 @@ public class BestFitCoresConfiguration extends ProductionSimbaConfiguration
 	@Override
 	protected Grader grader()
 	{
-		return GradeMatcherProvider.createGraderBf2();
+		return GradeMatcherProvider.createGraderBfCores();
 	}
 }
