@@ -25,6 +25,7 @@ public abstract class Collector
 		try
 		{
 			writer.append(line + "\n");
+			writer.flush();
 		}
 		catch (IOException ex)
 		{
