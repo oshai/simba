@@ -15,6 +15,9 @@ public class SingleReservationHolderTest
 		tested.put("id", r);
 		assertEquals(r, tested.get("id"));
 		assertEquals(Reservation.NULL_OBJECT, tested.get("bla"));
+		tested.clear();
+		assertEquals(Reservation.NULL_OBJECT, tested.get("id"));
+
 	}
 
 	@Test(expected = RuntimeException.class)

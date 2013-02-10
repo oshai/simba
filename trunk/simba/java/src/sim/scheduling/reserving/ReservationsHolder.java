@@ -28,4 +28,10 @@ public class ReservationsHolder implements Reservations
 		reservations.put(id1, r);
 	}
 
+	@Override
+	public void clear()
+	{
+		reservations.clear();
+	}
+
 }

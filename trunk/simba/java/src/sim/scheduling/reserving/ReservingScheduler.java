@@ -42,6 +42,7 @@ public class ReservingScheduler implements Scheduler
 	private int skippedJobs;
 	private int startingHostsCount;
 	private int startingJobsCount;
+	private final ReservingHostCollection reservingHostCollector = new ReservingHostCollection();
 
 	@Inject
 	public ReservingScheduler(WaitingQueue waitingQueue, Cluster cluster, Grader grader, JobDispatcher dispatcher, SimbaConfiguration simbaConfiguration)
@@ -53,7 +54,14 @@ public class ReservingScheduler implements Scheduler
 		this.simbaConfiguration = simbaConfiguration;
 		reservationsSupplier = new ReservationsHolderSupplier(this.simbaConfiguration.reservationsLimit());
 		DUMMY_JOB = Job.builder(1).cores(1).memory(1).build();
+		init();
 		// log.setLevel(Level.DEBUG);
+	}
+
+	private void init()
+	{
+		reservations = reservationsSupplier.get();
+		reservingSchedulerUtils = new ReservingSchedulerUtils(reservations);
 	}
 
 	@Override
@@ -75,7 +83,7 @@ public class ReservingScheduler implements Scheduler
 
 	public Map<Job, Host> scheduleWithoutDispatch(long time)
 	{
-		init();
+		initBeforeSchedule();
 		Map<Job, Host> dispatchedJobs = selectJobsToDispatch(time);
 		return dispatchedJobs;
 	}
@@ -183,11 +191,10 @@ public class ReservingScheduler implements Scheduler
 		return !reservingSchedulerUtils.isAvailable(host, DUMMY_JOB);
 	}
 
-	private void init()
+	private void initBeforeSchedule()
 	{
 		started = System.currentTimeMillis();
-		reservations = reservationsSupplier.get();
-		reservingSchedulerUtils = new ReservingSchedulerUtils(reservations);
+		reservations.clear();
 		currentCycleHosts = removeHostsThatAreFull(cluster.hosts());
 		processedJobsCount = 0;
 		scheduledJobs = 0;
@@ -220,7 +227,7 @@ public class ReservingScheduler implements Scheduler
 		{
 			return DUMMY_HOST;
 		}
-		HostPicker hostPicker = new HostPicker(reservingSchedulerUtils, currentCycleHosts, grader);
+		HostPicker hostPicker = new HostPicker(reservingSchedulerUtils, currentCycleHosts, grader, reservingHostCollector);
 		Host bestHost = hostPicker.getBestHost(job);
 		maxAvailableMemory = hostPicker.maxAvailableMemory();
 		return bestHost;

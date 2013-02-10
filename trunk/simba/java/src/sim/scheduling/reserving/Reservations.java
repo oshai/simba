@@ -7,4 +7,6 @@ public interface Reservations
 
 	void put(String id1, Reservation r);
 
+	void clear();
+
 }
