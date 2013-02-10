@@ -23,6 +23,7 @@ import com.google.common.base.Predicate;
 
 public class JobParser
 {
+	private static final String JOBID = "JOBID";
 	private static final Logger log = Logger.getLogger(JobParser.class);
 	private static final String JOBS_FILE = System.getProperty("jobs-file");
 	private int left;
@@ -62,6 +63,8 @@ public class JobParser
 		this.cluster = cluster;
 		this.eventQueue = eventQueue;
 		this.allocationConfiguration = allocationConfiguration;
+		"".intern();
+		JOBID.intern();
 	}
 
 	public void parse()
@@ -99,13 +102,13 @@ public class JobParser
 					updateRunTimeBuckets(length);
 					updateMemoryBuckets(memory);
 					long submitTime = Math.round(simbaConfiguration.submitRatio() * l(cols.get(index_iterationsubmittime)));
-					String id = cols.get(index_jobid);
+					String id = JOBID;// cols.get(index_jobid);
 					if (id.contains(":"))
 					{
 						parallel++;
 						drop = true;
 					}
-					String qslot = parseQslot(cols);
+					String qslot = null; // parseQslot(cols);
 					// if (!qslot.startsWith("/iil_1base") ||
 					// !allocationConfiguration.getAll().containsKey(qslot))
 					// {
