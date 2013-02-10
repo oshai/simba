@@ -45,7 +45,7 @@ public class HostPickerTest
 		ReservingSchedulerUtils r = new ReservingSchedulerUtils(reservations);
 		reservations.put("1", new Reservation(0, 1));
 		Grader g = mock(Grader.class);
-		HostPicker tested = new HostPicker(r, hosts, g);
+		HostPicker tested = new HostPicker(r, hosts, g, new ReservingHostCollection());
 		assertEquals(host, tested.getBestHost(job));
 		verify(g).getGrade((Host) any(), (Job) any());// TODO how to test that?
 	}
@@ -54,7 +54,7 @@ public class HostPickerTest
 	{
 		ReservingSchedulerUtils r = new ReservingSchedulerUtils(new ReservationsHolder());
 		Grader g = mock(Grader.class);
-		HostPicker tested = new HostPicker(r, hosts, g);
+		HostPicker tested = new HostPicker(r, hosts, g, new ReservingHostCollection());
 		return tested;
 	}
 }

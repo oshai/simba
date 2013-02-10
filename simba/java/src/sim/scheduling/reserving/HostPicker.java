@@ -13,13 +13,15 @@ public class HostPicker
 	private final ReservingSchedulerUtils reservingSchedulerUtils;
 	private final List<Host> currentCycleHosts;
 	private final Grader grader;
+	private final ReservingHostCollection reservingHostCollector;
 
-	public HostPicker(ReservingSchedulerUtils reservingSchedulerUtils, List<Host> currentCycleHosts, Grader grader)
+	public HostPicker(ReservingSchedulerUtils reservingSchedulerUtils, List<Host> currentCycleHosts, Grader grader, ReservingHostCollection reservingHostCollector)
 	{
 		super();
 		this.reservingSchedulerUtils = reservingSchedulerUtils;
 		this.currentCycleHosts = currentCycleHosts;
 		this.grader = grader;
+		this.reservingHostCollector = reservingHostCollector;
 	}
 
 	public Host getBestHost(Job job)
@@ -34,11 +36,11 @@ public class HostPicker
 			{
 				continue;
 			}
-			ReservingHost reservingHost = new ReservingHost(host, reservingSchedulerUtils);
+			ReservingHost reservingHost = reservingHostCollector.getReservingHost(host, reservingSchedulerUtils);
 			double grade = grader.getGrade(reservingHost, job);
 			if (reservingSchedulerUtils.isAvailable(host, job))
 			{
-				ReservingHost reservingSelectedHost = new ReservingHost(selectedHost, reservingSchedulerUtils);
+				ReservingHost reservingSelectedHost = reservingHostCollector.getReservingHost(selectedHost, reservingSchedulerUtils);
 				if (!isAvailable || grade > grader.getGrade(reservingSelectedHost, job))
 				{
 					selectedHost = host;

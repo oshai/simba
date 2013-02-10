@@ -31,4 +31,10 @@ public class SingleReservationHolder implements Reservations
 		reservation = r;
 	}
 
+	@Override
+	public void clear()
+	{
+		id = NOT_EXIST_HOST;
+	}
+
 }
