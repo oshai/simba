@@ -7,7 +7,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.apache.commons.math3.util.Pair;
 
@@ -27,29 +26,20 @@ public class WhoWins
 	public static void main(String[] args)
 	{
 		WhoWins.cmdArgs = args;
-		runOnCol(0);
+		runOnCol();
 	}
 
-	private static void runOnCol(int col)
+	private static void runOnCol()
 	{
 		Map<String, Pair<Integer, String>> whoWinsMemory = newHashMap();
-		ArrayList<Integer> list = newArrayList(2, 3, 5, 6, 7);
-		for (Integer test : list)
-		{
-			calc(whoWinsMemory, test);
-		}
-		System.out.println("col " + col);
-		for (Entry<String, Pair<Integer, String>> e : whoWinsMemory.entrySet())
-		{
-			System.out.println(e.getKey() + "=>" + e.getValue().getKey() + "," + e.getValue().getValue());
-		}
-	}
+		ArrayList<Integer> list = newArrayList(2, 3, 6, 7);
 
-	private static void calc(Map<String, Pair<Integer, String>> whoWinsMemory, int col)
-	{
-		String test = "col:" + col;
 		String file = cmdArgs[0];
 		String lines = TextFileUtils.getContents(new File(file));
+		int sum = 0;
+		int count = 0;
+		int sumMf = 0;
+		int sumBest = 0;
 		for (String line : lines.split("\n"))
 		{
 			if (line.isEmpty())
@@ -59,19 +49,24 @@ public class WhoWins
 			try
 			{
 				List<String> split = Lists.newArrayList(Splitter.on(" ").omitEmptyStrings().split(line));
-
-				int memory = (int) ((double) Double.valueOf(split.get(col)));
-				if (memory > 0)// && Integer.valueOf(split[0]) > 1343671200)
+				int mf = (int) ((double) Double.valueOf(split.get(5)));
+				int best = 0;
+				for (Integer i : list)
 				{
-					String time = split.get(0);
-					if (whoWinsMemory.get(time) == null || whoWinsMemory.get(time).getKey() < memory)
+					int current = (int) ((double) Double.valueOf(split.get(i)));
+					if (current > best)
 					{
-						whoWinsMemory.put(time, new Pair<Integer, String>(memory, test));
+						best = current;
 					}
-					else if (memory == whoWinsMemory.get(time).getKey())
-					{
-						whoWinsMemory.put(time, new Pair<Integer, String>(memory, whoWinsMemory.get(time).getValue() + " " + test));
-					}
+				}
+				int delta = best - mf;
+				if (delta > 0)
+				{
+					// System.out.println("best - mf: " + delta);
+					sum += delta;
+					sumMf += mf;
+					sumBest += best;
+					count++;
 				}
 			}
 			catch (NumberFormatException ex)
@@ -80,6 +75,9 @@ public class WhoWins
 				System.out.println(ex.getMessage());
 			}
 		}
+		System.out.println("average delta= " + (sum / count));
+		System.out.println("average mf= " + (sumMf / count));
+		System.out.println("average best= " + (sumBest / count));
 	}
 
 }
