@@ -57,11 +57,11 @@ public class Simulator
 		{
 			return new ByTraceConfiguration();
 		}
-		if ("best-fit".equals(System.getProperty("simulation")))
+		if ("best-fit-memory".equals(System.getProperty("simulation")))
 		{
 			return new BestFitConfiguration();
 		}
-		if ("worse-fit".equals(System.getProperty("simulation")))
+		if ("worse-fit-memory".equals(System.getProperty("simulation")))
 		{
 			return new WorseFitConfiguration();
 		}

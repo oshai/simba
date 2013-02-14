@@ -155,7 +155,7 @@ public class ProductionSimbaConfiguration extends AbstractModule implements Modu
 	@Override
 	public String toString()
 	{
-		return getClass().getSimpleName() + "[scheduler()=" + scheduler() + ", grader()=" + grader() + ", timeToSchedule()=" + timeToSchedule() + ", timeToLog()=" + timeToLog() + ", hostCoreRatio()=" + hostCoreRatio() + ", machineDropRatio()=" + machineDropRatio() + ", hostMemoryRatio()=" + hostMemoryRatio() + ", reservationsLimit()=" + reservationsLimit() + ", isActualCoreUsageSimulation()=" + isActualCoreUsageSimulation() + ", jobsCheckedBySchduler()=" + jobsCheckedBySchduler() + ", submitRatio()=" + submitRatio() + ", isBucketSimulation()=" + isBucketSimulation() + ", bucketSize()=" + bucketSize() + ", collectTime()=" + collectTime() + ", fixedMemory()=" + fixedMemory() + ", fixedCores()=" + fixedCores() + "]";
+		return getClass().getSimpleName() + "[scheduler()=" + scheduler() + ", grader()=" + grader() + ", timeToSchedule()=" + timeToSchedule() + ", timeToLog()=" + timeToLog() + ", hostCoreRatio()=" + hostCoreRatio() + ", machineDropRatio()=" + machineDropRatio() + ", hostMemoryRatio()=" + hostMemoryRatio() + ", reservationsLimit()=" + reservationsLimit() + ", isActualCoreUsageSimulation()=" + isActualCoreUsageSimulation() + ", jobsCheckedBySchduler()=" + jobsCheckedBySchduler() + ", submitRatio()=" + submitRatio() + ", isBucketSimulation()=" + isBucketSimulation() + ", bucketSize()=" + bucketSize() + ", collectTime()=" + collectTime() + ", fixedMemory()=" + fixedMemory() + ", fixedCores()=" + fixedCores() + ", isFixedCost()=" + isFixedCost() + "]";
 	}
 
 	@Override

@@ -1,0 +1,14 @@
+
+
+
+
+iil1 itstl0023 0.72-0.67 max jobs 
+linux1 itstl0021 0.68-0.60 
+sc_linux5 itstl0022 0.65-0.60
+fm_nb itstl0024 0.95-0.85
+
+worse-fit-cores
+mix-fit
+
+best-fit-cores
+
