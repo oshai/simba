@@ -42,7 +42,7 @@ public class SchedulersProvider implements Provider<List<ReservingScheduler>>
 	@Override
 	public List<ReservingScheduler> get()
 	{
-		List<ReservingScheduler> l = Lists.newArrayList(createScheduler("BEST-FIT"), createScheduler("WF"), createScheduler("FF"), createScheduler("MF4"), createScheduler("BFC"), createScheduler("WFC"));
+		List<ReservingScheduler> l = Lists.newArrayList(createScheduler("BEST-FIT"), createScheduler("WF"), createScheduler("BFC"), createScheduler("WFC"), createScheduler("MF4"));
 		return l;
 	}
 
