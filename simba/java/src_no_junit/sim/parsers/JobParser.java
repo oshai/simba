@@ -12,7 +12,7 @@ import org.apache.log4j.Logger;
 
 import sim.SimbaConfiguration;
 import sim.collectors.AllocationConfiguration;
-import sim.event_handling.EventQueue;
+import sim.event_handling.IEventQueue;
 import sim.events.Submit;
 import sim.model.Cluster;
 import sim.model.Host;
@@ -52,11 +52,13 @@ public class JobParser
 
 	private final SimbaConfiguration simbaConfiguration;
 	private final Cluster cluster;
-	private final EventQueue eventQueue;
+	private final IEventQueue eventQueue;
 	private final AllocationConfiguration allocationConfiguration;
+	private int bucket = 1;
+	private int jobs = 0;
 
 	@Inject
-	public JobParser(SimbaConfiguration simbaConfiguration, Cluster cluster, EventQueue eventQueue, AllocationConfiguration allocationConfiguration)
+	public JobParser(SimbaConfiguration simbaConfiguration, Cluster cluster, IEventQueue eventQueue, AllocationConfiguration allocationConfiguration)
 	{
 		super();
 		this.simbaConfiguration = simbaConfiguration;
@@ -101,7 +103,12 @@ public class JobParser
 					}
 					updateRunTimeBuckets(length);
 					updateMemoryBuckets(memory);
-					long submitTime = Math.round(simbaConfiguration.submitRatio() * l(cols.get(index_iterationsubmittime)));
+					long submitTime = simbaConfiguration.isBucketSimulation() ? bucket : Math.round(simbaConfiguration.submitRatio() * l(cols.get(index_iterationsubmittime)));
+					jobs++;
+					if (jobs % 1000 == 0)
+					{
+						bucket++;
+					}
 					String id = JOBID;// cols.get(index_jobid);
 					if (id.contains(":"))
 					{

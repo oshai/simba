@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import org.junit.Before;
 import org.junit.Test;
 
-import sim.event_handling.EventQueue;
+import sim.event_handling.IEventQueue;
 import sim.events.Submit;
 import sim.model.Cluster;
 import sim.model.Host;
@@ -19,14 +19,14 @@ import com.google.inject.Injector;
 
 public class SystemTest
 {
-	private EventQueue eventQueue;
+	private IEventQueue eventQueue;
 	private Injector injector;
 
 	@Before
 	public void beforeTest()
 	{
 		injector = Guice.createInjector(new SemiProductionSimbaConfiguration());
-		eventQueue = injector.getInstance(EventQueue.class);
+		eventQueue = injector.getInstance(IEventQueue.class);
 	}
 
 	@Test

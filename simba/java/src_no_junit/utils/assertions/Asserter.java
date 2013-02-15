@@ -64,12 +64,12 @@ public class Asserter
 	 */
 	public boolean assertFalse(boolean condition)
 	{
-		return assertFalse(condition, "expected false");
+		return assertFalse(condition, " expected false");
 	}
 
 	public boolean assertTrue(boolean condition)
 	{
-		return assertTrue(condition, "expected true");
+		return assertTrue(condition, " expected true");
 	}
 
 	public boolean fail(String message)
@@ -119,7 +119,7 @@ public class Asserter
 
 	public boolean assertNotNull(Object obj)
 	{
-		return assertNotNull(obj, "object is null");
+		return assertNotNull(obj, " object is null");
 	}
 
 	public boolean assertNotNull(Object obj, String message)

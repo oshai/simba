@@ -2,7 +2,7 @@ package sim.scheduling;
 
 import javax.inject.Inject;
 
-import sim.event_handling.EventQueue;
+import sim.event_handling.IEventQueue;
 import sim.events.Finish;
 import sim.model.Host;
 import sim.model.Job;
@@ -10,10 +10,10 @@ import sim.model.Job;
 public class JobDispatcher
 {
 
-	private final EventQueue eventQueue;
+	private final IEventQueue eventQueue;
 
 	@Inject
-	public JobDispatcher(EventQueue eventQueue)
+	public JobDispatcher(IEventQueue eventQueue)
 	{
 		this.eventQueue = eventQueue;
 	}

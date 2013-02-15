@@ -1,21 +1,27 @@
 package sim.event_handling;
 
+import static com.google.common.collect.Lists.*;
+
 import java.util.Iterator;
+import java.util.List;
 
 import javax.inject.Inject;
 
 import sim.Clock;
 import sim.events.Event;
+import sim.events.Finish;
+import sim.events.Submit;
 
 import com.google.common.collect.MinMaxPriorityQueue;
 
-public class EventQueue implements IEventQueue
+public class EventsList implements IEventQueue
 {
 	private final MinMaxPriorityQueue<Event> queue = MinMaxPriorityQueue.orderedBy(new EventComparator()).create();
+	private final List<Event> finishedQueue = newArrayList();
 	private final Clock clock;
 
 	@Inject
-	public EventQueue(Clock clock)
+	public EventsList(Clock clock)
 	{
 		this.clock = clock;
 	}
@@ -30,7 +36,14 @@ public class EventQueue implements IEventQueue
 	public void add(Event event)
 	{
 		validate(event);
-		queue.add(event);
+		if (event instanceof Submit)
+		{
+			queue.add(event);
+		}
+		if (event instanceof Finish)
+		{
+			finishedQueue.add(event);
+		}
 	}
 
 	private void validate(Event event)
@@ -44,7 +57,7 @@ public class EventQueue implements IEventQueue
 	@Override
 	public Event peek()
 	{
-		return queue.peekFirst();
+		return queue.peek();
 	}
 
 	@Override
@@ -74,7 +87,9 @@ public class EventQueue implements IEventQueue
 	@Override
 	public Iterator<Event> clearRunningJobs()
 	{
-		throw new UnsupportedOperationException();
+		Iterator<Event> $ = newArrayList(finishedQueue).iterator();
+		finishedQueue.clear();
+		return $;
 	}
 
 }
