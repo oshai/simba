@@ -8,8 +8,10 @@ import sim.collectors.IntervalCollector;
 import sim.collectors.JobCollector;
 import sim.collectors.MiscStatisticsCollector;
 import sim.event_handling.EventQueue;
+import sim.event_handling.IEventQueue;
 import sim.model.Cluster;
 import sim.parsers.HostParser;
+import sim.parsers.IHostParser;
 import sim.parsers.JobParser;
 import sim.scheduling.JobDispatcher;
 import sim.scheduling.Scheduler;
@@ -31,7 +33,7 @@ public class ProductionSimbaConfiguration extends AbstractModule implements Modu
 	private final double coreRatio = Double.valueOf(System.getProperty("cores-ratio", "1.0"));
 	private final double machineDropRatio = Double.valueOf(System.getProperty("machine-drop-ratio", "1.0"));
 	private final double submitRatio = Double.valueOf(System.getProperty("submit-ratio", "1.0"));
-	private int bucketSize = 10800;
+	private int bucketSize = 1;
 	private boolean isBucketSimulation = Boolean.getBoolean("bucket-simulation");
 	private long timeToLog = 60 * 60 * 24;// 1 day
 	private int timeToSchedule = Integer.valueOf(System.getProperty("scheduling-interval", "10"));
@@ -50,10 +52,10 @@ public class ProductionSimbaConfiguration extends AbstractModule implements Modu
 	protected void configure()
 	{
 		bind(SimbaConfiguration.class).toInstance(this);
-		bind(HostParser.class).in(Scopes.SINGLETON);
+		bind(IHostParser.class).to(HostParser.class);
 		bind(Clock.class).in(Scopes.SINGLETON);
 		bind(JobParser.class).in(Scopes.SINGLETON);
-		bind(EventQueue.class).in(Scopes.SINGLETON);
+		bind(IEventQueue.class).to(EventQueue.class).in(Scopes.SINGLETON);
 		bind(Cluster.class).in(Scopes.SINGLETON);
 		bind(Grader.class).toInstance(grader());
 		bind(JobDispatcher.class).in(Scopes.SINGLETON);

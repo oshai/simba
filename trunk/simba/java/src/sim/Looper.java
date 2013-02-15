@@ -9,7 +9,7 @@ import javax.inject.Inject;
 import org.apache.log4j.Logger;
 
 import sim.collectors.IntervalCollector;
-import sim.event_handling.EventQueue;
+import sim.event_handling.IEventQueue;
 import sim.events.Event;
 import sim.events.Finish;
 import sim.events.NoOp;
@@ -24,7 +24,7 @@ public class Looper
 	private static final Logger log = Logger.getLogger(Looper.class);
 	private long timeToLogPassed;
 	private final Clock clock;
-	private final EventQueue eventQueue;
+	private final IEventQueue eventQueue;
 	private IntervalCollector intervalCollector;
 	private final JobFinisher jobFinisher;
 	private boolean firstCycle = true;
@@ -34,7 +34,7 @@ public class Looper
 	private final Scheduler scheduler;
 
 	@Inject
-	public Looper(Clock clock, EventQueue eventQueue, WaitingQueue waitingQueue, Scheduler scheduler, IntervalCollector hostCollector, JobFinisher jobFinisher, SimbaConfiguration simbaConsts)
+	public Looper(Clock clock, IEventQueue eventQueue, WaitingQueue waitingQueue, Scheduler scheduler, IntervalCollector hostCollector, JobFinisher jobFinisher, SimbaConfiguration simbaConsts)
 	{
 		this.waitingQueue = waitingQueue;
 		this.scheduler = scheduler;
@@ -73,8 +73,7 @@ public class Looper
 		boolean handeledEvents = handleEvents(time);
 		int scheduledJobs = 0;
 		hasEventsNotScheduleYet = hasEventsNotScheduleYet || handeledEvents;
-		if (((time % simbaConfiguration.timeToSchedule() == 0 && hasEventsNotScheduleYet) || (time % simbaConfiguration.timeToSchedule() == 1 && firstCycle))
-				&& (!simbaConfiguration.isBucketSimulation() || isBucketTime(time)))
+		if (((time % simbaConfiguration.timeToSchedule() == 0 && hasEventsNotScheduleYet) || (time % simbaConfiguration.timeToSchedule() == 1 && firstCycle)) && (!simbaConfiguration.isBucketSimulation() || isBucketTime(time)))
 		{
 			scheduledJobs = schedule(time);
 			if (scheduledJobs == 0)
@@ -102,11 +101,11 @@ public class Looper
 	{
 		return simbaConfiguration.isBucketSimulation() && time % simbaConfiguration.bucketSize() == 0;
 	}
-	
+
 	private void removeAllRunningJobs()
 	{
 		int i = 0;
-		Iterator<Event> it = eventQueue.iterator();
+		Iterator<Event> it = eventQueue.clearRunningJobs();
 		while (it.hasNext())
 		{
 			Event event = it.next();
@@ -115,7 +114,6 @@ public class Looper
 				Finish finish = (Finish) event;
 				jobFinisher.finish(finish);
 				i++;
-				it.remove();
 			}
 		}
 		log.info("removed running jobs " + i);

@@ -21,10 +21,10 @@ import sim.configuration.ProductionSimbaConfiguration;
 import sim.configuration.SimpleMaxJobsConfiguration;
 import sim.configuration.WorseFitConfiguration;
 import sim.configuration.WorseFitCoresConfiguration;
-import sim.event_handling.EventQueue;
+import sim.event_handling.IEventQueue;
 import sim.events.Event;
 import sim.model.Cluster;
-import sim.parsers.HostParser;
+import sim.parsers.IHostParser;
 import sim.parsers.JobParser;
 import sim.scheduling.max_cost.IMaxCostCollector;
 
@@ -101,13 +101,15 @@ public class Simulator
 		BasicConfigurator.configure();
 		Level level = Boolean.getBoolean("ebug") ? Level.DEBUG : Level.INFO;
 		Logger.getRootLogger().setLevel(level);
-		Logger.getLogger("sim").setLevel(level);
+		Logger logger = Logger.getLogger("sim");
+		logger.setLevel(level);
 		try
 		{
 			new Simulator().execute();
 		}
 		catch (Exception ex)
 		{
+			logger.error("error in simulation", ex);
 			ex.printStackTrace();
 		}
 		System.exit(0);
@@ -120,7 +122,7 @@ public class Simulator
 		Stopwatch stopwatch = new Stopwatch().start();
 		parseCluster();
 		parseJobs();
-		EventQueue eventQueue = createEventQueue();
+		IEventQueue eventQueue = createEventQueue();
 		Cluster cluster = injector.getInstance(Cluster.class);
 		log.info("execute() - cluster size is " + cluster.hosts().size());
 		log.info("execute() - # of jobs " + eventQueue.size());
@@ -138,9 +140,13 @@ public class Simulator
 		injector.getInstance(IntervalCollector.class).init();
 	}
 
-	private EventQueue createEventQueue()
+	private IEventQueue createEventQueue()
 	{
-		EventQueue eventQueue = injector.getInstance(EventQueue.class);
+		if (null == injector)
+		{
+			throw new RuntimeException("event qeue is null");
+		}
+		IEventQueue eventQueue = injector.getInstance(IEventQueue.class);
 		Event event = eventQueue.peek();
 		long time = event.time() - 1;
 		log.info("execute() - simulation starting clock (epoc): " + time);
@@ -155,7 +161,7 @@ public class Simulator
 
 	private void parseCluster()
 	{
-		injector.getInstance(HostParser.class).parse();
+		injector.getInstance(IHostParser.class).parse();
 	}
 
 }

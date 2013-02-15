@@ -11,7 +11,7 @@ import sim.model.Cluster;
 import sim.model.Host;
 import utils.TextFileUtils;
 
-public class HostParser
+public class HostParser implements IHostParser
 {
 	private static final Logger log = Logger.getLogger(HostParser.class);
 	private final String HOST_FILE = System.getProperty("hosts-file");
