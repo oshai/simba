@@ -4,12 +4,7 @@ import static org.junit.Assert.*;
 import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.*;
 
-import java.util.Iterator;
-
-import org.junit.Ignore;
 import org.junit.Test;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 
 import sim.collectors.MiscStatisticsCollector;
 import sim.configuration.ProductionSimbaConfiguration;
@@ -157,7 +152,6 @@ public class LooperTest
 		return new Looper(clock, eventQueue, waitingQueue, scheduler, mock(MiscStatisticsCollector.class), jobFinisher, consts);
 	}
 
-	@Ignore("buckets are dispatching every cycle")
 	@Test
 	public void testBucketSimulationRunningJobsRemoved()
 	{
@@ -169,8 +163,24 @@ public class LooperTest
 		SimpleScheduler scheduler = mock(SimpleScheduler.class);
 		SimbaConfiguration consts = createBucketConsts();
 		Looper looper = createLooper(clock, eventQueue, waitingQueue, scheduler, mock(JobFinisher.class), consts);
-		assertFalse(looper.tick());
+		looper.tick();
 		assertTrue(eventQueue.isEmpty());
+	}
+
+	@Test
+	public void testBucketSimulationRemoveWaitingJobs()
+	{
+		Clock clock = new Clock(BUCKET_SIZE - 1);
+		EventQueue eventQueue = new EventQueue(clock);
+		Job job = Job.builder(1).priority(0).submitTime(0).cores(0).memory(0).build();
+		AbstractWaitingQueue waitingQueue = new LinkedListWaitingQueue();
+		waitingQueue.add(job);
+		SimpleScheduler scheduler = mock(SimpleScheduler.class);
+		SimbaConfiguration consts = createBucketConsts();
+		Looper looper = createLooper(clock, eventQueue, waitingQueue, scheduler, mock(JobFinisher.class), consts);
+		looper.tick();
+		assertTrue(eventQueue.isEmpty());
+		assertTrue(waitingQueue.isEmpty());
 	}
 
 	@Test
@@ -184,46 +194,6 @@ public class LooperTest
 		Looper looper = createLooper(clock, eventQueue, waitingQueue, scheduler, mock(JobFinisher.class), consts);
 		assertTrue(looper.tick());
 		verifyZeroInteractions(scheduler);
-	}
-
-	@Ignore("buckets are dispatching every cycle")
-	@Test
-	public void testBucketSimulationJobsDispatchedOnlyOnBucket()
-	{
-		Clock clock = new Clock(4);
-		final EventQueue eventQueue = new EventQueue(clock);
-		final Job job = Job.builder(1).priority(0).submitTime(5).cores(0).memory(0).build();
-		final Job job2 = Job.builder(1).priority(0).submitTime(5).cores(0).memory(0).build();
-		final AbstractWaitingQueue waitingQueue = new LinkedListWaitingQueue();
-		eventQueue.add(new Submit(job));
-		eventQueue.add(new Submit(job2));
-		SimpleScheduler scheduler = mock(SimpleScheduler.class);
-		Answer<Integer> answer = new Answer<Integer>()
-		{
-			@Override
-			public Integer answer(InvocationOnMock invocation) throws Throwable
-			{
-				Iterator<Job> iterator = waitingQueue.iterator();
-				iterator.next();
-				iterator.remove();
-				eventQueue.add(new Finish(8, job, null));
-				return 1;
-			}
-		};
-		when(scheduler.schedule(7)).then(answer);
-		SimbaConfiguration consts = createBucketConsts();
-		Looper looper = createLooper(clock, eventQueue, waitingQueue, scheduler, mock(JobFinisher.class), consts);
-		looper.tick();// 5
-		assertFalse(waitingQueue.isEmpty());
-		assertTrue(eventQueue.isEmpty());
-		looper.tick();// 6
-		assertFalse(waitingQueue.isEmpty());
-		assertTrue(eventQueue.isEmpty());
-		looper.tick();// 7
-		assertTrue(waitingQueue.isEmpty());
-		assertFalse(eventQueue.isEmpty());
-		looper.tick();// 8
-		assertTrue(eventQueue.isEmpty());
 	}
 
 	private SimbaConfiguration createConsts()

@@ -3,6 +3,7 @@ package sim;
 import static utils.assertions.Asserter.*;
 
 import java.util.Iterator;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -104,19 +105,14 @@ public class Looper
 
 	private void removeAllRunningJobs()
 	{
-		int i = 0;
-		Iterator<Event> it = eventQueue.clearRunningJobs();
+		List<Finish> l = eventQueue.clearRunningJobs();
+		Iterator<Finish> it = l.iterator();
 		while (it.hasNext())
 		{
-			Event event = it.next();
-			if (event instanceof Finish)
-			{
-				Finish finish = (Finish) event;
-				jobFinisher.finish(finish);
-				i++;
-			}
+			Finish finish = it.next();
+			jobFinisher.finish(finish);
 		}
-		log.info("removed running jobs " + i);
+		log.info("removed running jobs " + l.size());
 	}
 
 	private void removeAllWaitingJobs()

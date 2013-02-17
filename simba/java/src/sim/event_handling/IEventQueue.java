@@ -1,8 +1,10 @@
 package sim.event_handling;
 
 import java.util.Iterator;
+import java.util.List;
 
 import sim.events.Event;
+import sim.events.Finish;
 
 public interface IEventQueue
 {
@@ -19,6 +21,6 @@ public interface IEventQueue
 
 	Iterator<Event> iterator();
 
-	Iterator<Event> clearRunningJobs();
+	List<Finish> clearRunningJobs();
 
 }
