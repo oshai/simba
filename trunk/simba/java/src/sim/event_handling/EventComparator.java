@@ -11,7 +11,8 @@ public class EventComparator implements Comparator<Event>
 	{
 		if (o1.time() == o2.time())
 		{
-			return o1.hashCode() - o2.hashCode();
+			long l = o1.job().id() - o2.job().id();
+			return l > 0 ? 1 : (l < 0 ? -1 : 1);
 		}
 		return o1.time() - o2.time() > 0 ? 1 : -1;
 	}

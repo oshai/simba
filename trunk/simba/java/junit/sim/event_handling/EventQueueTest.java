@@ -12,6 +12,7 @@ import sim.events.Event;
 import sim.events.Finish;
 import sim.events.NoOp;
 import sim.events.Submit;
+import sim.model.Job;
 
 public class EventQueueTest
 {
@@ -21,9 +22,10 @@ public class EventQueueTest
 	{
 		assertEquals(1, new EventComparator().compare(new Event(1, null), new Event(0, null)));
 		assertEquals(-1, new EventComparator().compare(new Event(0, null), new Event(1, null)));
-		Event o1 = new Event(0, null);
-		Event o2 = new Event(0, null);
-		assertEquals(new EventComparator().compare(o2, o1), -new EventComparator().compare(o1, o2));
+		Event o1 = new Event(0, Job.builder(1).id(1).build());
+		Event o2 = new Event(0, Job.builder(1).id(2).build());
+		assertEquals(-1, new EventComparator().compare(o1, o2));
+		assertEquals(1, new EventComparator().compare(o2, o1));
 	}
 
 	@Test
@@ -58,8 +60,8 @@ public class EventQueueTest
 		Clock clock = mock(Clock.class);
 		when(clock.time()).thenReturn(-1L);
 		EventQueue eventQueue = new EventQueue(clock);
-		Event finish = mock(Finish.class);
-		Event submit = mock(Submit.class);
+		Event finish = new Finish(0, mock(Job.class), null);
+		Event submit = new Submit(mock(Job.class));
 		eventQueue.add(finish);
 		eventQueue.add(submit);
 		List<Finish> runningJobs = eventQueue.clearRunningJobs();

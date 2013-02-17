@@ -53,8 +53,8 @@ public class SystemTest
 	public void test2Jobs1Host()
 	{
 		Host host = Host.builder().cores(2).memory(8).build();
-		Job job1 = Job.builder(3).priority(0).submitTime(2).cores(1).memory(4).build();
-		Job job2 = Job.builder(4).priority(0).submitTime(2).cores(1).memory(4).build();
+		Job job1 = Job.builder(3).id(1).priority(0).submitTime(2).cores(1).memory(4).build();
+		Job job2 = Job.builder(4).id(2).priority(0).submitTime(2).cores(1).memory(4).build();
 		ArrayList<Job> jobs = newArrayList(job1, job2);
 		Looper looper = init(host, jobs);
 		looper.tick();
