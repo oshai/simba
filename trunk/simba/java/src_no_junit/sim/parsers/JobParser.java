@@ -177,9 +177,9 @@ public class JobParser
 		return Math.round(Double.valueOf(value));
 	}
 
-	private String getPrecentString(int jobs)
+	private String getPrecentString(int jobs1)
 	{
-		return jobs + " jobs which is: " + (int) ((double) jobs * 100 / total) + "%";
+		return jobs1 + " jobs which is: " + (int) ((double) jobs1 * 100 / total) + "%";
 	}
 
 	private boolean canRun(Job job)

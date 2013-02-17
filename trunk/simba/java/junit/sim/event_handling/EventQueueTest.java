@@ -3,11 +3,15 @@ package sim.event_handling;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
+import java.util.List;
+
 import org.junit.Test;
 
 import sim.Clock;
 import sim.events.Event;
+import sim.events.Finish;
 import sim.events.NoOp;
+import sim.events.Submit;
 
 public class EventQueueTest
 {
@@ -17,7 +21,9 @@ public class EventQueueTest
 	{
 		assertEquals(1, new EventComparator().compare(new Event(1, null), new Event(0, null)));
 		assertEquals(-1, new EventComparator().compare(new Event(0, null), new Event(1, null)));
-		assertEquals(0, new EventComparator().compare(new Event(0, null), new Event(0, null)));
+		Event o1 = new Event(0, null);
+		Event o2 = new Event(0, null);
+		assertEquals(new EventComparator().compare(o2, o1), -new EventComparator().compare(o1, o2));
 	}
 
 	@Test
@@ -44,6 +50,22 @@ public class EventQueueTest
 		NoOp event = new NoOp(5);
 		eventQueue.add(event);
 		assertEquals(event, eventQueue.iterator().next());
+	}
+
+	@Test
+	public void testRemoveRunningJobs()
+	{
+		Clock clock = mock(Clock.class);
+		when(clock.time()).thenReturn(-1L);
+		EventQueue eventQueue = new EventQueue(clock);
+		Event finish = mock(Finish.class);
+		Event submit = mock(Submit.class);
+		eventQueue.add(finish);
+		eventQueue.add(submit);
+		List<Finish> runningJobs = eventQueue.clearRunningJobs();
+		assertEquals(finish, runningJobs.get(0));
+		assertEquals(1, runningJobs.size());
+		assertEquals(1, eventQueue.size());
 	}
 
 	@Test
