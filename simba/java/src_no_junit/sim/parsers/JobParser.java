@@ -109,12 +109,12 @@ public class JobParser
 					{
 						bucket++;
 					}
-					String id = JOBID;// cols.get(index_jobid);
-					if (id.contains(":"))
-					{
-						parallel++;
-						drop = true;
-					}
+					long id = total;// cols.get(index_jobid);
+					// if (id.contains(":"))
+					// {
+					// parallel++;
+					// drop = true;
+					// }
 					String qslot = null; // parseQslot(cols);
 					// if (!qslot.startsWith("/iil_1base") ||
 					// !allocationConfiguration.getAll().containsKey(qslot))

@@ -4,7 +4,7 @@ public class Job
 {
 	private static final long MAX_JOB_LENGTH = 60 * 60 * 24 * 31;// 1 month
 
-	private final String id;
+	private final long id;
 	private final long priority;
 	private final long submitTime;
 	private final long length;
@@ -44,7 +44,7 @@ public class Job
 	@SuppressWarnings("hiding")
 	public static class Builder
 	{
-		private String id;
+		private long id;
 		private long priority;
 		private long submitTime;
 		private long length;
@@ -59,7 +59,7 @@ public class Job
 			this.length = length;
 		}
 
-		public Builder id(String id)
+		public Builder id(long id)
 		{
 			this.id = id;
 			return this;
@@ -153,7 +153,7 @@ public class Job
 		startTime = time;
 	}
 
-	public String id()
+	public long id()
 	{
 		return id;
 	}
