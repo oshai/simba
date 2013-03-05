@@ -94,7 +94,7 @@ public class MaxCostScheduler extends ReservingScheduler implements Scheduler
 			log.info("numOfWinsOverBestFit " + numOfWinsOverBestFit);
 			log.info("numOfWins " + numOfWins);
 		}
-		maxCostCollector.collect(time, scheduleResults, winner);
+		maxCostCollector.collect(time, scheduleResults, winner, waitingQueue());
 		return winner.get(0).shceduledJobsToHost;
 	}
 
