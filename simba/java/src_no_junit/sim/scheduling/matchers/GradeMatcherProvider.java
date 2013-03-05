@@ -60,9 +60,14 @@ public class GradeMatcherProvider
 		return new AvailableCoresGrader();
 	}
 
-	public static Grader createProductionGrader()
+	public static Grader createProductionGraderMemFirstRev()
 	{
-		return new CompositeGrader(newArrayList(invert(new ConfiguredMemoryGrader()), invert(new AvailableMemoryGrader())), 1000, "netbatch-fit");
+		return new CompositeGrader(newArrayList(invert(new ConfiguredMemoryGrader()), invert(new AvailableMemoryGrader())), 1000, "mem_first_rev");
+	}
+
+	public static Grader createProductionGraderMemFirst()
+	{
+		return new CompositeGrader(newArrayList(invert(new ConfiguredMemoryGrader()), new AvailableMemoryGrader()), 1000, "mem_first");
 	}
 
 	private static Grader invert(Grader grader)

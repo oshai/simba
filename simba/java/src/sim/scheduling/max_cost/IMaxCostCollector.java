@@ -3,6 +3,7 @@ package sim.scheduling.max_cost;
 import java.util.List;
 
 import sim.scheduling.reserving.ScheduleCostResult;
+import sim.scheduling.waiting_queue.WaitingQueue;
 
 public interface IMaxCostCollector
 {
@@ -15,12 +16,12 @@ public interface IMaxCostCollector
 		}
 
 		@Override
-		public void collect(long time, Iterable<ScheduleCostResult> results, List<ScheduleCostResult> winner)
+		public void collect(long time, Iterable<ScheduleCostResult> results, List<ScheduleCostResult> winner, WaitingQueue waitingQueue)
 		{
 		}
 	};
 
-	void collect(long time, Iterable<ScheduleCostResult> results, List<ScheduleCostResult> winner);
+	void collect(long time, Iterable<ScheduleCostResult> results, List<ScheduleCostResult> winner, WaitingQueue waitingQueue);
 
 	void init();
 

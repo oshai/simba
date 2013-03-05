@@ -244,4 +244,9 @@ public class ReservingScheduler implements Scheduler
 		return "ReservingScheduler [grader=" + grader + "]";
 	}
 
+	protected WaitingQueue waitingQueue()
+	{
+		return waitingQueue;
+	}
+
 }
