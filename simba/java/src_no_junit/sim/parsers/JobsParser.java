@@ -21,10 +21,10 @@ import utils.TextFileUtils;
 
 import com.google.common.base.Predicate;
 
-public class JobParser
+public class JobsParser
 {
 	private static final String JOBID = "JOBID";
-	private static final Logger log = Logger.getLogger(JobParser.class);
+	private static final Logger log = Logger.getLogger(JobsParser.class);
 	private static final String JOBS_FILE = System.getProperty("jobs-file");
 	private int left;
 	private int total;
@@ -58,7 +58,7 @@ public class JobParser
 	private int jobs = 0;
 
 	@Inject
-	public JobParser(SimbaConfiguration simbaConfiguration, Cluster cluster, IEventQueue eventQueue, AllocationConfiguration allocationConfiguration)
+	public JobsParser(SimbaConfiguration simbaConfiguration, Cluster cluster, IEventQueue eventQueue, AllocationConfiguration allocationConfiguration)
 	{
 		super();
 		this.simbaConfiguration = simbaConfiguration;
@@ -138,7 +138,7 @@ public class JobParser
 				{
 					log.debug("apply() - error: " + ex.getMessage() + "; on line " + line, ex);
 				}
-				if (JobParser.DEBUG && total > 1000000)
+				if (JobsParser.DEBUG && total > 1000000)
 				{
 					return false;
 				}

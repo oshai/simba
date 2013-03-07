@@ -12,7 +12,7 @@ import sim.event_handling.IEventQueue;
 import sim.model.Cluster;
 import sim.parsers.HostParser;
 import sim.parsers.IHostParser;
-import sim.parsers.JobParser;
+import sim.parsers.JobsParser;
 import sim.scheduling.JobDispatcher;
 import sim.scheduling.Scheduler;
 import sim.scheduling.graders.Grader;
@@ -54,7 +54,7 @@ public class ProductionSimbaConfiguration extends AbstractModule implements Modu
 		bind(SimbaConfiguration.class).toInstance(this);
 		bind(IHostParser.class).to(HostParser.class);
 		bind(Clock.class).in(Scopes.SINGLETON);
-		bind(JobParser.class).in(Scopes.SINGLETON);
+		bind(JobsParser.class).in(Scopes.SINGLETON);
 		bind(IEventQueue.class).to(EventQueue.class).in(Scopes.SINGLETON);
 		bind(Cluster.class).in(Scopes.SINGLETON);
 		bind(Grader.class).toInstance(grader());
