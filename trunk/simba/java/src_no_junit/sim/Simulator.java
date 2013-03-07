@@ -25,7 +25,7 @@ import sim.event_handling.IEventQueue;
 import sim.events.Event;
 import sim.model.Cluster;
 import sim.parsers.IHostParser;
-import sim.parsers.JobParser;
+import sim.parsers.JobsParser;
 import sim.scheduling.max_cost.IMaxCostCollector;
 
 import com.google.common.base.Stopwatch;
@@ -156,7 +156,7 @@ public class Simulator
 
 	private void parseJobs()
 	{
-		injector.getInstance(JobParser.class).parse();
+		injector.getInstance(JobsParser.class).parse();
 	}
 
 	private void parseCluster()
