@@ -1,1 +1,0 @@
-/nfs/iil/iec/sws/work/oshai/sim_runner.pl
